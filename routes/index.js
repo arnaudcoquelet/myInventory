@@ -4,5 +4,6 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { user: req.user, title: 'MyInventory' });
+    res.redirect('/sites');
+    //res.render('index', { user: req.user, title: 'MyInventory' });
 };

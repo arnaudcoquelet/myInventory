@@ -1,48 +1,50 @@
-<% layout('globalLayout') -%>
+<% layout('sitesLayout') -%>
+</br></br>
 <div class="container">
-
-    <div class="row row-offcanvas row-offcanvas-right">
-        <div class="col-xs-12 col-sm-9">
-            <div class="row">
-                <%if (breadcrumbs) {%>
-                <%if (breadcrumbs instanceof Array && breadcrumbs.length>0) {%>
-                <ol class="breadcrumb">
-                    <% for(var b=0; b< breadcrumbs.length; b++) {%>
-                    <li class="<%=breadcrumbs[b].class %>">
-                        <% if(breadcrumbs[b].url === '') {%>
-                            <%=breadcrumbs[b].name%>
-                        <% } else {%>
-                            <a href="<%=breadcrumbs[b].url %>"><%=breadcrumbs[b].name %></a>
-                        <%}%>
-                    </li>
-                    <%}%>
-                </ol>
-                <%}%>
-                <%}%>
-            </div>
-
-            <div>
+    <div class="row">
+        <div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <i class="glyphicon glyphicon-tasks"></i>
+                    Sites
+                    <% if(sites) { %>
+                    (<%= sites.length %>)
+                    <% } %>
+                </div>
+                <div class="panel-body">
+                    <p></p>
+                </div>
                 <table class="table table-striped">
                     <tr>
-                        <th>Code</th>
+                        <th class="col-sm-2">Code</th>
                         <th>Name</th>
-                        <th><a href="#modalAddSite" role="button" data-toggle="modal">Add a Site</a></th>
+                        <th class="col-sm-1"><a href="#modalAddSite" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign" title="Add a site"></a></th>
                     </tr>
-                    <% if(sites && sites instanceof Array && sites.length>0 ) {%>
-                    <% for(var i=0; i< sites.length; i++) {%>
-                        <tr>
-                            <td><a href="/Sites/<%=sites[i].code%>"><%= sites[i].code %></a></td>
-                            <td><%= sites[i].name %></td>
-                            <td> <a>Details</a> <a>Delete</a></td>
-                        </tr>
+                    <% if(sites && sites instanceof Array && sites.length > 0 ) { %>
+                    <% for(var i = 0; i < sites.length; i++) { %>
+                    <tr>
+                        <td>
+                            <a href="/Sites/<%= sites[i].code %>"><%= sites[i].code %></a>
+                        </td>
+                        <td><%= sites[i].name %></td>
+                        <td>
+                            <a href='' class="glyphicon glyphicon-pencil" title="edit"></a>
+                            <a href="" class="glyphicon glyphicon-remove" title="delete"></a>
+                        </td>
+                    </tr>
                     <% } %>
                     <% } %>
                 </table>
+                <div class="panel-body">
+                    <p></p>
+                </div>
             </div>
-        </div><!--/span-->
+        </div>
+        <!--/span-->
 
 
-    </div><!--/row-->
+    </div>
+    <!--/row-->
 
     <hr>
 </div><!--/.container-->
@@ -54,6 +56,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">&times;</a>
+
                 <h3>Add a new Site</h3>
             </div>
             <div class="modal-body">
@@ -68,10 +71,13 @@
                     </div>
 
                     <label class="control-label">Address</label>
+
                     <div class="form-group">
                         <div class="col-lg-10">
-                            <input type="text" class="form-control" id="address1" name="address1" placeholder="Address 1"/>
-                            <input type="text" class="form-control" id="address2" name="address2" placeholder="Address 2"/>
+                            <input type="text" class="form-control" id="address1" name="address1"
+                                   placeholder="Address 1"/>
+                            <input type="text" class="form-control" id="address2" name="address2"
+                                   placeholder="Address 2"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -87,10 +93,10 @@
                     </div>
 
 
-                <div class="form-group">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
                 </form>
             </div>
 

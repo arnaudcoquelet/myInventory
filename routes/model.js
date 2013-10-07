@@ -3,17 +3,24 @@
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
+    host: "10.118.204.106",
     port: 3306,
     dialect: 'mysql'
 });
 
 var User = sequelize.define('user', {
     name: { type: Sequelize.STRING, allowNull: false},
-    email: { type: Sequelize.STRING, allowNull: false},
     username: { type: Sequelize.STRING, allowNull: false},
     password: { type: Sequelize.STRING, allowNull: false},
-    role: { type: Sequelize.STRING, defaultValue: "read"}
+    role: { type: Sequelize.STRING, defaultValue: "read"},
+    email: { type: Sequelize.STRING, allowNull: false},
+    telephone: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    address1: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    address2: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    city: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    state: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    position: { type: Sequelize.STRING, defaultValue: "", allowNull: true}
     },
     {
         getterMethods   : {
@@ -26,17 +33,6 @@ var User = sequelize.define('user', {
     }
 );
 
-var Contact = sequelize.define('contact', {
-    name: { type: Sequelize.STRING, allowNull: false},
-    email: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    telephone: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    address1: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    address2: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    city: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    state: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    role: { type: Sequelize.STRING, defaultValue: "", allowNull: true}
-});
 
 var Device = sequelize.define('device', {
     name: { type: Sequelize.STRING, allowNull: false},
@@ -73,7 +69,7 @@ var Site = sequelize.define('site', {
 
 
 //Association
-Site.hasMany(Contact, {as: 'Contacts'});
+Site.hasMany(User, {as: 'Contacts'});
 Site.hasMany(Building, {as: 'Buildings'});
 Building.hasMany(Floor, {as: 'Floors'});
 Floor.hasMany(Closet, {as: 'Closets'});
@@ -100,7 +96,7 @@ exports.Building = Building;
 exports.Floor = Floor;
 exports.Closet = Closet;
 exports.Device = Device;
-exports.Contact = Contact;
+
 
 
 //****************************************//
@@ -440,7 +436,7 @@ exports.findClosetById = _findClosetById;
 
 var _createCloset = function (name, next) {
     var chainer = new Sequelize.Utils.QueryChainer
-    , closet  = Closet.build({ name: 'Main' });
+    , closet  = Closet.build({ name: name });
 
     chainer
         .add(closet.save())
@@ -473,7 +469,7 @@ var _createClosetWithFloorId = function (floorid, name, next) {
             //Get Site from SiteCode
             _findFloorById(floorid, function(err, floor){
                 //Link Building to Site
-                floor.addFloor(closet)
+                floor.addCloset(closet)
                     .on('success', function(){
                         if(next) next(null, closet);
                     })

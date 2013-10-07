@@ -115,7 +115,7 @@ app.get('/logout',ensureAuthenticated, function(req, res){req.logout();res.redir
 app.get('/sites', function(req, res){site.list(req, res, model)});
 app.post('/sites', function(req, res){site.create(req, res, model)});
 //app.delete('/sites/:sitecode', function(req, res){site.delete(req, res, model)} );
-app.get('/sites/:sitecode', function(req, res){site.details(req, res,model)} );
+app.get('/sites/:sitecode', function(req, res){site.details(req, res, model)} );
 
 //Buildings
 app.get('/sites/:sitecode/building', function(req, res){building.list(req, res, model)});
@@ -127,7 +127,20 @@ app.get('/sites/:sitecode/building/:buildingid', function(req, res){building.det
 app.get('/sites/:sitecode/building/:buildingid/floor', function(req, res){floor.list(req, res, model)});
 app.post('/sites/:sitecode/building/:buildingid/floor', function(req, res){floor.create(req, res, model)});
 //app.delete('/sites/:sitecode/building/:buildingid/floor/:floorid', function(req, res){floor.delete(req, res, model)} );
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid', function(req, res){floor.details(req, res,model)} );
+app.get('/sites/:sitecode/building/:buildingid/floor/:floorid', function(req, res){floor.details(req, res, model)} );
+
+//Closets
+app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list(req, res, model)});
+app.post('/sites/:sitecode/building/:buildingid/floor/:floorid/closet', function(req, res){closet.create(req, res, model)});
+//app.delete('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid', function(req, res){closet.delete(req, res, model)} );
+app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid', function(req, res){closet.details(req, res, model)} );
+
+
+
+
+
+
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

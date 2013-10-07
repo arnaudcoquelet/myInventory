@@ -1,32 +1,48 @@
 <% layout('mainLayout') -%>
-
+</br></br>
 <div class="row">
     <div class="bs-example">
-        <div class="col-24 col-sm-24 col-lg-12">
+        <div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <i class="glyphicon glyphicon-tasks"></i>
+                    Buildings
+                    <% if(buildings) { %>
+                    (<%= buildings.length %>)
+                    <% } %>
+                </div>
+                <div class="panel-body">
+                    <p></p>
+                </div>
+                <table class="table table-striped">
+                    <tr>
+                        <th class="col-sm-1">#</th>
+                        <th>Building</th>
+                        <th class="col-sm-1"><a href="#modalAddBuilding" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign"></a></th>
+                    </tr>
 
-            <h3>Buildings
-                <% if(buildings) { %>
-                (<%= buildings.length %>)
-                <% } %>
-            </h3>
-            <table class="table table-striped">
-                <tr>
-                    <th>#</th>
-                    <th>Building</th>
-                    <th><a href="#modalAddBuilding" role="button" data-toggle="modal">Add a Building</a></th>
-                </tr>
+                    <% if(buildings && buildings.length > 0) { %>
+                    <% for(var i = 0; i < buildings.length; i++) { %>
+                    <tr>
+                        <td>
+                            <a href="/sites/<%= site.code %>/building/<%= buildings[i].id %>"><%= buildings[i].id %></a>
+                        </td>
+                        <td><%= buildings[i].name %></td>
+                        <td class="col-lg-1">
+                             <a href='' class="glyphicon glyphicon-pencil" title="edit"></a>
+                             <a href="" class="glyphicon glyphicon-remove" title="delete"></a>
+                        </td>
+                    </tr>
+                    <% } %>
+                    <% } %>
+                </table>
 
-                <% if(buildings && buildings.length > 0) { %>
-                <% for(var i = 0; i < buildings.length; i++) { %>
-                <tr>
-                    <td><a href="/sites/<%= site.code %>/building/<%= buildings[i].id %>"><%= buildings[i].id %></a>
-                    </td>
-                    <td><%= buildings[i].name %></td>
-                    <td><a>Details</a> <a>Delete</a></td>
-                </tr>
-                <% } %>
-                <% } %>
-            </table>
+                <div class="panel-body">
+                    <p></p>
+                </div>
+            </div>
+
+
         </div>
         <!--Closets-->
     </div>
@@ -34,32 +50,46 @@
 </div>
 <br/>
 <div class="row">
-    <div class="col-24 col-sm-24 col-lg-12">
-        <h3>Devices (0)</h3>
-        <table class="table table-striped">
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Hostname</th>
-                <th>IP</th>
-                <th>Building</th>
-                <th>Floor</th>
-                <th>Closet</th>
-                <th></th>
-            </tr>
-            <% var devices = [] %>
-            <% if(devices) { %>
-            <% if( devices instanceof Array && devices.length > 0 ) { %>
-            <% for(var i = 0; i < devices.length; i++) { %>
-            <tr>
-                <td><a href="/Sites/Devices/<%= devices[i].id %>"><%= devices[i].id %></a></td>
-                <td><%= devices[i].name %></td>
-                <td><a>Details</a> <a>Delete</a></td>
-            </tr>
-            <% } %>
-            <% } %>
-            <% } %>
-        </table>
+    <div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-th"></i>
+                Devices (0)
+            </div>
+            <div class="panel-body">
+                <p></p>
+            </div>
+
+            <table class="table table-striped">
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Hostname</th>
+                    <th>IP</th>
+                    <th>Building</th>
+                    <th>Floor</th>
+                    <th>Closet</th>
+                    <th class="col-sm-1"><a href="#modalAddDevice" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign"></a></th>
+                </tr>
+                <% var devices = [] %>
+                <% if(devices) { %>
+                <% if( devices instanceof Array && devices.length > 0 ) { %>
+                <% for(var i = 0; i < devices.length; i++) { %>
+                <tr>
+                    <td><a href="/Sites/Devices/<%= devices[i].id %>"><%= devices[i].id %></a></td>
+                    <td><%= devices[i].name %></td>
+                    <td><a>Details</a> <a>Delete</a></td>
+                </tr>
+                <% } %>
+                <% } %>
+                <% } %>
+            </table>
+
+            <div class="panel-body">
+                <p></p>
+            </div>
+
+        </div>
     </div>
 </div>
 

@@ -1,29 +1,36 @@
 /**
  * Created by ArnaudCoquelet on 10/4/13.
  */
-/**
- * Created by ArnaudCoquelet on 10/4/13.
- */
-exports.list = function(req, res, model){
+exports.list = function (req, res, model) {
     var sitecode = req.params.sitecode;
     var buildingid = req.params.buildingid;
-    var breadcrumbs = [{name:'Sites',url:'/sites',class: ''},{name:sitecode,url:'',class: ''},{name:buildingid,url:'',class: ''}];
+    var breadcrumbs = [
+        {name: 'Sites', url: '/sites', class: ''},
+        {name: sitecode, url: '', class: ''},
+        {name: buildingid, url: '', class: ''}
+    ];
 
-    if(sitecode && buildingid && model){
-        model.findSiteByCode(sitecode, function(err,site){
-            if(err){res.redirect("/sites/" + sitecode);}
-            if(site){
-                model.findBuildingById(buildingid, function(err,building){
-                    if(err) {res.redirect("/sites/" + sitecode + "/building/" + buildingid);}
-                    if(buillding){
+    if (sitecode && buildingid && model) {
+        model.findSiteByCode(sitecode, function (err, site) {
+            if (err) {
+                res.redirect("/sites/" + sitecode);
+            }
+            if (site) {
+                model.findBuildingById(buildingid, function (err, building) {
+                    if (err) {
+                        res.redirect("/sites/" + sitecode + "/building/" + buildingid);
+                    }
+                    if (building) {
                         building.getFloors()
-                            .on('success', function(floors){
+                            .on('success', function (floors) {
 
-                                breadcrumbs = [{name:'Sites',url:'/sites',class: ''},
-                                               {name:site.code,url:'/sites/' + site.code ,class: ''},
-                                               {name:building.name,url:'',class: 'active'}];
+                                breadcrumbs = [
+                                    {name: 'Sites', url: '/sites', class: ''},
+                                    {name: site.code, url: '/sites/' + site.code, class: ''},
+                                    {name: building.name, url: '', class: 'active'}
+                                ];
 
-                                res.render('site', { title: 'MyInventory',
+                                res.render('floorList', { title: 'MyInventory',
                                     site: site,
                                     building: building,
                                     floors: floors,
@@ -34,83 +41,87 @@ exports.list = function(req, res, model){
             }
         })
     }
-    else
-    {
+    else {
         res.redirect("/Sites");
     }
 };
 
-exports.details = function(req, res, model){
+exports.details = function (req, res, model) {
     var sitecode = req.params.sitecode;
     var buildingid = req.params.buildingid;
     var floorid = req.params.floorid;
 
-    var breadcrumbs = [ {name:'Sites',url:'/sites',class: ''},
-        {name:sitecode,url:'/sites/' + sitecode,class: ''},
-        {name:buildingid,url:'',class: 'active'}
+    var breadcrumbs = [
+        {name: 'Sites', url: '/sites', class: ''}
     ];
 
-    if(buildingid && model){
-        model.findBuildingById(buildingid, function(err,building){
-            if(err){
-                console.log(err);
-                console.log("Corresponding Building not found");
-                res.redirect("/Sites/" + sitecode);}
+    if (sitecode && buildingid && floorid && model) {
+        model.findSiteByCode(sitecode, function (err, site) {
+            if (err) {
+                res.redirect("/sites/" + sitecode);
+            }
+            if (site) {
+                model.findBuildingById(buildingid, function (err, building) {
+                    if (err) {
+                        res.redirect("/sites/" + sitecode + "/building/" + buildingid);
+                    }
+                    if (building) {
+                        model.findFloorById(floorid, function (err, floor) {
+                            if (err) {
+                                res.redirect("/sites/" + sitecode + "/building/" + buildingid);
+                            }
 
-            if(building){
-                building.getSites()
-                    .on('success', function(sites){
-                        console.log(sites);
-                        if(sites && !sites instanceof Array) {
-                            console.log("Corresponding site information not found");
-                            res.redirect("/Sites/" + sitecode);
-                        }
+                            if (floor) {
+                                floor.getClosets()
+                                    .on('success', function (closets) {
+                                        breadcrumbs = [
+                                            {name: 'Sites', url: '/sites', class: ''},
+                                            {name: site.code, url: '/sites/' + site.code, class: ''},
+                                            {name: building.name, url: '/sites/' + site.code + '/building/' + building.id, class: ''},
+                                            {name: floor.name, url: '', class: 'active'}
+                                        ];
 
-                        building.getFloors()
-                            .on('success', function(floors){
-                                if(floors && !floors instanceof Array) {
-                                    floors = [];
-                                }
-
-                                var breadcrumbs = [ {name:'Sites',url:'/sites',class: ''},
-                                    {name:sitecode,url:'/sites/' + sitecode,class: ''},
-                                    {name:building.name,url:'',class: 'active'}
-                                ];
-
-                                res.render('buildingDetails', { title: 'MyInventory',
-                                    site: sites[0],
-                                    building: building,
-                                    floors: floors,
-                                    breadcrumbs: breadcrumbs
-                                });
-                            });
-                    });
+                                        res.render('floorDetails', { title: 'MyInventory',
+                                            site: site,
+                                            building: building,
+                                            floor: floor,
+                                            closets: closets,
+                                            breadcrumbs: breadcrumbs });
+                                    });
+                            }
+                        });
+                    }
+                });
             }
         })
     }
-    else
-    {
+    else {
         res.redirect("/Sites");
     }
 };
 
-exports.create = function(req, res, model){
+exports.create = function (req, res, model) {
     var sitecode = req.params.sitecode,
-        buildingname = req.body.buildingname;
+        buildingid = req.params.buildingid,
+        floorname = req.body.name;
 
-    var error='';
-    if(!sitecode || sitecode==='') { error = 'Missing the Site Code'; }
-    if(!buildingname || buildingname==='') { error = 'Missing the Building Name'; }
+    var error = '';
+    if (!buildingid || buildingid === '') {
+        error = 'Missing the Building Id';
+    }
+    if (!floorname || floorname === '') {
+        error = 'Missing the Floor Name';
+    }
 
-    model.createBuildingWithSitecode(sitecode, buildingname, function(err,building){
+    model.createFloorWithBuildingId(buildingid, floorname, function (err, floor) {
         console.log("----------");
         req.method = 'get';
-        res.redirect('/Sites/' + sitecode + '/building');
-    } );
+        res.redirect('/Sites/' + sitecode + '/building/' + buildingid);
+    });
 
 };
 
-exports.delete = function(req, res, model){
+exports.delete = function (req, res, model) {
 
     res.render('siteList', { title: 'MyInventory' });
 };

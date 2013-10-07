@@ -2,7 +2,7 @@
 <div class="container">
 
     <div class="row row-offcanvas row-offcanvas-right">
-        <div class="col-xs-12 col-sm-9">
+        <div>
             <div class="row">
                 <%if (breadcrumbs) {%>
                 <%if (breadcrumbs instanceof Array && breadcrumbs.length>0) {%>
@@ -28,7 +28,7 @@
                     <h2>(<%=site.code%>)</h2>
                 </div>
                 <div class="highlight">
-                    <div class="col-6 col-sm-6 col-lg-4 well">
+                    <div class="col-6 col-sm-6 col-lg-4 well well-sm">
                         <i>Address</i><br/><br/>
                         <address>
                             <%if(site) {%>

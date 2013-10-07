@@ -1,51 +1,7 @@
 <% layout('mainLayout') -%>
+
 </br></br>
-<div class="row">
-    <div class="bs-example">
-        <div>
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <i class="glyphicon glyphicon-tasks"></i>
-                    Closets
-                    <% if(closets) { %>
-                    (<%= closets.length %>)
-                    <% } %>
-                </div>
-                <div class="panel-body">
-                    <p></p>
-                </div>
-                <table class="table table-striped">
-                    <tr>
-                        <th class="col-sm-1">#</th>
-                        <th>Closet</th>
-                        <th class="col-sm-1"><a href="#modalAddCloset" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign"></a></th>
-                    </tr>
 
-                    <% if(closets && closets.length > 0) { %>
-                    <% for(var i = 0; i < closets.length; i++) { %>
-                    <tr>
-                        <td>
-                            <a href="/Sites/<%= site.code %>/building/<%= building.id %>/floor/<%= floor.id %>/closet/<%= closets[i].id %>"><%= closets[i].id %></a>
-                        </td>
-                        <td><%= closets[i].name %></td>
-                        <td>
-                            <a href='' class="glyphicon glyphicon-pencil" title="edit"></a>
-                            <a href="" class="glyphicon glyphicon-remove" title="delete"></a>
-                        </td>
-                    </tr>
-                    <% } %>
-                    <% } %>
-                </table>
-                <div class="panel-body">
-                    <p></p>
-                </div>
-            </div>
-        </div>
-        <!--floors-->
-    </div>
-
-</div>
-<br/>
 <div class="row">
     <div>
         <div class="panel panel-primary">
@@ -99,8 +55,7 @@
 
 
 <!--Modals-->
-<div class="modal" tabindex="-1" role="dialog" id="modalAddCloset" aria-labelledby="modalAddClosetLabel"
-     aria-hidden="true">
+<div class="modal" tabindex="-1" role="dialog" id="modalAddCloset" aria-labelledby="modalAddClosetLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -109,12 +64,10 @@
                 <h3>Add a new Closet</h3>
             </div>
             <div class="modal-body">
-                <form role="form" class="form-horizontal"
-                      action="/sites/<%= site.code %>/building/<%= building.id %>/floor/<%= floor.id %>/closet"
-                      method="post">
+                <form role="form" class="form-horizontal" action="/sites/<%= site.code %>/building/<%= building.id %>/floor/<%= floor.id%>/closet" method="post">
                     <div class="form-group">
                         <div class="col-lg-7">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Closet name"/>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Floor name"/>
                         </div>
                     </div>
 
