@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
+    <link rel='stylesheet' href='/stylesheets/bootstrap-theme.css' />
+    <script src="js/bootstrap.js"></script>
+    <script src="js/jquery.js"></script>
+
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><%= title %></a>
+        </div><!--/.navbar-collapse -->
+    </div>
+</div>
+
+<br/>
+<br/>
+
+    <div class="container" style="max-width: 500px">
+
+    <form class="form-signin" method="post" action="/register" >
+        <h2 class="form-signin-heading">Please enter your information</h2>
+        <input type="text" class="form-control" name="name" placeholder="Name" autofocus>
+        <input type="text" class="form-control" name="username" placeholder="Username" autofocus>
+        <input type="text" class="form-control" name="email" placeholder="Email address">
+        <input type="password" class="form-control" name="password" placeholder="Password">
+        <input type="password" class="form-control" name="confirmationpassword" placeholder="ConfirmationPassword">
+        <button class="btn btn-lg btn-primary btn-block btn-outline-inverse" type="submit">Register</button>
+    </form>
+
+</div>
+</body>
+</html>

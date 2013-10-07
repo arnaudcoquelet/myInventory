@@ -1,0 +1,95 @@
+<% layout('mainLayout') -%>
+
+<div class="row">
+    <div class="bs-example">
+        <div class="col-24 col-sm-24 col-lg-12">
+
+            <h3>Buildings
+                <% if(buildings) { %>
+                (<%= buildings.length %>)
+                <% } %>
+            </h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Building</th>
+                    <th><a href="#modalAddBuilding" role="button" data-toggle="modal">Add a Building</a></th>
+                </tr>
+
+                <% if(buildings && buildings.length > 0) { %>
+                <% for(var i = 0; i < buildings.length; i++) { %>
+                <tr>
+                    <td><a href="/sites/<%= site.code %>/building/<%= buildings[i].id %>"><%= buildings[i].id %></a>
+                    </td>
+                    <td><%= buildings[i].name %></td>
+                    <td><a>Details</a> <a>Delete</a></td>
+                </tr>
+                <% } %>
+                <% } %>
+            </table>
+        </div>
+        <!--Closets-->
+    </div>
+
+</div>
+<br/>
+<div class="row">
+    <div class="col-24 col-sm-24 col-lg-12">
+        <h3>Devices (0)</h3>
+        <table class="table table-striped">
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Hostname</th>
+                <th>IP</th>
+                <th>Building</th>
+                <th>Floor</th>
+                <th>Closet</th>
+                <th></th>
+            </tr>
+            <% var devices = [] %>
+            <% if(devices) { %>
+            <% if( devices instanceof Array && devices.length > 0 ) { %>
+            <% for(var i = 0; i < devices.length; i++) { %>
+            <tr>
+                <td><a href="/Sites/Devices/<%= devices[i].id %>"><%= devices[i].id %></a></td>
+                <td><%= devices[i].name %></td>
+                <td><a>Details</a> <a>Delete</a></td>
+            </tr>
+            <% } %>
+            <% } %>
+            <% } %>
+        </table>
+    </div>
+</div>
+
+
+<!--Modals-->
+<div class="modal" tabindex="-1" role="dialog" id="modalAddBuilding" aria-labelledby="modalAddBuildingLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+
+                <h3>Add a new Building to <%= site.code %></h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal" action="/Sites/<%= site.code %>/building" method="post">
+                    <div class="form-group">
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="buildingname" name="buildingname"
+                                   placeholder="Name"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
