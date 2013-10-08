@@ -121,7 +121,7 @@ exports.details = function (req, res, model) {
 
                                     if(closet){
                                         closet.getDevices()
-                                            .on('success', function (closets) {
+                                            .on('success', function (devices) {
                                                                                     breadcrumbs = [
                                                                                         {name: 'Sites', url: '/sites', class: ''},
                                                                                         {name: site.code, url: '/sites/' + site.code, class: ''},
@@ -135,7 +135,7 @@ exports.details = function (req, res, model) {
                                                                                         building: building,
                                                                                         floor: floor,
                                                                                         closet: closet,
-                                                                                        devices: [],
+                                                                                        devices: devices,
                                                                                         breadcrumbs: breadcrumbs });
                                                                                 });
                                     }

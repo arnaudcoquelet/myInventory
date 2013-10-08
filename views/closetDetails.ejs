@@ -22,16 +22,16 @@
                     <th>Building</th>
                     <th>Floor</th>
                     <th>Closet</th>
-                    <th class="col-sm-1"><a href="#modalAddDevice" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign"></a></th>
+                    <th class="col-sm-1"><a href="#modalAddDevice" role="button" data-toggle="modal"
+                                            class="glyphicon glyphicon-plus-sign"></a></th>
                 </tr>
-                <% var devices = [] %>
                 <% if(devices) { %>
                 <% if( devices instanceof Array && devices.length > 0 ) { %>
                 <% for(var i = 0; i < devices.length; i++) { %>
                 <tr>
                     <td><a href="/Sites/Devices/<%= devices[i].id %>"><%= devices[i].id %></a></td>
                     <td><%= devices[i].name %></td>
-                    <td></td>
+                    <td><%= devices[i].type %></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -55,7 +55,8 @@
 
 
 <!--Modals-->
-<div class="modal" tabindex="-1" role="dialog" id="modalAddCloset" aria-labelledby="modalAddClosetLabel" aria-hidden="true">
+<div class="modal" tabindex="-1" role="dialog" id="modalAddCloset" aria-labelledby="modalAddClosetLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -64,7 +65,9 @@
                 <h3>Add a new Closet</h3>
             </div>
             <div class="modal-body">
-                <form role="form" class="form-horizontal" action="/sites/<%= site.code %>/building/<%= building.id %>/floor/<%= floor.id%>/closet" method="post">
+                <form role="form" class="form-horizontal"
+                      action="/sites/<%= site.code %>/building/<%= building.id %>/floor/<%= floor.id %>/closet"
+                      method="post">
                     <div class="form-group">
                         <div class="col-lg-7">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Floor name"/>
@@ -76,6 +79,122 @@
                         <button type="submit" class="btn btn-primary">Add</button>
                     </div>
                 </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="/js/angular_sites.js"></script>
+<div class="modal" tabindex="-1" role="dialog" id="modalAddDevice" aria-labelledby="modalAddDeviceLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+
+                <h3>Add a new Device</h3>
+            </div>
+            <div class="modal-body">
+                <div ng-controller="getClosetCtrl">
+                    <div ng-init="currentSiteCode='<%= site.code %>'"></div>
+                    <div ng-init="currentBuildingId=<%= building.id %>"></div>
+                    <div ng-init="currentFloorId=<%= floor.id %>"></div>
+                    <div ng-init="currentClosetId=<%= closet.id %>"></div>
+
+                    <form role="form" class="form-horizontal"
+                          action="/sites/<%= site.code %>/building/<%= building.id %>/floor/<%= floor.id %>/closet/<%= closet.id%>/device"
+                          method="post">
+
+                        <!-- Device -->
+                        <div class="form-group">
+                            <div>
+                                <i class="glyphicon glyphicon-chevron-down btn-sm" ng-show="showDevice()"
+                                   ng-click="toggleShowDevice()"></i>
+                                <i class="glyphicon glyphicon-chevron-right btn-sm" ng-show="!showDevice()"
+                                   ng-click="toggleShowDevice()"></i>
+                                <label ng-click="toggleShowDevice()">Device</label>
+                            </div>
+                        </div>
+                        <div class="panel panel-default" ng-show="showDevice()">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label for="deviceName"  class="col-lg-2 control-label">Name</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" name="deviceName" id="deviceName" placeholder="Device Name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="deviceType" class="col-lg-2 control-label">Type</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" name="deviceType" id="deviceType"
+                                               placeholder="Device Type">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="form-group">
+                            <div>
+                                <i class="glyphicon glyphicon-chevron-down btn-sm" ng-show="showLocation()"
+                                   ng-click="toggleShowLocation()"></i>
+                                <i class="glyphicon glyphicon-chevron-right btn-sm" ng-show="!showLocation()"
+                                   ng-click="toggleShowLocation()"></i>
+                                <label ng-click="toggleShowLocation()">Location</label>
+                            </div>
+                        </div>
+                        <div class="panel panel-default" ng-show="showLocation()">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label for="siteListOptions" class="col-lg-2 control-label">Site</label>
+
+                                    <div class="col-lg-10">
+                                        <select class="form-control" id="siteListOptions" ng-model="selectedSite"
+                                                ng-options="s as s.name for s in sites" ng-change="siteUpdated()"
+                                                ng-disabled="canSelectSite()"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="buildingListOptions" class="col-lg-2 control-label">Building</label>
+
+                                    <div class="col-lg-10">
+                                        <select class="form-control" id="buildingListOptions"
+                                                ng-model="selectedBuilding" ng-options="b as b.name for b in buildings"
+                                                ng-init="selectedBuilding=buildings[0]" ng-change="buildingUpdated()"
+                                                ng-disabled="canSelectBuilding()"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="floorListOptions" class="col-lg-2 control-label">Floor</label>
+
+                                    <div class="col-lg-10">
+                                        <select class="form-control" id="floorListOptions" ng-model="selectedFloor"
+                                                ng-options="f as f.name for f in floors"
+                                                ng-init="selectedFloor=floors[0]" ng-change="floorUpdated()"
+                                                ng-disabled="canSelectFloor()"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="closetListOptions" class="col-lg-2 control-label">Closet</label>
+
+                                    <div class="col-lg-10">
+                                        <select class="form-control" id="closetListOptions" ng-model="selectedCloset"
+                                                ng-options="c as c.name for c in closets"
+                                                ng-init="selectedCloset=closets[0]" ng-change="closetUpdated()"
+                                                ng-disabled="canSelectCloset()"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary pull-right">Add</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
         </div>

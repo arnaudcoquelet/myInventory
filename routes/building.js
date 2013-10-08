@@ -3,7 +3,7 @@
  */
 exports.list = function(req, res, model){
     var sitecode = req.params.sitecode;
-    var breadcrumbs = [{name:'Sites',url:'/sites',class: ''},{name:sitecode,url:'',class: 'active'}];
+    var breadcrumbs = [{name:'Sites',url:'/sites',class: ''}];
 
     if(sitecode && model){
         model.findSiteByCode(sitecode, function(err,site){
@@ -12,6 +12,8 @@ exports.list = function(req, res, model){
                 var buildings = site.getBuildings()
                     .on('success', function(buildings){
                         if(buildings && !buildings instanceof Array) {buildings=[];}
+
+                        breadcrumbs = [{name:'Sites',url:'/sites',class: ''},{name:site.code + '-' + site.name,url:'',class: 'active'}];
 
                         res.render('buildingList', { title: 'MyInventory',
                             site: site,

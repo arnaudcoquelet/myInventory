@@ -142,8 +142,16 @@ app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid',
 app.get('/json/sites/:sitecode/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list_json(req, res, model)});
 
 
+//Devices
+app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.getDeviceFromCloset(req, res, model)});
+app.post('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.createDeviceWithClosetId(req, res, model)});
+app.get('/json/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.getDeviceFromCloset_json(req, res, model)});
 
-
+app.get('/devices', function(req, res){device.listAll(req, res, model)});
+app.post('/devices', function(req, res){device.create(req, res, model)});
+//app.delete('/devices/:deviceid', function(req, res){device.delete(req, res, model)} );
+app.get('/devices/:deviceid', function(req, res){device.details(req, res, model)} );
+app.get('/json/devices', function(req, res){device.listAll_json(req, res, model)});
 
 
 

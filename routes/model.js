@@ -3,7 +3,8 @@
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
+    //host: "localhost",
+    host: "10.118.204.106",
     port: 3306,
     dialect: 'mysql'
 });
@@ -83,9 +84,9 @@ Building.hasMany(Site);
 Device.hasMany(Device, {as:'SubDevices'});
 
 sequelize
-    .sync({force:true})
+    .sync({force:false})
     .on('success', function() {console.log("Model Create in DB");
-        _createUnassignedSite();
+        //_createUnassignedSite();
     })
     .on('failure', function(err) {console.log(err); });
 
@@ -116,7 +117,7 @@ var _findUserByUsername = function (username, next) {
     User
         .find({ where: {username: username} })
         .success(function(user) {
-            console.log("user found:"); console.log(user);
+            console.log("user found");
             if(next){
                 if(!user) return next("User " + username + " not found", false);
                 return next(null,user);
@@ -131,7 +132,6 @@ var _findUserById = function(userid, next) {
         .find(userid)
         .success(function(fuser) {
             console.log("user found");
-            console.log(fuser);
 
             if(next) {
                 if(!fuser){ return next ("UserId " + userid + " not found", false)}
@@ -267,7 +267,6 @@ exports.findBuildingAll = _findBuildingAll;
 
 var _findBuildingById = function(id, next){
     Building.find(id).success(function(building) {
-        console.log(building);
         if (!building){ if(next) next("building not found", false);}
         if(next) return next(null, building);
     })
@@ -349,7 +348,6 @@ exports.findFloorAll = _findFloorAll;
 
 var _findFloorById = function(id, next){
     Floor.find(id).success(function(floor) {
-        console.log(floor);
         if (!floor){ if(next) next("floor not found", false);}
         if(next) return next(null, floor);
     })
@@ -427,7 +425,6 @@ exports.findClosetAll = _findClosetAll;
 
 var _findClosetById = function(id, next){
     Closet.find(id).success(function(closet) {
-        console.log(closet);
         if (!closet){ if(next) next("Closet not found", false);}
         if(next) return next(null, closet);
     })
@@ -481,3 +478,99 @@ var _createClosetWithFloorId = function (floorid, name, next) {
     });
 };
 exports.createClosetWithFloorId = _createClosetWithFloorId;
+
+
+
+//****************************************//
+// Devices
+//****************************************//
+var _findDeviceAll = function(next){
+    Device.findAll().success(function(devices) {
+        var tmpDevices = [];
+        if (! devices instanceof Array){
+            tmpDevices.push(devices);
+        }
+        else{
+            tmpDevices = devices;
+        }
+
+        if(next) return next(null, tmpDevices);
+    })
+};
+exports.findDeviceAll = _findDeviceAll;
+
+var _findDeviceAllByClosetId = function(closetId,  next){
+    _findClosetById(closetId, function(err,closet){
+        if(closet)
+        {
+            closet.getDevices()
+                .on('success', function(devices){
+                    if(devices && !devices instanceof Array) {devices=[];}
+                    if(next) next(null,devices);
+                })
+                .on('failure', function(err){
+                    if(next) next(err,false);
+                });
+        }
+        else
+        {
+            if(next) next('Closet not found',false);
+        }
+    });
+};
+exports.findDeviceAllByClosetId = _findDeviceAllByClosetId;
+
+var _findDeviceById = function(id, next){
+    Device.find(id).success(function(device) {
+        if (!device){ if(next) next("Device not found", false);}
+        if(next) return next(null, device);
+    })
+};
+exports.findDeviceById = _findDeviceById;
+
+var _createDevice = function (name,type, next) {
+    var chainer = new Sequelize.Utils.QueryChainer
+    , device  = Device.build({ name: name, type: type });
+
+    chainer
+        .add(device.save())
+
+    chainer.run()
+        .on('success', function() {
+
+            var chainerAssociations = new Sequelize.Utils.QueryChainer
+            chainerAssociations
+                .run()
+                .on('success', function() { if(next) next(null, device); })
+                .on('failure', function(err) {
+                    console.log("---------");
+                    console.log(err);
+                    if(next) next(err,false);
+                })
+        })
+        .on('failure', function(err) {
+            console.log("---------");
+            console.log(err);
+            if(next) next(err,false);
+        })
+};
+exports.createDevice = _createDevice;
+
+var _createDeviceWithClosetId = function (closetid, name,type, next) {
+    _createDevice(name,type, function(err, device){
+        if(device){
+            //Get Site from SiteCode
+            _findClosetById(closetid, function(err, closet){
+                //Link Building to Site
+                closet.addDevice(device)
+                    .on('success', function(){
+                        if(next) next(null, device);
+                    })
+                    .on('failure', function(device){
+                        if(next) next(error, false);
+                    });
+            });
+        }
+    });
+};
+exports.createDeviceWithClosetId = _createDeviceWithClosetId;
