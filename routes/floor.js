@@ -46,6 +46,31 @@ exports.list = function (req, res, model) {
     }
 };
 
+exports.list_json = function (req, res, model) {
+    var sitecode = req.params.sitecode;
+    var buildingid = req.params.buildingid;
+
+    if (sitecode && buildingid && model) {
+        model.findSiteByCode(sitecode, function (err, site) {
+            if (err) { res.json([]);  }
+            if (site) {
+                model.findBuildingById(buildingid, function (err, building) {
+                    if (err) {res.json([]);}
+                    if (building) {
+                        building.getFloors()
+                            .on('success', function (floors) {
+                                res.json(floors);
+                            });
+                    }
+                });
+            }
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
 exports.details = function (req, res, model) {
     var sitecode = req.params.sitecode;
     var buildingid = req.params.buildingid;

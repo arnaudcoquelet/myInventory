@@ -55,6 +55,38 @@ exports.list = function (req, res, model) {
     }
 };
 
+exports.list_json = function (req, res, model) {
+    var sitecode = req.params.sitecode;
+    var buildingid = req.params.buildingid;
+    var floorid = req.params.floorid;
+
+    if (sitecode && buildingid && floorid && model) {
+        model.findSiteByCode(sitecode, function (err, site) {
+            if (err) {res.json([]);}
+            if (site) {
+                model.findBuildingById(buildingid, function (err, building) {
+                    if (err) {res.json([]);}
+                    if (building) {
+                        model.findFloorById(floorid, function (err, floor) {
+                            if (err) {res.json([]);}
+
+                            if (floor) {
+                                floor.getClosets()
+                                    .on('success', function (closets) {
+                                        res.json(closets);
+                                    });
+                            }
+                        });
+                    }
+                });
+            }
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
 exports.details = function (req, res, model) {
     var sitecode = req.params.sitecode;
     var buildingid = req.params.buildingid;

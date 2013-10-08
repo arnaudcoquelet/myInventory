@@ -13,8 +13,19 @@ exports.list = function(req, res, model){
     else{
         res.render('siteList', { title: 'MyInventory', sites: sites, breadcrumbs: breadcrumbs });
     }
-
 };
+
+exports.list_json = function(req, res, model){
+    if(model){
+        model.findSiteAll( function(err,sites) {
+            res.json(sites );
+        });
+    }
+    else{
+        res.json([]);
+    }
+};
+
 
 exports.details = function(req, res, model){
     var sitecode = req.params.sitecode;

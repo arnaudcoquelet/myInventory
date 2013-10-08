@@ -27,6 +27,28 @@ exports.list = function(req, res, model){
     }
 };
 
+exports.list_json = function(req, res, model){
+    var sitecode = req.params.sitecode;
+
+    if(sitecode && model){
+        model.findSiteByCode(sitecode, function(err,site){
+            if(err){res.json([]);}
+            if(site){
+                var buildings = site.getBuildings()
+                    .on('success', function(buildings){
+                        if(buildings && !buildings instanceof Array) {res.json([]);}
+
+                        res.json(buildings);
+                    });
+            }
+        })
+    }
+    else
+    {
+        res.json([]);
+    }
+};
+
 exports.details = function(req, res, model){
     var sitecode = req.params.sitecode;
     var buildingid = req.params.buildingid;
