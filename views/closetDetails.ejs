@@ -7,7 +7,10 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <i class="glyphicon glyphicon-tasks"></i>
-                Devices (0)
+                Devices
+                <% if(devices) { %>
+                (<%= devices.length %>)
+                <% } %>
             </div>
             <div class="panel-body">
                 <p></p>

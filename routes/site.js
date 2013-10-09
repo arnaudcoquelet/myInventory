@@ -26,6 +26,17 @@ exports.list_json = function(req, res, model){
     }
 };
 
+exports.listdetails_json = function(req, res, model){
+    if(model){
+        model.findSiteAllDetails( function(err,sites) {
+            res.json(sites );
+        });
+    }
+    else{
+        res.json([]);
+    }
+};
+
 
 exports.details = function(req, res, model){
     var sitecode = req.params.sitecode;

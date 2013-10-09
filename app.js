@@ -117,7 +117,7 @@ app.post('/sites', function(req, res){site.create(req, res, model)});
 //app.delete('/sites/:sitecode', function(req, res){site.delete(req, res, model)} );
 app.get('/sites/:sitecode', function(req, res){site.details(req, res, model)} );
 app.get('/json/sites', function(req, res){site.list_json(req, res, model)});
-
+app.get('/json/sites/details', function(req, res){site.listdetails_json(req, res, model)});
 
 //Buildings
 app.get('/sites/:sitecode/building', function(req, res){building.list(req, res, model)});

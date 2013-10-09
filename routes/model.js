@@ -3,8 +3,8 @@
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    //host: "localhost",
-    host: "10.118.204.106",
+    host: "localhost",
+    //host: "10.118.204.106",
     port: 3306,
     dialect: 'mysql'
 });
@@ -147,6 +147,21 @@ exports.findUserById = _findUserById;
 //****************************************//
 // SITE
 //****************************************//
+var _findSiteAllDetails = function(next){
+    Site.findAll({include: [{ model: Building, as: 'Buildings' }] }).success(function(sites) {
+        var tmpSites = [];
+        if (! sites instanceof Array){
+            tmpSites.push(sites);
+        }
+        else{
+            tmpSites = sites;
+        }
+
+        if(next) return next(null, tmpSites);
+    })
+};
+exports.findSiteAllDetails = _findSiteAllDetails;
+
 var _findSiteAll = function(next){
     Site.findAll().success(function(sites) {
         var tmpSites = [];
@@ -574,3 +589,9 @@ var _createDeviceWithClosetId = function (closetid, name,type, next) {
     });
 };
 exports.createDeviceWithClosetId = _createDeviceWithClosetId;
+
+var _findDeviceAllDetails = function(){
+    var sql = "SELECT * from device_fulldetails";
+
+
+};
