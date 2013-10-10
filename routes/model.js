@@ -3,25 +3,25 @@
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
-    //host: "10.118.204.106",
+    //host: "localhost",
+    host: "10.118.204.106",
     port: 3306,
     dialect: 'mysql'
 });
 
 var User = sequelize.define('user', {
     name: { type: Sequelize.STRING, allowNull: false},
-    username: { type: Sequelize.STRING, allowNull: false},
-    password: { type: Sequelize.STRING, allowNull: false},
+    username: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    password: { type: Sequelize.STRING, defaultValue: "password", allowNull: false},
     role: { type: Sequelize.STRING, defaultValue: "read"},
-    email: { type: Sequelize.STRING, allowNull: false},
-    telephone: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    address1: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    address2: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    city: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    state: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    position: { type: Sequelize.STRING, defaultValue: "", allowNull: true}
+    email: { type: Sequelize.STRING, defaultValue: "",allowNull: false},
+    telephone: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    address1: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    address2: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    city: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    state: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    position: { type: Sequelize.STRING, defaultValue: "", allowNull: false}
     },
     {
         getterMethods   : {
@@ -37,7 +37,16 @@ var User = sequelize.define('user', {
 
 var Device = sequelize.define('device', {
     name: { type: Sequelize.STRING, allowNull: false},
-    type: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false}
+
+});
+
+var ProductFamily = sequelize.define('productfamily', {
+    name: { type: Sequelize.STRING, allowNull: false}
+});
+
+var Product = sequelize.define('product', {
+    name: { type: Sequelize.STRING, allowNull: false},
+    part: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false}
 });
 
 var Closet = sequelize.define('closet', {
@@ -51,7 +60,6 @@ var Floor = sequelize.define('floor', {
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false}
 });
 
-
 var Building = sequelize.define('building', {
     name: { type: Sequelize.STRING, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false}
@@ -59,44 +67,59 @@ var Building = sequelize.define('building', {
 
 var Site = sequelize.define('site', {
     name: { type: Sequelize.STRING, allowNull: false},
-    code: { type: Sequelize.STRING, allowNull: false, unique: true},
+    code: { type: Sequelize.STRING, allowNull: false},
     address1: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     address2: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     city: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     state: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false}
+    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
+    category: { type: Sequelize.STRING, defaultValue: "", allowNull: true}
 });
 
+var Geolocation = sequelize.define('geolocation', {
+    name: { type: Sequelize.STRING, allowNull: false},
+    code: { type: Sequelize.STRING, allowNull: false}
+});
 
 //Association
+Geolocation.hasMany(Sites, {as: 'Sites'});
 Site.hasMany(User, {as: 'Contacts'});
 Site.hasMany(Building, {as: 'Buildings'});
 Building.hasMany(Floor, {as: 'Floors'});
 Floor.hasMany(Closet, {as: 'Closets'});
 Closet.hasMany(Device, {as: 'Devices'});
+Device.hasMany(Device, {as:'SubDevices'});
+Device.hasMany(Product, {as:'Products'});
+ProductFamily.hasMany(Product, {as:'Products'});
 
 Device.hasMany(Closet);
 Closet.hasMany(Floor);
 Floor.hasMany(Building);
 Building.hasMany(Site);
-
-Device.hasMany(Device, {as:'SubDevices'});
+Site.hasMany(Geolocation);
+Product.hasMany(Device);
 
 sequelize
-    .sync({force:false})
+    .sync({force:true})
     .on('success', function() {console.log("Model Create in DB");
-        //_createUnassignedSite();
+        _createUnassignedSite();
+        _createDefaultProductFamily();
+        _createAdminUser();
     })
     .on('failure', function(err) {console.log(err); });
 
 exports.sequelize = sequelize;
 exports.User = User;
+exports.Geolocation = Geolocation;
 exports.Site = Site;
 exports.Building = Building;
 exports.Floor = Floor;
 exports.Closet = Closet;
 exports.Device = Device;
+exports.ProductFamily = ProductFamily;
+exports.Product = Product;
+
 
 
 
@@ -142,7 +165,20 @@ var _findUserById = function(userid, next) {
 };
 exports.findUserById = _findUserById;
 
+var _createAdminUser = function(){
+    var chainer = new Sequelize.Utils.QueryChainer;
+    var user = User.build( { name: 'admin', username: 'admin', password: 'admin', role: 'admin' } );
 
+    chainer
+        .add(user.save())
+        .run()
+        .on('success', function() {
+
+        })
+        .on('failure', function(err) {
+                    });
+};
+exports.createAdminUser=_createAdminUser;
 
 //****************************************//
 // SITE
@@ -595,3 +631,175 @@ var _findDeviceAllDetails = function(){
 
 
 };
+
+
+
+//****************************************//
+// Product Family
+//****************************************//
+var _findProductFamilyAll = function(next){
+    ProductFamily.findAll().success(function(productfamilies) {
+        var tmpProductFamilies = [];
+        if (! productfamilies instanceof Array){
+            tmpProductFamilies.push(productfamilies);
+        }
+        else{
+            tmpProductFamilies = productfamilies;
+        }
+
+        if(next) return next(null, tmpProductFamilies);
+    })
+};
+exports.findProductFamilyAll = _findProductFamilyAll;
+
+var _findProductFamilyById = function(id, next){
+    ProductFamily.find(id).success(function(productfamily) {
+        if (!productfamily){ if(next) next("Product Family not found", false);}
+        if(next) return next(null, productfamily);
+    })
+};
+exports.findProductFamilyById = _findProductFamilyById;
+
+var _createProductFamily = function (name, next) {
+    var chainer = new Sequelize.Utils.QueryChainer
+    , productfamily  = ProductFamily.build({ name: name });
+
+    chainer
+        .add(productfamily.save())
+
+    chainer.run()
+        .on('success', function() {
+
+            var chainerAssociations = new Sequelize.Utils.QueryChainer
+            chainerAssociations
+                .run()
+                .on('success', function() { if(next) next(null, productfamily); })
+                .on('failure', function(err) {
+                    console.log("---------");
+                    console.log(err);
+                    if(next) next(err,false);
+                })
+        })
+        .on('failure', function(err) {
+            console.log("---------");
+            console.log(err);
+            if(next) next(err,false);
+        })
+};
+exports.createProductFamily = _createProductFamily;
+
+//Create default Product Family
+var _createDefaultProductFamily = function(){
+        var chainer = new Sequelize.Utils.QueryChainer;
+
+        chainer
+            .add(ProductFamily.build({name:'IPD'}).save())
+            .add(ProductFamily.build({name:'OND'}).save())
+            .add(ProductFamily.build({name:'DATA'}).save())
+            .add(ProductFamily.build({name:'VOICE'}).save())
+            .add(ProductFamily.build({name:'WIRELESS'}).save())
+            .add(ProductFamily.build({name:'SERVER'}).save())
+            .add(ProductFamily.build({name:'APPLICATION'}).save())
+            .add(ProductFamily.build({name:'OTHER'}).save())
+
+        chainer.run()
+            .on('success', function() {
+            })
+            .on('failure', function(err) {
+            });
+};
+exports.createDefaultProductFamily=_createDefaultProductFamily;
+
+//****************************************//
+// Product
+//****************************************//
+var _findProductAll = function(next){
+    Product.findAll().success(function(productfamilies) {
+        var tmpProducts = [];
+        if (! products instanceof Array){
+            tmpProducts.push(products);
+        }
+        else{
+            tmpProducts = products;
+        }
+
+        if(next) return next(null, tmpProducts);
+    })
+};
+exports.findProductAll = _findProductAll;
+
+var _findProductAllByProductFamilyId = function(productfamilyid, next){
+    _findProductFamilyById(productfamilyid, function(err, productfamily){
+        if(productfamily)
+        {
+            productfamily.getProducts()
+                .on('success', function(products){
+                    if(products && !products instanceof Array) {products=[];}
+                    if(next) next(null,products);
+                })
+                .on('failure', function(err){
+                    if(next) next(err,false);
+                });
+        }
+        else
+        {
+            if(next) next('Product Family not found',false);
+        }
+    });
+};
+exports.findProductAllByProductFamilyId = _findProductAllByProductFamilyId;
+
+var _findProductById = function(id, next){
+    Product.find(id).success(function(product) {
+        if (!product){ if(next) next("Product not found", false);}
+        if(next) return next(null, product);
+    })
+};
+exports.findProductById = _findProductById;
+
+var _createProduct = function (name, next) {
+    var chainer = new Sequelize.Utils.QueryChainer
+    , product  = Product.build({ name: name });
+
+    chainer
+        .add(product.save())
+
+    chainer.run()
+        .on('success', function() {
+
+            var chainerAssociations = new Sequelize.Utils.QueryChainer
+            chainerAssociations
+                .run()
+                .on('success', function() { if(next) next(null, product); })
+                .on('failure', function(err) {
+                    console.log("---------");
+                    console.log(err);
+                    if(next) next(err,false);
+                })
+        })
+        .on('failure', function(err) {
+            console.log("---------");
+            console.log(err);
+            if(next) next(err,false);
+        })
+};
+exports.createProduct = _createProduct;
+
+var _createProductWithProductFamilyId = function (productfamilyId, name, next) {
+    _createProduct(name, function(err, product){
+        if(product){
+            //Get Product family from SiteCode
+            _findProductFamilyById(productfamilyId, function(err, productfamily){
+                //Link Product to Product family
+                productfamilyId.addProduct(product)
+                    .on('success', function(){
+                        if(next) next(null, product);
+                    })
+                    .on('failure', function(product){
+                        if(next) next(error, false);
+                    });
+            });
+        }
+    });
+};
+exports.createProductWithProductFamilyId = _createProductWithProductFamilyId;

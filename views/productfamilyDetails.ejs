@@ -1,0 +1,81 @@
+<% layout('adminLayout') -%>
+</br></br>
+<div class="row">
+    <div class="bs-example">
+        <div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <i class="glyphicon glyphicon-tasks"></i>
+                    Products
+                    <% if(products) { %>
+                    (<%= products.length %>)
+                    <% } %>
+                </div>
+                <div class="panel-body">
+                    <p></p>
+                </div>
+                <table class="table table-striped">
+                    <tr>
+                        <th class="col-sm-1">#</th>
+                        <th>Products</th>
+                        <th class="col-sm-1"><a href="#modalAddProducts" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign"></a></th>
+                    </tr>
+
+                    <% if(products && products.length > 0) { %>
+                    <% for(var i = 0; i < products.length; i++) { %>
+                    <tr>
+                        <td>
+                            <a href="/admin/<%= productfamily.id %>/product/<%= products[i].id %>"><%= products[i].id %></a>
+                        </td>
+                        <td><%= products[i].name %></td>
+                        <td class="col-lg-1">
+                             <a href='' class="glyphicon glyphicon-pencil" title="edit"></a>
+                             <a href="" class="glyphicon glyphicon-remove" title="delete"></a>
+                        </td>
+                    </tr>
+                    <% } %>
+                    <% } %>
+                </table>
+
+                <div class="panel-body">
+                    <p></p>
+                </div>
+            </div>
+
+
+        </div>
+        <!--Closets-->
+    </div>
+
+</div>
+<br/>
+
+<!--Modals-->
+<div class="modal" tabindex="-1" role="dialog" id="modalAddProduct" aria-labelledby="modalAddProductLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+
+                <h3>Add a new Products to <%= productfamily.name %></h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal" action="/admin/familyproduct/<%= productfamily.id %>/product" method="post">
+                    <div class="form-group">
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control" id="productname" name="productname"
+                                   placeholder="Product Name"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

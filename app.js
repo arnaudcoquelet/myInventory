@@ -66,7 +66,7 @@ var building = require('./routes/building');
 var floor = require('./routes/floor');
 var closet = require('./routes/closet');
 var device = require('./routes/device');
-
+var productfamily = require('./routes/productfamily');
 
 
 
@@ -152,6 +152,15 @@ app.post('/devices', function(req, res){device.create(req, res, model)});
 //app.delete('/devices/:deviceid', function(req, res){device.delete(req, res, model)} );
 app.get('/devices/:deviceid', function(req, res){device.details(req, res, model)} );
 app.get('/json/devices', function(req, res){device.listAll_json(req, res, model)});
+
+
+//Products family
+app.get('/admin/productfamily', function(req, res){productfamily.list(req, res, model)});
+app.post('/admin/productfamily', function(req, res){productfamily.create(req, res, model)});
+//app.delete('/admin/productfamily/:productfamilid', function(req, res){productfamily.delete(req, res, model)} );
+app.get('/admin/productfamily/:productfamilid', function(req, res){productfamily.details(req, res, model)} );
+app.get('/json/productfamily', function(req, res){productfamily.list_json(req, res, model)});
+app.get('/json/productfamily/details', function(req, res){productfamily.listdetails_json(req, res, model)});
 
 
 
