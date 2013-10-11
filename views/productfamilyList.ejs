@@ -25,11 +25,14 @@
                     <tr>
                         <td>
                             <a href="/admin/productfamily/<%= productfamilies[i].id %>"><%= productfamilies[i].id %></a>
+                            <% if(productfamilies[i].products) {%>
+                            <span class="label label-primary pull-right"> <%= productfamilies[i].products.length%> </span>
+                            <% } %>
                         </td>
-                        <td><%= productfamilies[i].name %></td>
+                        <td><a href="/admin/productfamily/<%= productfamilies[i].id %>"><%= productfamilies[i].name %></a></td>
                         <td>
-                            <a href='' class="glyphicon glyphicon-pencil" title="edit"></a>
-                            <a href="" class="glyphicon glyphicon-remove" title="delete"></a>
+                            <a href="#modalEditProductFamily" data-toggle="modal" data-id="<%= productfamilies[i].id %>" data-name="<%= productfamilies[i].name %>" class="open-EditProductFamily glyphicon glyphicon-pencil" title="edit"></a>
+                            <a href="/admin/productfamily/<%= productfamilies[i].id %>/delete" class="glyphicon glyphicon-remove" title="delete"></a>
                         </td>
                     </tr>
                     <% } %>
@@ -49,11 +52,10 @@
     <hr>
 </div><!--/.container-->
 
-
 <!--Modals-->
-<div class="modal" tabindex="-1" role="dialog" id="modalAddProductFamily" aria-labelledby="modalAddProductFamilyLabel" aria-hidden="true">
+<div class="modal" role="dialog" id="modalAddProductFamily" aria-labelledby="modalAddProductFamilyLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content col-md-8">
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">&times;</a>
 
@@ -62,20 +64,55 @@
             <div class="modal-body">
                 <form role="form" class="form-horizontal" action="/admin/productfamily" method="post">
                     <div class="form-group">
-                        <div class="col-lg-7">
-                            <input type="text" class="form-control" id="productfamily" name="productfamily" placeholder="Product family name"/>
+                        <div class="">
+                            <input type="text" class="form-control" id="productfamily" name="productfamily" placeholder="Product family name" autofocus/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add</button>
+                        <div class="">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary pull-right">Add</button>
+                        </div>
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </div>
 
+<script>
+    $(document).on("click", ".open-EditProductFamily", function () {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        $(".editProductFamilyFields #productfamilyId").val( id );
+        $(".editProductFamilyFields #productfamilyName").val( name );
+    })
+</script>
 
+<div class="modal" role="dialog" id="modalEditProductFamily" aria-labelledby="modalEditProductFamilyLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Edit product family</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editname" class="form-horizontal" action="/admin/productfamily/update" method="post">
+                    <div class="form-group">
+                        <div class="editProductFamilyFields">
+                            <input type="hidden" class="form-control" id="productfamilyId" name="productfamilyId">
+                            <input type="text" class="form-control" id="productfamilyName" name="productfamilyName" placeholder="Product family name" autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary pull-right">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 

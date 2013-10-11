@@ -17,7 +17,8 @@
                 <table class="table table-striped">
                     <tr>
                         <th class="col-sm-1">#</th>
-                        <th>Products</th>
+                        <th class="col-sm-2">Part #</th>
+                        <th>Name</th>
                         <th class="col-sm-1"><a href="#modalAddProducts" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign"></a></th>
                     </tr>
 
@@ -27,6 +28,7 @@
                         <td>
                             <a href="/admin/<%= productfamily.id %>/product/<%= products[i].id %>"><%= products[i].id %></a>
                         </td>
+                        <td><%= products[i].part %></td>
                         <td><%= products[i].name %></td>
                         <td class="col-lg-1">
                              <a href='' class="glyphicon glyphicon-pencil" title="edit"></a>

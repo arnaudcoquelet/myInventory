@@ -157,10 +157,12 @@ app.get('/json/devices', function(req, res){device.listAll_json(req, res, model)
 //Products family
 app.get('/admin/productfamily', function(req, res){productfamily.list(req, res, model)});
 app.post('/admin/productfamily', function(req, res){productfamily.create(req, res, model)});
-//app.delete('/admin/productfamily/:productfamilid', function(req, res){productfamily.delete(req, res, model)} );
-app.get('/admin/productfamily/:productfamilid', function(req, res){productfamily.details(req, res, model)} );
+app.get('/admin/productfamily/:productfamilyid', function(req, res){productfamily.details(req, res, model)} );
+app.delete('/admin/productfamily/:productfamilyid', function(req, res){productfamily.delete(req, res, model)} );
+app.get('/admin/productfamily/:productfamilyid/delete', function(req, res){productfamily.delete(req, res, model)} );
 app.get('/json/productfamily', function(req, res){productfamily.list_json(req, res, model)});
 app.get('/json/productfamily/details', function(req, res){productfamily.listdetails_json(req, res, model)});
+app.post('/admin/productfamily/update', function(req, res){productfamily.update(req, res, model)});
 
 
 

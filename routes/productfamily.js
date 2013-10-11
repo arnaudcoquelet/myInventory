@@ -27,17 +27,19 @@ exports.list_json = function(req, res, model){
 };
 
 exports.details = function(req, res, model){
-    var productfamilid = req.params.productfamilid;
+    var productfamilyid = req.params.productfamilyid;
     var breadcrumbs = [{name:'Product Family',url:'/admin/productfamily',class: ''}, {name:productfamilid,url:'',class: 'active'}];
 
-    if(productfamilid && model){
-        model.findProductFamilyById(productfamilid, function(err,productfamily){
+    if(productfamilyid && model){
+        model.findProductFamilyById(productfamilyid, function(err,productfamily){
             if(err){}
 
             if(productfamily){
                 var products = productfamily.getProducts()
                     .on('success', function(products){
                         if(products && !products instanceof Array) {products=[];}
+
+                        breadcrumbs = [{name:'Product Family',url:'/admin/productfamily',class: ''}, {name:productfamily.name ,url:'',class: 'active'}];
 
                         res.render('productfamilyDetails', { title: 'MyInventory',
                                                     productfamily: productfamily,
@@ -53,9 +55,6 @@ exports.details = function(req, res, model){
     }
 };
 
-
-
-
 exports.create = function(req, res, model){
     var productfamily = req.body.productfamily;
     var error='';
@@ -70,6 +69,37 @@ exports.create = function(req, res, model){
 };
 
 exports.delete = function(req, res, model){
+    var productfamilyid = req.params.productfamilyid;
 
-    res.render('siteList', { title: 'MyInventory' });
+    if(model && productfamilyid)
+    {
+        model.findProductFamilyById(productfamilyid, function(err, productfamily){
+            if(err){res.redirect('/admin/productfamily');}
+            productfamily.destroy().success(function() {
+                res.redirect('/admin/productfamily');
+            });
+        });
+    }
+    else{
+        res.redirect('/admin/productfamily');
+    }
+};
+
+exports.update = function(req, res, model){
+    var productfamilyid = req.body.productfamilyId;
+    var productfamilname = req.body.productfamilyName;
+
+    if(model && productfamilyid)
+    {
+        model.findProductFamilyById(productfamilyid, function(err, productfamily){
+            if(err){res.redirect('/admin/productfamily');}
+
+            productfamily.updateAttributes({name: productfamilname}).success(function() {
+                res.redirect('/admin/productfamily');
+            })
+        });
+    }
+    else{
+        res.redirect('/admin/productfamily');
+    }
 };
