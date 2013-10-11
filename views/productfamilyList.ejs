@@ -18,7 +18,7 @@
                     <tr>
                         <th class="col-sm-1">#</th>
                         <th>Name</th>
-                        <th class="col-sm-1"><a href="#modalAddProductFamily" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign" title="Add a Product Family"></a></th>
+                        <th class="col-sm-1"><a href="#modalAdd" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign" title="Add a Product Family"></a></th>
                     </tr>
                     <% if(productfamilies && productfamilies instanceof Array && productfamilies.length > 0 ) { %>
                     <% for(var i = 0; i < productfamilies.length; i++) { %>
@@ -31,8 +31,8 @@
                         </td>
                         <td><a href="/admin/productfamily/<%= productfamilies[i].id %>"><%= productfamilies[i].name %></a></td>
                         <td>
-                            <a href="#modalEditProductFamily" data-toggle="modal" data-id="<%= productfamilies[i].id %>" data-name="<%= productfamilies[i].name %>" class="open-EditProductFamily glyphicon glyphicon-pencil" title="edit"></a>
-                            <a href="/admin/productfamily/<%= productfamilies[i].id %>/delete" class="glyphicon glyphicon-remove" title="delete"></a>
+                            <a href="#modalEdit" data-toggle="modal" data-id="<%= productfamilies[i].id %>" data-name="<%= productfamilies[i].name %>" class="open-EditProductFamily glyphicon glyphicon-pencil" title="edit"></a>
+                            <a href="#modalDelete" data-toggle="modal" data-id="<%= productfamilies[i].id %>" data-name="<%= productfamilies[i].name %>" class="open-DeleteProductFamily glyphicon glyphicon-remove" title="delete"></a>
                         </td>
                     </tr>
                     <% } %>
@@ -53,7 +53,7 @@
 </div><!--/.container-->
 
 <!--Modals-->
-<div class="modal" role="dialog" id="modalAddProductFamily" aria-labelledby="modalAddProductFamilyLabel" aria-hidden="true">
+<div class="modal" role="dialog" id="modalAdd" aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content col-md-8">
             <div class="modal-header">
@@ -88,8 +88,7 @@
         $(".editProductFamilyFields #productfamilyName").val( name );
     })
 </script>
-
-<div class="modal" role="dialog" id="modalEditProductFamily" aria-labelledby="modalEditProductFamilyLabel" aria-hidden="true">
+<div class="modal" role="dialog" id="modalEdit" aria-labelledby="modalEditLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content col-md-8">
             <div class="modal-header">
@@ -116,3 +115,37 @@
     </div>
 </div>
 
+<script>
+    $(document).on("click", ".open-DeleteProductFamily", function () {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        $(".deleteProductFamilyFields #productfamilyId").val( id );
+        $(".deleteProductFamilyFields #productfamilyName").val( name );
+    })
+</script>
+<div class="modal" role="dialog" id="modalDelete" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Are you about to delete</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editname" class="form-horizontal" action="/admin/productfamily/delete" method="post">
+                    <div class="form-group">
+                        <div class="deleteProductFamilyFields">
+                            <input type="hidden" class="form-control" id="productfamilyId" name="productfamilyId">
+                            <input type="text" class="form-control" id="productfamilyName" name="productfamilyName" placeholder="Product family name" autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger pull-right">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

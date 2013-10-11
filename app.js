@@ -67,7 +67,7 @@ var floor = require('./routes/floor');
 var closet = require('./routes/closet');
 var device = require('./routes/device');
 var productfamily = require('./routes/productfamily');
-
+var product = require('./routes/product');
 
 
 var app = express();
@@ -159,11 +159,16 @@ app.get('/admin/productfamily', function(req, res){productfamily.list(req, res, 
 app.post('/admin/productfamily', function(req, res){productfamily.create(req, res, model)});
 app.get('/admin/productfamily/:productfamilyid', function(req, res){productfamily.details(req, res, model)} );
 app.delete('/admin/productfamily/:productfamilyid', function(req, res){productfamily.delete(req, res, model)} );
-app.get('/admin/productfamily/:productfamilyid/delete', function(req, res){productfamily.delete(req, res, model)} );
 app.get('/json/productfamily', function(req, res){productfamily.list_json(req, res, model)});
 app.get('/json/productfamily/details', function(req, res){productfamily.listdetails_json(req, res, model)});
+app.get('/json/admin/productfamily/:productfamilyid', function(req, res){productfamily.details_json(req, res, model)} );
 app.post('/admin/productfamily/update', function(req, res){productfamily.update(req, res, model)});
+app.post('/admin/productfamily/delete', function(req, res){productfamily.delete(req, res, model)} );
 
+//Products
+app.post('/admin/productfamily/:productfamilyid/product', function(req, res){product.create(req, res, model)});
+app.post('/admin/productfamily/:productfamilyid/product/update', function(req, res){product.update(req, res, model)});
+app.post('/admin/productfamily/:productfamilyid/product/delete', function(req, res){product.delete(req, res, model)} );
 
 
 http.createServer(app).listen(app.get('port'), function(){

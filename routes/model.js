@@ -3,8 +3,8 @@
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
-    //host: "10.118.204.106",
+    //host: "localhost",
+    host: "10.118.204.106",
     port: 3306,
     dialect: 'mysql'
 });
@@ -21,7 +21,8 @@ var User = sequelize.define('user', {
     city: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     state: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    position: { type: Sequelize.STRING, defaultValue: "", allowNull: false}
+    position: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
     },
     {
         getterMethods   : {
@@ -37,32 +38,43 @@ var User = sequelize.define('user', {
 
 var Device = sequelize.define('device', {
     name: { type: Sequelize.STRING, allowNull: false},
-
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    
 });
 
 var ProductFamily = sequelize.define('productfamily', {
-    name: { type: Sequelize.STRING, allowNull: false}
+    name: { type: Sequelize.STRING, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    
 });
 
 var Product = sequelize.define('product', {
     name: { type: Sequelize.STRING, allowNull: false},
-    part: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false}
+    part: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    
 });
 
 var Closet = sequelize.define('closet', {
     name: { type: Sequelize.STRING, allowNull: false},
     spare: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
-    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false}
+    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    
 });
 
 var Floor = sequelize.define('floor', {
     name: { type: Sequelize.STRING, allowNull: false},
-    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false}
+    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    
 });
 
 var Building = sequelize.define('building', {
     name: { type: Sequelize.STRING, allowNull: false},
-    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false}
+    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    
 });
 
 var Site = sequelize.define('site', {
@@ -74,12 +86,16 @@ var Site = sequelize.define('site', {
     state: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
-    category: { type: Sequelize.STRING, defaultValue: "", allowNull: true}
+    category: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    
 });
 
 var Geolocation = sequelize.define('geolocation', {
     name: { type: Sequelize.STRING, allowNull: false},
-    code: { type: Sequelize.STRING, allowNull: false}
+    code: { type: Sequelize.STRING, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    
 });
 
 //Association
@@ -101,12 +117,12 @@ Site.hasMany(Geolocation);
 Product.hasMany(Device);
 
 sequelize
-    .sync({force:false})
+    .sync({force:true})
     .on('success', function() {console.log("Model Create in DB");
-        //_createUnassignedSite();
-        //_createDefaultProductFamily();
-        //_createAdminUser();
-        //_createDefaultProducts();
+        _createUnassignedSite();
+        _createDefaultProductFamily();
+        _createAdminUser();
+        _createDefaultProducts();
     })
     .on('failure', function(err) {console.log(err); });
 
@@ -185,7 +201,7 @@ exports.createAdminUser=_createAdminUser;
 // SITE
 //****************************************//
 var _findSiteAllDetails = function(next){
-    Site.findAll({include: [{ model: Building, as: 'Buildings' }] }).success(function(sites) {
+    Site.findAll({where: {deleted: false},include: [{ model: Building, as: 'Buildings' }] }).success(function(sites) {
         var tmpSites = [];
         if (! sites instanceof Array){
             tmpSites.push(sites);
@@ -200,7 +216,7 @@ var _findSiteAllDetails = function(next){
 exports.findSiteAllDetails = _findSiteAllDetails;
 
 var _findSiteAll = function(next){
-    Site.findAll().success(function(sites) {
+    Site.findAll({where: {deleted: false}}).success(function(sites) {
         var tmpSites = [];
         if (! sites instanceof Array){
             tmpSites.push(sites);
@@ -303,7 +319,7 @@ exports.createUnassignedSite=_createUnassignedSite;
 // Buildings
 //****************************************//
 var _findBuildingAll = function(next){
-    Building.findAll().success(function(buildings) {
+    Building.findAll({where: {deleted: false}}).success(function(buildings) {
         var tmpBuildings = [];
         if (! buildings instanceof Array){
             tmpBuildings.push(buildings);
@@ -384,7 +400,7 @@ exports.createBuildingWithSitecode = _createBuildingWithSitecode;
 // Floor
 //****************************************//
 var _findFloorAll = function(next){
-    Floor.findAll().success(function(floors) {
+    Floor.findAll({where: {deleted: false}}).success(function(floors) {
         var tmpFloors = [];
         if (! floors instanceof Array){
             tmpFloors.push(floors);
@@ -461,7 +477,7 @@ exports.createFloorWithBuildingId = _createFloorWithBuildingId;
 // Closet
 //****************************************//
 var _findClosetAll = function(next){
-    Closet.findAll().success(function(closets) {
+    Closet.findAll({where: {deleted: false}}).success(function(closets) {
         var tmpClosets = [];
         if (! closets instanceof Array){
             tmpClosets.push(closets);
@@ -537,7 +553,7 @@ exports.createClosetWithFloorId = _createClosetWithFloorId;
 // Devices
 //****************************************//
 var _findDeviceAll = function(next){
-    Device.findAll().success(function(devices) {
+    Device.findAll({where: {deleted: false}}).success(function(devices) {
         var tmpDevices = [];
         if (! devices instanceof Array){
             tmpDevices.push(devices);
@@ -639,7 +655,7 @@ var _findDeviceAllDetails = function(){
 // Product Family
 //****************************************//
 var _findProductFamilyAll = function(next){
-    ProductFamily.findAll({ include: [{ model: Product, as: 'Products' }] }).success(function(productfamilies) {
+    ProductFamily.findAll({where: {deleted: false}, include: [{ model: Product, as: 'Products' }] }).success(function(productfamilies) {
         var tmpProductFamilies = [];
         if (! productfamilies instanceof Array){ tmpProductFamilies.push(productfamilies); }
         else{ tmpProductFamilies = productfamilies; }
@@ -693,6 +709,31 @@ var _createProductFamily = function (name, next) {
 };
 exports.createProductFamily = _createProductFamily;
 
+var _deleteProductFamilyById = function (id, next) {
+    ProductFamily.find(id).success(function(productfamily) {
+            if (!productfamily){ if(next) next("Product Family not found", false);}
+            productfamily.deleted = true;
+            productfamily.save().success(function() {
+                //*** Add log
+
+                if(next) return next(null, null);
+            });
+        });
+};
+exports.deleteProductFamilyById = _deleteProductFamilyById;
+
+var _updateProductFamilyById = function (id,name, next) {
+    ProductFamily.find(id).success(function(productfamily) {
+            if (!productfamily){ if(next) next("Product Family not found", false);}
+            productfamily.updateAttributes({name: name}).success(function() {
+                //*** Add log
+
+                if(next) return next(null, productfamily);
+            });
+        });
+};
+exports.updateProductFamilyById = _updateProductFamilyById;
+
 //Create default Product Family
 var _createDefaultProductFamily = function(){
         var chainer = new Sequelize.Utils.QueryChainer;
@@ -715,11 +756,13 @@ var _createDefaultProductFamily = function(){
 };
 exports.createDefaultProductFamily=_createDefaultProductFamily;
 
+
+
 //****************************************//
 // Product
 //****************************************//
 var _findProductAll = function(next){
-    Product.findAll().success(function(productfamilies) {
+    Product.findAll({where: {deleted: false}}).success(function(productfamilies) {
         var tmpProducts = [];
         if (! products instanceof Array){
             tmpProducts.push(products);
@@ -828,6 +871,34 @@ var _createProductWithProductFamilyName = function (productfamilyName, name,part
     });
 };
 exports.createProductWithProductFamilyName = _createProductWithProductFamilyName;
+
+
+var _deleteProductById = function (id, next) {
+    Product.find(id).success(function(product) {
+            if (!product){ if(next) next("Product  not found", false);}
+            product.deleted = true;
+            product.save().success(function() {
+                //*** Add log
+
+                if(next) return next(null, null);
+            });
+        });
+};
+exports.deleteProductById = _deleteProductById;
+
+var _updateProductById = function (id,name,part, next) {
+    Product.find(id).success(function(product) {
+            if (!product){ if(next) next("Product not found", false);}
+            product.updateAttributes({name: name, part: part}).success(function() {
+                //*** Add log
+
+                if(next) return next(null, product);
+            });
+        });
+};
+exports.updateProductById = _updateProductById;
+
+
 
 var _createDefaultProducts = function(){
     _createProductWithProductFamilyName('VOICE','VoIP8-1 Daughterboard : 8 IP channels','3EH73063AC');

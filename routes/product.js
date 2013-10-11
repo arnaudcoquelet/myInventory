@@ -57,21 +57,21 @@ exports.details = function(req, res, model){
 };
 
 exports.details_json = function(req, res, model){
-    var productfamilyid = req.params.productfamilyid;
+    var productid = req.params.productid;
     var breadcrumbs = [{name:'Product Family',url:'/admin/productfamily',class: ''}, {name:productfamilyid,url:'',class: 'active'}];
 
-    if(productfamilyid && model){
+    if(productfamilyid && model){/*
         model.findProductFamilyById(productfamilyid, function(err,productfamily){
             if(err){}
 
             if(productfamily){
-                var products = productfamily.getProducts({where: {deleted: false} ,attributes: ['id', 'name', 'part']})
+                var products = productfamily.getProducts({attributes: ['id', 'name', 'part']})
                     .on('success', function(products){
                         if(products && !products instanceof Array) {res.json([]);}
                         res.json(products);
                 });
             }
-        })
+        })*/
     }
     else
     {
@@ -80,49 +80,56 @@ exports.details_json = function(req, res, model){
 };
 
 exports.create = function(req, res, model){
-    var productfamily = req.body.productfamily;
-    var error='';
-    if(!productfamily || productfamily==='') { error = 'Missing the product family name'; }
+    var productfamilyid = req.params.productfamilyid;
+    var name = req.body.productName;
+    var part = req.body.productPart;
 
-    model.createProductFamily(productfamily, function(err,site){
+    var error='';
+    if(!name || name==='') { error = 'Missing the Product name'; }
+    if(!part || part==='') { error = 'Missing the Product part #'; }
+    if(!productfamilyid || productfamilyid==='') { error = 'Missing the Product family'; }
+
+    model.createProductWithProductFamilyId(productfamilyid,name,part, function(err,site){
         console.log("----------");
         req.method = 'get';
-        res.redirect('/admin/productfamily');
+        res.redirect('/admin/productfamily/' + productfamilyid);
     } );
 
 };
 
 exports.delete = function(req, res, model){
-    var productfamilyid = req.params.productfamilyId;
-    if(! productfamilyid || productfamilyid==='undefined' ) {productfamilyid = req.body.productfamilyId;}
+    var productfamilyid = req.params.productfamilyid;
+    var productid = req.params.productid;
 
-       console.log(productfamilyid);
+    if(! productid || productid==='undefined' ) {productid = req.body.productId;}
 
-    if(model && productfamilyid)
+    if(model && productid)
     {
-        model.deleteProductFamilyById(productfamilyid, function(err, productfamily){
+        model.deleteProductById(productid, function(err, product){
             if(err){}
 
-            res.redirect('/admin/productfamily');
+            res.redirect('/admin/productfamily/' + productfamilyid);
         });
     }
     else{
-        res.redirect('/admin/productfamily');
+        res.redirect('/admin/productfamily/' + productfamilyid);
     }
 };
 
 exports.update = function(req, res, model){
-    var productfamilyid = req.body.productfamilyId;
-    var productfamilname = req.body.productfamilyName;
+    var productfamilyid = req.params.productfamilyid;
+    var id = req.body.productId;
+    var name = req.body.productName;
+    var part = req.body.productPart;
 
-    if(model && productfamilyid)
+    if(model && id)
     {
-        model.updateProductFamilyById(productfamilyid, productfamilname, function(err, productfamily){
+        model.updateProductById(id, name, part, function(err, product){
             if(err){}
-            res.redirect('/admin/productfamily');
+            res.redirect('/admin/productfamily/' +productfamilyid );
         });
     }
     else{
-        res.redirect('/admin/productfamily');
+        res.redirect('/admin/productfamily/' +productfamilyid );
     }
 };
