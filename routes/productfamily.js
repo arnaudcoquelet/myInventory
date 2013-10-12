@@ -80,12 +80,11 @@ exports.details_json = function(req, res, model){
 };
 
 exports.create = function(req, res, model){
-    var productfamily = req.body.productfamily;
+    var productfamilyName = req.body.productfamily;
     var error='';
-    if(!productfamily || productfamily==='') { error = 'Missing the product family name'; }
+    if(!productfamilyName || productfamilyName==='') { error = 'Missing the product family name'; }
 
-    model.createProductFamily(productfamily, function(err,site){
-        console.log("----------");
+    model.createProductFamily(productfamilyName, function(err,productfamily){
         req.method = 'get';
         res.redirect('/admin/productfamily');
     } );
@@ -95,8 +94,6 @@ exports.create = function(req, res, model){
 exports.delete = function(req, res, model){
     var productfamilyid = req.params.productfamilyId;
     if(! productfamilyid || productfamilyid==='undefined' ) {productfamilyid = req.body.productfamilyId;}
-
-       console.log(productfamilyid);
 
     if(model && productfamilyid)
     {

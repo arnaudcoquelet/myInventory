@@ -3,8 +3,8 @@
  */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    //host: "localhost",
-    host: "10.118.204.106",
+    host: "localhost",
+    //host: "10.118.204.106",
     port: 3306,
     dialect: 'mysql'
 });
@@ -22,7 +22,7 @@ var User = sequelize.define('user', {
     state: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     position: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
     },
     {
         getterMethods   : {
@@ -35,23 +35,34 @@ var User = sequelize.define('user', {
     }
 );
 
+var Log = sequelize.define('log', {
+    action: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false},
+    model: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    text: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
+});
+
+var Comment = sequelize.define('device', {
+    text: { type: Sequelize.STRING,defaultValue: "", allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
+});
 
 var Device = sequelize.define('device', {
     name: { type: Sequelize.STRING, allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
-    
+    serial: { type: Sequelize.STRING, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 });
 
 var ProductFamily = sequelize.define('productfamily', {
     name: { type: Sequelize.STRING, allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
     
 });
 
 var Product = sequelize.define('product', {
     name: { type: Sequelize.STRING, allowNull: false},
     part: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
     
 });
 
@@ -59,22 +70,21 @@ var Closet = sequelize.define('closet', {
     name: { type: Sequelize.STRING, allowNull: false},
     spare: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
     
 });
 
 var Floor = sequelize.define('floor', {
     name: { type: Sequelize.STRING, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
     
 });
 
 var Building = sequelize.define('building', {
     name: { type: Sequelize.STRING, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
-    
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 });
 
 var Site = sequelize.define('site', {
@@ -87,15 +97,13 @@ var Site = sequelize.define('site', {
     zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     category: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
-    
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 });
 
 var Geolocation = sequelize.define('geolocation', {
     name: { type: Sequelize.STRING, allowNull: false},
     code: { type: Sequelize.STRING, allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
-    
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 });
 
 //Association
@@ -115,6 +123,21 @@ Floor.hasMany(Building);
 Building.hasMany(Site);
 Site.hasMany(Geolocation);
 Product.hasMany(Device);
+
+User.hasMany(Comment, {as:'Comments'});
+
+Comment.hasOne(User, {as:'Author'});
+ProductFamily.hasMany(Comment, {as:'Comments'});
+Product.hasMany(Comment, {as:'Comments'});
+Device.hasMany(Comment, {as:'Comments'});
+Closet.hasMany(Comment, {as:'Comments'});
+Floor.hasMany(Comment, {as:'Comments'});
+Building.hasMany(Comment, {as:'Comments'});
+Site.hasMany(Comment, {as:'Comments'});
+Geolocation.hasMany(Comment, {as:'Comments'});
+User.hasMany(Log, {as:'Logs'});
+Log.hasMany(Comment, {as:'Comments'});
+Log.hasOne(User, {as:'Author'});
 
 sequelize
     .sync({force:true})
@@ -690,16 +713,10 @@ var _createProductFamily = function (name, next) {
 
     chainer.run()
         .on('success', function() {
-
-            var chainerAssociations = new Sequelize.Utils.QueryChainer
-            chainerAssociations
-                .run()
-                .on('success', function() { if(next) next(null, productfamily); })
-                .on('failure', function(err) {
-                    console.log("---------");
-                    console.log(err);
-                    if(next) next(err,false);
-                })
+            //Log
+            _createLog("CREATE",'PRODUCTFAMILY','Create product family: name=' + name,  null, function(err, log){
+                if(next) return next(null, productfamily);
+            });
         })
         .on('failure', function(err) {
             console.log("---------");
@@ -712,11 +729,13 @@ exports.createProductFamily = _createProductFamily;
 var _deleteProductFamilyById = function (id, next) {
     ProductFamily.find(id).success(function(productfamily) {
             if (!productfamily){ if(next) next("Product Family not found", false);}
+            var name = productfamily.name
             productfamily.deleted = true;
             productfamily.save().success(function() {
                 //*** Add log
-
-                if(next) return next(null, null);
+                _createLog("DELETE",'PRODUCTFAMILY','Delete product family('+ id +') name=' + name,  null, function(err, log){
+                    if(next) return next(null, null);
+                });
             });
         });
 };
@@ -727,8 +746,9 @@ var _updateProductFamilyById = function (id,name, next) {
             if (!productfamily){ if(next) next("Product Family not found", false);}
             productfamily.updateAttributes({name: name}).success(function() {
                 //*** Add log
-
-                if(next) return next(null, productfamily);
+                _createLog("UPDATE",'PRODUCTFAMILY','Update product family('+ id +') name=' + name,  null, function(err, log){
+                    if(next) return next(null, productfamily);
+                });
             });
         });
 };
@@ -841,7 +861,9 @@ var _createProductWithProductFamilyId = function (productfamilyId, name,part, ne
                 //Link Product to Product family
                 productfamily.addProduct(product)
                     .on('success', function(){
-                        if(next) next(null, product);
+                        _createLog("CREATE",'PRODUCT','Create product: name=' + name + " part=" + part + ' for ' + productfamily.name, null, function(err, log){
+                            if(next) return next(null, product);
+                        });
                     })
                     .on('failure', function(product){
                         if(next) next(error, false);
@@ -860,7 +882,9 @@ var _createProductWithProductFamilyName = function (productfamilyName, name,part
                 //Link Product to Product family
                 productfamilys[0].addProduct(product)
                     .on('success', function(){
-                        if(next) next(null, product);
+                        _createLog("CREATE",'PRODUCT','Create product: name=' + name + " part=" + part + ' for ' + productfamilyName, null, function(err, log){
+                            if(next) return next(null, product);
+                        });
                     })
                     .on('failure', function(product){
                         if(next) next(error, false);
@@ -876,11 +900,14 @@ exports.createProductWithProductFamilyName = _createProductWithProductFamilyName
 var _deleteProductById = function (id, next) {
     Product.find(id).success(function(product) {
             if (!product){ if(next) next("Product  not found", false);}
+            var name = product.name;
+            var part = product.part
             product.deleted = true;
             product.save().success(function() {
                 //*** Add log
-
-                if(next) return next(null, null);
+                _createLog("DELETE",'PRODUCT','Delete product(' + id + ') ' + part, null, function(err, log){
+                    if(next) return next(null, null);
+                });
             });
         });
 };
@@ -891,13 +918,13 @@ var _updateProductById = function (id,name,part, next) {
             if (!product){ if(next) next("Product not found", false);}
             product.updateAttributes({name: name, part: part}).success(function() {
                 //*** Add log
-
-                if(next) return next(null, product);
+                _createLog("UPDATE",'PRODUCT','Update product(' + id + '): name=' + name + " part=" + part, null, function(err, log){
+                    if(next) return next(null, product);
+                });
             });
         });
 };
 exports.updateProductById = _updateProductById;
-
 
 
 var _createDefaultProducts = function(){
@@ -1148,8 +1175,48 @@ var _createDefaultProducts = function(){
     _createProductWithProductFamilyName('OND','10 X GIGE MUX WT CARD','8DG39283AA');
     _createProductWithProductFamilyName('OND','2 x GigE Mux WT Card - Tunable','8DG39267AA');
     _createProductWithProductFamilyName('OND','Air Filters FRU','8DG39309AA');
-
-
-
 };
 exports.createDefaultProducts = _createDefaultProducts;
+
+
+
+//****************************************//
+// Logs
+//****************************************//
+var _findLogAll = function(next){
+    Log.findAll({where: {deleted: false}}).success(function(logs) {
+        var tmpLogs = [];
+        if (! logs instanceof Array){
+            tmpLogs.push(logs);
+        }
+        else{
+            tmpLogs = logs;
+        }
+
+        if(next) return next(null, tmpLogs);
+    })
+};
+exports.findLogAll = _findLogAll;
+
+var _createLog = function(action,modelName,text,user,next)
+{
+    var chainer = new Sequelize.Utils.QueryChainer
+        , log  = Log.build({ action: action, model: modelName, text: text });
+
+    chainer
+        .add(log.save())
+
+    chainer.run()
+        .on('success', function() {
+            //Assign log to user
+           if(user) {
+                user.addLog(log)
+                    .on('success', function() { if(next) next(null, log); })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            ;}
+            else{ if(next) next(null, log); }
+        })
+        .on('failure', function(err) { if(next) next(err,false); });
+};
+exports.createLog = _createLog;
+

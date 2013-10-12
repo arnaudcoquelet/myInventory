@@ -68,7 +68,7 @@ var closet = require('./routes/closet');
 var device = require('./routes/device');
 var productfamily = require('./routes/productfamily');
 var product = require('./routes/product');
-
+var log = require('./routes/log');
 
 var app = express();
 
@@ -112,64 +112,67 @@ app.get('/logout',ensureAuthenticated, function(req, res){req.logout();res.redir
 
 
 //Sites
-app.get('/sites', function(req, res){site.list(req, res, model)});
-app.post('/sites', function(req, res){site.create(req, res, model)});
-//app.delete('/sites/:sitecode', function(req, res){site.delete(req, res, model)} );
-app.get('/sites/:sitecode', function(req, res){site.details(req, res, model)} );
+app.get('/sites',ensureAuthenticated, function(req, res){site.list(req, res, model)});
+app.post('/sites',ensureAuthenticated, function(req, res){site.create(req, res, model)});
+//app.delete('/sites/:sitecode',ensureAuthenticated, function(req, res){site.delete(req, res, model)} );
+app.get('/sites/:sitecode',ensureAuthenticated, function(req, res){site.details(req, res, model)} );
 app.get('/json/sites', function(req, res){site.list_json(req, res, model)});
 app.get('/json/sites/details', function(req, res){site.listdetails_json(req, res, model)});
 
 //Buildings
-app.get('/sites/:sitecode/building', function(req, res){building.list(req, res, model)});
-app.post('/sites/:sitecode/building', function(req, res){building.create(req, res, model)});
-//app.delete('/sites/:sitecode/building/:buildingid', function(req, res){building.delete(req, res, model)} );
-app.get('/sites/:sitecode/building/:buildingid', function(req, res){building.details(req, res,model)} );
+app.get('/sites/:sitecode/building',ensureAuthenticated, function(req, res){building.list(req, res, model)});
+app.post('/sites/:sitecode/building',ensureAuthenticated, function(req, res){building.create(req, res, model)});
+//app.delete('/sites/:sitecode/building/:buildingid',ensureAuthenticated, function(req, res){building.delete(req, res, model)} );
+app.get('/sites/:sitecode/building/:buildingid',ensureAuthenticated, function(req, res){building.details(req, res,model)} );
 app.get('/json/sites/:sitecode/building', function(req, res){building.list_json(req, res, model)});
 
 
 //Floors
-app.get('/sites/:sitecode/building/:buildingid/floor', function(req, res){floor.list(req, res, model)});
-app.post('/sites/:sitecode/building/:buildingid/floor', function(req, res){floor.create(req, res, model)});
-//app.delete('/sites/:sitecode/building/:buildingid/floor/:floorid', function(req, res){floor.delete(req, res, model)} );
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid', function(req, res){floor.details(req, res, model)} );
+app.get('/sites/:sitecode/building/:buildingid/floor',ensureAuthenticated, function(req, res){floor.list(req, res, model)});
+app.post('/sites/:sitecode/building/:buildingid/floor',ensureAuthenticated, function(req, res){floor.create(req, res, model)});
+//app.delete('/sites/:sitecode/building/:buildingid/floor/:floorid',ensureAuthenticated, function(req, res){floor.delete(req, res, model)} );
+app.get('/sites/:sitecode/building/:buildingid/floor/:floorid',ensureAuthenticated, function(req, res){floor.details(req, res, model)} );
 app.get('/json/sites/:sitecode/building/:buildingid/floor', function(req, res){floor.list_json(req, res, model)});
 
 //Closets
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list(req, res, model)});
-app.post('/sites/:sitecode/building/:buildingid/floor/:floorid/closet', function(req, res){closet.create(req, res, model)});
-//app.delete('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid', function(req, res){closet.delete(req, res, model)} );
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid', function(req, res){closet.details(req, res, model)} );
+app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet',ensureAuthenticated, function(req, res){closet.list(req, res, model)});
+app.post('/sites/:sitecode/building/:buildingid/floor/:floorid/closet',ensureAuthenticated, function(req, res){closet.create(req, res, model)});
+//app.delete('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid',ensureAuthenticated, function(req, res){closet.delete(req, res, model)} );
+app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid',ensureAuthenticated, function(req, res){closet.details(req, res, model)} );
 app.get('/json/sites/:sitecode/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list_json(req, res, model)});
 
 
 //Devices
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.getDeviceFromCloset(req, res, model)});
-app.post('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.createDeviceWithClosetId(req, res, model)});
+app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device',ensureAuthenticated, function(req, res){device.getDeviceFromCloset(req, res, model)});
+app.post('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device',ensureAuthenticated, function(req, res){device.createDeviceWithClosetId(req, res, model)});
 app.get('/json/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.getDeviceFromCloset_json(req, res, model)});
 
-app.get('/devices', function(req, res){device.listAll(req, res, model)});
-app.post('/devices', function(req, res){device.create(req, res, model)});
-//app.delete('/devices/:deviceid', function(req, res){device.delete(req, res, model)} );
-app.get('/devices/:deviceid', function(req, res){device.details(req, res, model)} );
+app.get('/devices',ensureAuthenticated, function(req, res){device.listAll(req, res, model)});
+app.post('/devices',ensureAuthenticated, function(req, res){device.create(req, res, model)});
+//app.delete('/devices/:deviceid',ensureAuthenticated, function(req, res){device.delete(req, res, model)} );
+app.get('/devices/:deviceid',ensureAuthenticated, function(req, res){device.details(req, res, model)} );
 app.get('/json/devices', function(req, res){device.listAll_json(req, res, model)});
 
 
 //Products family
-app.get('/admin/productfamily', function(req, res){productfamily.list(req, res, model)});
-app.post('/admin/productfamily', function(req, res){productfamily.create(req, res, model)});
-app.get('/admin/productfamily/:productfamilyid', function(req, res){productfamily.details(req, res, model)} );
-app.delete('/admin/productfamily/:productfamilyid', function(req, res){productfamily.delete(req, res, model)} );
+app.get('/admin/productfamily',ensureAuthenticated, function(req, res){productfamily.list(req, res, model)});
+app.post('/admin/productfamily',ensureAuthenticated, function(req, res){productfamily.create(req, res, model)});
+app.get('/admin/productfamily/:productfamilyid',ensureAuthenticated, function(req, res){productfamily.details(req, res, model)} );
+app.delete('/admin/productfamily/:productfamilyid',ensureAuthenticated, function(req, res){productfamily.delete(req, res, model)} );
+app.post('/admin/productfamily/update',ensureAuthenticated, function(req, res){productfamily.update(req, res, model)});
+app.post('/admin/productfamily/delete',ensureAuthenticated, function(req, res){productfamily.delete(req, res, model)} );
 app.get('/json/productfamily', function(req, res){productfamily.list_json(req, res, model)});
 app.get('/json/productfamily/details', function(req, res){productfamily.listdetails_json(req, res, model)});
 app.get('/json/admin/productfamily/:productfamilyid', function(req, res){productfamily.details_json(req, res, model)} );
-app.post('/admin/productfamily/update', function(req, res){productfamily.update(req, res, model)});
-app.post('/admin/productfamily/delete', function(req, res){productfamily.delete(req, res, model)} );
 
 //Products
-app.post('/admin/productfamily/:productfamilyid/product', function(req, res){product.create(req, res, model)});
-app.post('/admin/productfamily/:productfamilyid/product/update', function(req, res){product.update(req, res, model)});
-app.post('/admin/productfamily/:productfamilyid/product/delete', function(req, res){product.delete(req, res, model)} );
+app.post('/admin/productfamily/:productfamilyid/product',ensureAuthenticated, function(req, res){product.create(req, res, model)});
+app.post('/admin/productfamily/:productfamilyid/product/update',ensureAuthenticated, function(req, res){product.update(req, res, model)});
+app.post('/admin/productfamily/:productfamilyid/product/delete',ensureAuthenticated, function(req, res){product.delete(req, res, model)} );
 
+//Logs
+app.get('/admin/audit', ensureAuthenticated, function(req, res){log.list(req, res, model)});
+app.get('/json/admin/log', function(req, res){log.list_json(req, res, model)});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
