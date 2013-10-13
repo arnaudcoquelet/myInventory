@@ -45,9 +45,6 @@ passport.deserializeUser(function(id, done) {
     if(!model){ return done(null, false, { message: 'Model not load.' });}
 
     model.findUserById(id, function(err, user) {
-        console.log('user:');
-        console.log(user);
-
         if(!user){return done(null, false, { message: 'User not found.' });}
         return done(null, user);
     });
@@ -61,6 +58,7 @@ var model = require('./routes/model');
 var http = require('http');
 var path = require('path');
 
+var geolocation = require('./routes/geolocation');
 var site = require('./routes/site');
 var building = require('./routes/building');
 var floor = require('./routes/floor');
@@ -104,20 +102,30 @@ var ensureAuthenticated = function (req, res, next) {
 
 app.get('/',ensureAuthenticated, routes.index);
 app.get('/login', login.login);
-app.post('/login', passport.authenticate('local', { successRedirect: '/Sites', failureRedirect: '/login', failureFlash: false }));
+app.post('/login', passport.authenticate('local', { successRedirect: '/geolocation', failureRedirect: '/login', failureFlash: false }));
 app.get('/users',ensureAuthenticated, user.list);
 app.get('/register', user.register);
 app.post('/register', function(req, res){user.registration(req, res, model)} );
 app.get('/logout',ensureAuthenticated, function(req, res){req.logout();res.redirect('/');});
 
 
+//Geolocations
+app.get('/geolocation',ensureAuthenticated, function(req, res){geolocation.list(req, res, model)});
+app.post('/geolocation/create',ensureAuthenticated, function(req, res){geolocation.create(req, res, model)});
+app.post('/geolocation/update',ensureAuthenticated, function(req, res){geolocation.update(req, res, model)});
+app.post('/geolocation/delete',ensureAuthenticated, function(req, res){geolocation.delete(req, res, model)});
+app.get('/geolocation/:geolocationid',ensureAuthenticated, function(req, res){site.list(req, res, model)} );
+app.get('/json/geolocation', function(req, res){geolocation.list_json(req, res, model)});
+app.get('/json/geolocation/details', function(req, res){geolocation.listdetails_json(req, res, model)});
+
 //Sites
-app.get('/sites',ensureAuthenticated, function(req, res){site.list(req, res, model)});
-app.post('/sites',ensureAuthenticated, function(req, res){site.create(req, res, model)});
-//app.delete('/sites/:sitecode',ensureAuthenticated, function(req, res){site.delete(req, res, model)} );
-app.get('/sites/:sitecode',ensureAuthenticated, function(req, res){site.details(req, res, model)} );
-app.get('/json/sites', function(req, res){site.list_json(req, res, model)});
-app.get('/json/sites/details', function(req, res){site.listdetails_json(req, res, model)});
+app.get('/geolocation/:geolocationid/site',ensureAuthenticated, function(req, res){site.list(req, res, model)});
+app.post('/geolocation/:geolocationid/site/create',ensureAuthenticated, function(req, res){site.create(req, res, model)});
+app.post('/geolocation/:geolocationid/site/update',ensureAuthenticated, function(req, res){site.update(req, res, model)});
+app.post('/geolocation/:geolocationid/site/delete',ensureAuthenticated, function(req, res){site.delete(req, res, model)});
+app.get('/geolocation/:geolocationid/site/:sitecode',ensureAuthenticated, function(req, res){site.details(req, res, model)} );
+app.get('/json/geolocation/:geolocationid/site', function(req, res){site.list_json(req, res, model)});
+app.get('/json/geolocation/:geolocationid/site/details', function(req, res){site.listdetails_json(req, res, model)});
 
 //Buildings
 app.get('/sites/:sitecode/building',ensureAuthenticated, function(req, res){building.list(req, res, model)});

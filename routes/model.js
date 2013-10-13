@@ -9,7 +9,8 @@ var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
     dialect: 'mysql'
 });
 
-var User = sequelize.define('user', {
+var User = sequelize.define('user',
+    {
     name: { type: Sequelize.STRING, allowNull: false},
     username: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     password: { type: Sequelize.STRING, defaultValue: "password", allowNull: false},
@@ -87,28 +88,34 @@ var Building = sequelize.define('building', {
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 });
 
-var Site = sequelize.define('site', {
-    name: { type: Sequelize.STRING, allowNull: false},
-    code: { type: Sequelize.STRING, allowNull: false},
+var Address = sequelize.define('address', {
     address1: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     address2: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     city: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     state: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
+});
+
+var Site = sequelize.define('site', {
+    name: { type: Sequelize.STRING, allowNull: false},
+    code: { type: Sequelize.STRING, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     category: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 });
 
 var Geolocation = sequelize.define('geolocation', {
-    name: { type: Sequelize.STRING, allowNull: false},
-    code: { type: Sequelize.STRING, allowNull: false},
+    name: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    code: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 });
 
 //Association
+User.hasMany(Address, {as: 'Addresses'});
 Geolocation.hasMany(Site, {as: 'Sites'});
 Site.hasMany(User, {as: 'Contacts'});
+Site.hasMany(Address, {as: 'Addresses'});
 Site.hasMany(Building, {as: 'Buildings'});
 Building.hasMany(Floor, {as: 'Floors'});
 Floor.hasMany(Closet, {as: 'Closets'});
@@ -121,9 +128,10 @@ Device.hasMany(Closet);
 Closet.hasMany(Floor);
 Floor.hasMany(Building);
 Building.hasMany(Site);
-Site.hasMany(Geolocation);
+Site.hasOne(Geolocation);
 Product.hasMany(Device);
-
+Address.hasMany(Site, {as: 'Sites'});
+Address.hasMany(User, {as: 'Users'});
 User.hasMany(Comment, {as:'Comments'});
 
 Comment.hasOne(User, {as:'Author'});
@@ -142,7 +150,7 @@ Log.hasOne(User, {as:'Author'});
 sequelize
     .sync({force:true})
     .on('success', function() {console.log("Model Create in DB");
-        _createUnassignedSite();
+        _createUnassignedGeolocation();
         _createDefaultProductFamily();
         _createAdminUser();
         _createDefaultProducts();
@@ -159,6 +167,7 @@ exports.Closet = Closet;
 exports.Device = Device;
 exports.ProductFamily = ProductFamily;
 exports.Product = Product;
+exports.Address = Address;
 
 
 
@@ -221,6 +230,119 @@ var _createAdminUser = function(){
 exports.createAdminUser=_createAdminUser;
 
 //****************************************//
+// GEOLOCATION
+//****************************************//
+var _findGeolocationAllDetails = function(next){
+    Geolocation.findAll({where: {deleted: false},include: [{ model: Site, as: 'Sites' }] }).success(function(geolocations) {
+        var tmpGeolocations = [];
+        if (! geolocations instanceof Array){ tmpGeolocations.push(geolocations); }
+        else{ tmpGeolocations = geolocations; }
+
+        if(next) return next(null, tmpGeolocations);
+    })
+};
+exports.findGeolocationAllDetails = _findGeolocationAllDetails;
+
+var _findGeolocationAll = function(next){
+    Geolocation.findAll({where: {deleted: false}}).success(function(geolocations) {
+        var tmpGeolocations = [];
+        if (! geolocations instanceof Array){
+            tmpGeolocations.push(geolocations);
+        }
+        else{
+            tmpGeolocations = geolocations;
+        }
+
+        if(next) return next(null, tmpGeolocations);
+    })
+};
+exports.findGeolocationAll = _findGeolocationAll;
+
+var _findGeolocationById = function(id,next){
+    Geolocation
+        .find(id)
+        .success(function(geolocation) {
+            if (!geolocation){ next("geolocation not found", false); }
+
+            if(next) return next(null, geolocation);
+        })
+};
+exports.findGeolocationById = _findGeolocationById;
+
+var _createGeolocation = function (name,code, next) {
+    var chainer = new Sequelize.Utils.QueryChainer
+        , geolocation = Geolocation.build({name: name, code: code})
+        , site = Site.build({name: 'Default', code: 'Default'})
+        , building = Building.build({name: 'Main'})
+        , floor  = Floor.build({ name: 'Main' })
+        , closet  = Closet.build({ name: 'Main' })
+
+    chainer
+        .add(geolocation.save())
+        .add(site.save())
+        .add(building.save())
+        .add(floor.save())
+        .add(closet.save())
+
+    chainer.run()
+        .on('success', function() {
+            var chainerAssociations = new Sequelize.Utils.QueryChainer
+            chainerAssociations
+                .add(floor.addCloset(closet))
+                .add(building.addFloor(floor))
+                .add(site.addBuilding(building))
+                .add(geolocation.addSite(site))
+                .run()
+                .on('success', function() { if(next) next(null, site); })
+                .on('failure', function(err) {
+                    if(next) next(err,false);
+                })
+        })
+        .on('failure', function(err) {
+            if(next) next(err,false);
+        })
+};
+exports.createGeolocation = _createGeolocation;
+
+var _updateGeolocationById = function(id, name, code, next){
+    _findGeolocationById(id, function(err, geolocation){
+        if(err){ if(next) next(err, false);}
+        if(!geolocation){ if(next) next("Geolocation not found", false);}
+
+        geolocation.updateAttributes({name: name, code: code}).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'GEOLOCATION','Update geolocation(' + id + '): name=' + name + " code=" + code, null, function(err, log){
+                if(next) return next(null, geolocation);
+            });
+        });
+    });
+};
+exports.updateGeolocationById = _updateGeolocationById;
+
+var _deleteGeolocationById = function (id, next) {
+    Geolocation.find(id).success(function(geolocation) {
+        if (!geolocation){ if(next) next("Geolocation  not found", false);}
+        var name = geolocation.name;
+        var code = geolocation.code;
+        geolocation.deleted = true;
+        geolocation.save().success(function() {
+            //*** Add log
+            _createLog("DELETE",'GEOLOCATION','Delete geolocation(' + id + ') ' + name, null, function(err, log){
+                if(next) return next(null, null);
+            });
+        });
+    });
+};
+exports.deleteGeolocationById = _deleteGeolocationById;
+
+//Create one Site for Unassigned devices
+var _createUnassignedGeolocation = function(){
+    _createGeolocation("_Unassigned", "_Unassigned", null);
+};
+exports.createUnassignedGeolocation=_createUnassignedGeolocation;
+
+
+//****************************************//
 // SITE
 //****************************************//
 var _findSiteAllDetails = function(next){
@@ -253,6 +375,33 @@ var _findSiteAll = function(next){
 };
 exports.findSiteAll = _findSiteAll;
 
+var _findSiteAllByGeolocationId = function(geolocationid, next){
+    _findGeolocationById(geolocationid, function(err, geolocation){
+        if(err) {if(next) return next(err, []);}
+        if(!geolocation) {if(next) return next("Geolocation not found", []);}
+
+        geolocation.getSites({where: {deleted: false}})
+            .on('success', function(sites){
+                if(next) next(null, sites);
+            })
+            .on('failure', function(error){
+                if(next) next(error, false);
+            });
+    });
+};
+exports.findSiteAllByGeolocationId = _findSiteAllByGeolocationId;
+
+var _findSiteById = function(id,next){
+    Site
+        .find(id)
+        .success(function(site) {
+            if (!site){ next("site not found", false); }
+
+            if(next) return next(null, site);
+        })
+};
+exports.findSiteByCode = _findSiteByCode;
+
 var _findSiteByCode = function(code,next){
     Site
         .find({where: {code: code}})
@@ -264,9 +413,9 @@ var _findSiteByCode = function(code,next){
 };
 exports.findSiteByCode = _findSiteByCode;
 
-var _createSite = function (name,code,address1,address2,city,state,zipcode, next) {
+var _createSite = function (name,code, next) {
     var chainer = new Sequelize.Utils.QueryChainer
-        , site = Site.build({name: name, code: code,address1:address1,address2:address2,city:city,state:state,zipcode:zipcode})
+        , site = Site.build({name: name, code: code})
         , building = Building.build({name: 'Main'})
         , building2 = Building.build({name: 'Main2'})
         , floor  = Floor.build({ name: 'Main' })
@@ -303,6 +452,61 @@ var _createSite = function (name,code,address1,address2,city,state,zipcode, next
         })
 };
 exports.createSite = _createSite;
+
+var _createSiteWithGeolocationId = function (geolocationid, name,code, next) {
+    _createSite(name,code,function(err, site){
+        if(site){
+            _findGeolocationById(geolocationid, function(err, geolocation){
+                if(geolocation){
+                    geolocation.addSite(site)
+                        .on('success', function(){
+                            _createLog("CREATE",'SITE','Create site: name=' + site.name + " code=" + site.code + ' in ' + geolocation.name, null, function(err, log){
+                                if(next) return next(null, site);
+                            });
+                        })
+                        .on('failure', function(site){
+                            if(next) next(error, false);
+                        });
+                }
+            });
+        }
+    });
+
+};
+exports.createSiteWithGeolocationId = _createSiteWithGeolocationId;
+
+var _updateSiteById = function(id, name, code, next){
+    _findSiteById(id, function(err, site){
+        if(err){ if(next) next(err, false);}
+        if(!site){ if(next) next("Site not found", false);}
+
+        site.updateAttributes({name: name, code: code}).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'SITE','Update site(' + id + '): name=' + name + " code=" + code, null, function(err, log){
+                if(next) return next(null, site);
+            });
+        });
+    });
+};
+exports.updateSiteById = _updateSiteById;
+
+var _deleteSiteById = function (id, next) {
+    Site.find(id).success(function(site) {
+        if (!site){ if(next) next("Site  not found", false);}
+        var name = site.name;
+        var code = site.code;
+        site.deleted = true;
+        site.save().success(function() {
+            //*** Add log
+            _createLog("DELETE",'SITE','Delete site(' + id + ') ' + name, null, function(err, log){
+                if(next) return next(null, null);
+            });
+        });
+    });
+};
+exports.deleteSiteById = _deleteSiteById;
+
+
 
 //Create one Site for Unassigned devices
 var _createUnassignedSite = function(){
