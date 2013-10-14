@@ -28,14 +28,14 @@ exports.registration = function(req, res, model){
 
     if(error !== '') {
         console.log(error);
-        req.method = 'get';
+        res.method = 'get';
         res.redirect('/register');
     }
     //Try to create a user
     if(model){
         model.createUser(name, username,email, password,
             function(){
-                req.method = 'get';
+                res.method = 'get';
                 res.redirect('/login');
             });
     }

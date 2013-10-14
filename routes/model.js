@@ -1,6 +1,3 @@
-/**
- * Created by ArnaudCoquelet on 10/4/13.
- */
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
     host: "localhost",
@@ -9,32 +6,21 @@ var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
     dialect: 'mysql'
 });
 
-var User = sequelize.define('user',
-    {
-    name: { type: Sequelize.STRING, allowNull: false},
-    username: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    password: { type: Sequelize.STRING, defaultValue: "password", allowNull: false},
-    role: { type: Sequelize.STRING, defaultValue: "read"},
-    email: { type: Sequelize.STRING, defaultValue: "",allowNull: false},
-    telephone: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    address1: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    address2: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    city: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    state: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    position: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-    },
-    {
-        getterMethods   : {
-            validPassword : function(password)  { return (this.password === password); }
-        },
-
-        setterMethods   : {
-            resetPassword : function() { this.password = "password"; }
-        }
-    }
-);
+var User = sequelize.define('user',{
+        name: { type: Sequelize.STRING, allowNull: false},
+        username: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+        password: { type: Sequelize.STRING, defaultValue: "password", allowNull: false},
+        role: { type: Sequelize.STRING, defaultValue: "read"},
+        email: { type: Sequelize.STRING, defaultValue: "",allowNull: false},
+        telephone: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+        address1: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+        address2: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+        city: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+        state: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+        zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+        position: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+        deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
+});
 
 var Log = sequelize.define('log', {
     action: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false},
@@ -128,7 +114,7 @@ Device.hasMany(Closet);
 Closet.hasMany(Floor);
 Floor.hasMany(Building);
 Building.hasMany(Site);
-Site.hasOne(Geolocation);
+Site.hasMany(Geolocation);
 Product.hasMany(Device);
 Address.hasMany(Site, {as: 'Sites'});
 Address.hasMany(User, {as: 'Users'});
@@ -148,12 +134,14 @@ Log.hasMany(Comment, {as:'Comments'});
 Log.hasOne(User, {as:'Author'});
 
 sequelize
-    .sync({force:true})
-    .on('success', function() {console.log("Model Create in DB");
-        _createUnassignedGeolocation();
-        _createDefaultProductFamily();
-        _createAdminUser();
-        _createDefaultProducts();
+    .sync({force:false})
+    .on('success', function() {
+        console.log("Model Create in DB");
+       // _createUnassignedGeolocation();
+       // _createDefaultProductFamily();
+       // _createAdminUser();
+       // _createDefaultProducts();
+       // _createViews();
     })
     .on('failure', function(err) {console.log(err); });
 
@@ -191,8 +179,8 @@ var _findUserByUsername = function (username, next) {
         .success(function(user) {
             console.log("user found");
             if(next){
-                if(!user) return next("User " + username + " not found", false);
-                return next(null,user);
+                if(!user){ next("User " + username + " not found", false);}
+                else { next(null,user); }
             }
         })
         .error(function(error){ console.error(error); if(next) next(error,false);});
@@ -246,14 +234,10 @@ exports.findGeolocationAllDetails = _findGeolocationAllDetails;
 var _findGeolocationAll = function(next){
     Geolocation.findAll({where: {deleted: false}}).success(function(geolocations) {
         var tmpGeolocations = [];
-        if (! geolocations instanceof Array){
-            tmpGeolocations.push(geolocations);
-        }
-        else{
-            tmpGeolocations = geolocations;
-        }
+        if (! geolocations instanceof Array){ tmpGeolocations.push(geolocations); }
+        else{ tmpGeolocations = geolocations; }
 
-        if(next) return next(null, tmpGeolocations);
+        if(next) next(null, tmpGeolocations);
     })
 };
 exports.findGeolocationAll = _findGeolocationAll;
@@ -264,7 +248,7 @@ var _findGeolocationById = function(id,next){
         .success(function(geolocation) {
             if (!geolocation){ next("geolocation not found", false); }
 
-            if(next) return next(null, geolocation);
+            if(next) next(null, geolocation);
         })
 };
 exports.findGeolocationById = _findGeolocationById;
@@ -275,18 +259,18 @@ var _createGeolocation = function (name,code, next) {
         , site = Site.build({name: 'Default', code: 'Default'})
         , building = Building.build({name: 'Main'})
         , floor  = Floor.build({ name: 'Main' })
-        , closet  = Closet.build({ name: 'Main' })
+        , closet  = Closet.build({ name: 'Main' });
 
     chainer
         .add(geolocation.save())
         .add(site.save())
         .add(building.save())
         .add(floor.save())
-        .add(closet.save())
+        .add(closet.save());
 
     chainer.run()
         .on('success', function() {
-            var chainerAssociations = new Sequelize.Utils.QueryChainer
+            var chainerAssociations = new Sequelize.Utils.QueryChainer;
             chainerAssociations
                 .add(floor.addCloset(closet))
                 .add(building.addFloor(floor))
@@ -400,7 +384,7 @@ var _findSiteById = function(id,next){
             if(next) return next(null, site);
         })
 };
-exports.findSiteByCode = _findSiteByCode;
+exports.findSiteById = _findSiteById;
 
 var _findSiteByCode = function(code,next){
     Site
@@ -568,6 +552,22 @@ var _findBuildingById = function(id, next){
 };
 exports.findBuildingById = _findBuildingById;
 
+var _findBuildingAllBySiteId = function(siteid, next){
+    _findSiteById(siteid, function(err, site){
+        if(err) {if(next) return next(err, []);}
+        if(!site) {if(next) return next("Building not found", []);}
+
+        site.getBuildings({where: {deleted: false}})
+            .on('success', function(buildings){
+                if(next) next(null, buildings);
+            })
+            .on('failure', function(error){
+                if(next) next(error, false);
+            });
+    });
+};
+exports.findBuildingAllBySiteId = _findBuildingAllBySiteId;
+
 var _createBuilding = function (name, next) {
     var chainer = new Sequelize.Utils.QueryChainer
         , building = Building.build({name: name})
@@ -602,6 +602,26 @@ var _createBuilding = function (name, next) {
 };
 exports.createBuilding = _createBuilding;
 
+var _createBuildingWithSiteId = function (id, name, next) {
+    //Create new building
+    _createBuilding(name, function(err, building){
+        if(building){
+            //Get Site from SiteCode
+            _findSiteById(id, function(err, site){
+                //Link Building to Site
+                site.addBuilding(building)
+                    .on('success', function(){
+                        if(next) next(null, building);
+                    })
+                    .on('failure', function(error){
+                        if(next) next(error, false);
+                    });
+            });
+        }
+    });
+};
+exports.createBuildingWithSiteId = _createBuildingWithSiteId;
+
 var _createBuildingWithSitecode = function (sitecode, name, next) {
     //Create new building
     _createBuilding(name, function(err, building){
@@ -622,6 +642,35 @@ var _createBuildingWithSitecode = function (sitecode, name, next) {
 };
 exports.createBuildingWithSitecode = _createBuildingWithSitecode;
 
+var _updateBuildingById = function(id, name,  next){
+    _findBuildingById(id, function(err, building){
+        if(err){ if(next) next(err, false);}
+        if(!building){ if(next) next("Building not found", false);}
+
+        building.updateAttributes({name: name}).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'BUILDING','Update building(' + id + '): name=' + name, null, function(err, log){
+                if(next) return next(null, building);
+            });
+        });
+    });
+};
+exports.updateBuildingById = _updateBuildingById;
+
+var _deleteBuildingById = function (id, next) {
+    Building.find(id).success(function(building) {
+        if (!building){ if(next) next("Building  not found", false);}
+        var name = building.name;
+        building.deleted = true;
+        building.save().success(function() {
+            //*** Add log
+            _createLog("DELETE",'BUILDING','Delete building(' + id + ') ' + name, null, function(err, log){
+                if(next) return next(null, null);
+            });
+        });
+    });
+};
+exports.deleteBuildingById = _deleteBuildingById;
 
 //****************************************//
 // Floor
@@ -649,6 +698,22 @@ var _findFloorById = function(id, next){
 };
 exports.findFloorById = _findFloorById;
 
+var _findFloorAllByBuildingId = function(buildingid, next){
+    _findBuildingById(buildingid, function(err, building){
+        if(err) {if(next) return next(err, []);}
+        if(!building) {if(next) return next("Building not found", []);}
+
+        building.getFloors({where: {deleted: false}})
+            .on('success', function(floors){
+                if(next) next(null, floors);
+            })
+            .on('failure', function(error){
+                if(next) next(error, false);
+            });
+    });
+};
+exports.findFloorAllByBuildingId = _findFloorAllByBuildingId;
+
 var _createFloor = function (name, next) {
     var chainer = new Sequelize.Utils.QueryChainer
         , floor  = Floor.build({ name: name })
@@ -665,16 +730,16 @@ var _createFloor = function (name, next) {
             chainerAssociations
                 .add(floor.addCloset(closet))
                 .run()
-                .on('success', function() { if(next) next(null, floor); })
+                .on('success', function() {
+                    _createLog("CREATE",'FLOOR','Create floor: name=' + floor.name,  null, function(err, log){
+                        if(next) return next(null, floor);
+                    });
+                })
                 .on('failure', function(err) {
-                    console.log("---------");
-                    console.log(err);
                     if(next) next(err,false);
                 })
         })
         .on('failure', function(err) {
-            console.log("---------");
-            console.log(err);
             if(next) next(err,false);
         })
 };
@@ -699,6 +764,36 @@ var _createFloorWithBuildingId = function (buildingid, name, next) {
     });
 };
 exports.createFloorWithBuildingId = _createFloorWithBuildingId;
+
+var _updateFloorById = function(id, name,  next){
+    _findFloorById(id, function(err, floor){
+        if(err){ if(next) next(err, false);}
+        if(!floor){ if(next) next("Floor not found", false);}
+
+        floor.updateAttributes({name: name}).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'FLOOR','Update floor(' + id + '): name=' + name, null, function(err, log){
+                if(next) return next(null, floor);
+            });
+        });
+    });
+};
+exports.updateFloorById = _updateFloorById;
+
+var _deleteFloorById = function (id, next) {
+    Floor.find(id).success(function(floor) {
+        if (!floor){ if(next) next("Floor  not found", false);}
+        var name = floor.name;
+        floor.deleted = true;
+        floor.save().success(function() {
+            //*** Add log
+            _createLog("DELETE",'FLOOR','Delete floor(' + id + ') ' + name, null, function(err, log){
+                if(next) return next(null, null);
+            });
+        });
+    });
+};
+exports.deleteFloorById = _deleteFloorById;
 
 //****************************************//
 // Closet
@@ -726,6 +821,22 @@ var _findClosetById = function(id, next){
 };
 exports.findClosetById = _findClosetById;
 
+var _findClosetAllByFloorId = function(floorid, next){
+    _findFloorById(floorid, function(err, floor){
+        if(err) {if(next) return next(err, []);}
+        if(!floor) {if(next) return next("Floor not found", []);}
+
+        floor.getClosets({where: {deleted: false}})
+            .on('success', function(closets){
+                if(next) next(null, closets);
+            })
+            .on('failure', function(error){
+                if(next) next(error, false);
+            });
+    });
+};
+exports.findClosetAllByFloorId = _findClosetAllByFloorId;
+
 var _createCloset = function (name, next) {
     var chainer = new Sequelize.Utils.QueryChainer
     , closet  = Closet.build({ name: name });
@@ -735,20 +846,11 @@ var _createCloset = function (name, next) {
 
     chainer.run()
         .on('success', function() {
-
-            var chainerAssociations = new Sequelize.Utils.QueryChainer
-            chainerAssociations
-                .run()
-                .on('success', function() { if(next) next(null, closet); })
-                .on('failure', function(err) {
-                    console.log("---------");
-                    console.log(err);
-                    if(next) next(err,false);
-                })
+            _createLog("CREATE",'CLOSET','Create closet: name=' + closet.name,  null, function(err, log){
+                if(next) return next(null, closet);
+            });
         })
         .on('failure', function(err) {
-            console.log("---------");
-            console.log(err);
             if(next) next(err,false);
         })
 };
@@ -774,7 +876,45 @@ var _createClosetWithFloorId = function (floorid, name, next) {
 };
 exports.createClosetWithFloorId = _createClosetWithFloorId;
 
+var _updateClosetById = function(id, name,  next){
+    _findClosetById(id, function(err, closet){
+        if(err){ if(next) next(err, false);}
+        if(!closet){ if(next) next("Closet not found", false);}
 
+        closet.updateAttributes({name: name}).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'CLOSET','Update closet(' + id + '): name=' + name, null, function(err, log){
+                if(next) return next(null, closet);
+            });
+        });
+    });
+};
+exports.updateClosetById = _updateClosetById;
+
+var _deleteClosetById = function (id, next) {
+    Closet.find(id).success(function(closet) {
+        if (!closet){ if(next) next("Closet  not found", false);}
+        var name = closet.name;
+        closet.deleted = true;
+        closet.save().success(function() {
+            //*** Add log
+            _createLog("DELETE",'CLOSET','closet floor(' + id + ') ' + name, null, function(err, log){
+                if(next) return next(null, null);
+            });
+        });
+    });
+};
+exports.deleteClosetById = _deleteClosetById;
+
+var _getClosetAllDetails = function(next){
+    var sql = "SELECT * from `view_closetalldetails`";
+    sequelize.query(sql, null, {raw: true})
+        .success(function(closets) {
+            if (!closets){ if(next) next("Closets not found", false);}
+            if(next) next(null, closets);
+        });
+}
+exports.getClosetAllDetails = _getClosetAllDetails
 
 //****************************************//
 // Devices
@@ -823,36 +963,46 @@ var _findDeviceById = function(id, next){
 };
 exports.findDeviceById = _findDeviceById;
 
-var _createDevice = function (name,type, next) {
+var _createDevice = function (name,serial, next) {
     var chainer = new Sequelize.Utils.QueryChainer
-    , device  = Device.build({ name: name, type: type });
+    , device  = Device.build({ name: name, serial: serial });
 
     chainer
         .add(device.save())
 
     chainer.run()
         .on('success', function() {
-
-            var chainerAssociations = new Sequelize.Utils.QueryChainer
-            chainerAssociations
-                .run()
-                .on('success', function() { if(next) next(null, device); })
-                .on('failure', function(err) {
-                    console.log("---------");
-                    console.log(err);
-                    if(next) next(err,false);
-                })
+            _createLog("CREATE",'DEVICE','Create device: name=' + device.name,  null, function(err, log){
+                if(next) return next(null, device);
+            });
         })
         .on('failure', function(err) {
-            console.log("---------");
-            console.log(err);
             if(next) next(err,false);
         })
 };
 exports.createDevice = _createDevice;
 
-var _createDeviceWithClosetId = function (closetid, name,type, next) {
-    _createDevice(name,type, function(err, device){
+var _createDeviceWithProductId = function (productid, name, serial, next) {
+    _createDevice(name,serial, function(err, device){
+        if(device){
+            //Get Site from SiteCode
+            _findProductById(productid, function(err, product){
+                //Link Building to Site
+                device.addProduct(product)
+                    .on('success', function(){
+                        if(next) next(null, device);
+                    })
+                    .on('failure', function(device){
+                        if(next) next(error, false);
+                    });
+            });
+        }
+    });
+};
+exports.createDeviceWithProductId = _createDeviceWithProductId;
+
+var _createDeviceWithClosetId = function (closetid,productid, name, serial, next) {
+    _createDeviceWithProductId(productid, name,serial, function(err, device){
         if(device){
             //Get Site from SiteCode
             _findClosetById(closetid, function(err, closet){
@@ -876,7 +1026,35 @@ var _findDeviceAllDetails = function(){
 
 };
 
+var _updateDeviceById = function(id, name,serial, next){
+    _findDeviceById(id, function(err, device){
+        if(err){ if(next) next(err, false);}
+        if(!device){ if(next) next("Device not found", false);}
 
+        device.updateAttributes({name: name, serial: serial}).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'DEVICE','Update device(' + id + '): name=' + name, null, function(err, log){
+                if(next) return next(null, closet);
+            });
+        });
+    });
+};
+exports.updateDeviceById = _updateDeviceById;
+
+var _deleteDeviceById = function (id, next) {
+    Device.find(id).success(function(device) {
+        if (!device){ if(next) next("Device  not found", false);}
+        var name = device.name;
+        device.deleted = true;
+        device.save().success(function() {
+            //*** Add log
+            _createLog("DELETE",'DEVICE','Delete device(' + id + ') ' + name, null, function(err, log){
+                if(next) return next(null, null);
+            });
+        });
+    });
+};
+exports.deleteDeviceById = _deleteDeviceById;
 
 //****************************************//
 // Product Family
@@ -918,13 +1096,11 @@ var _createProductFamily = function (name, next) {
     chainer.run()
         .on('success', function() {
             //Log
-            _createLog("CREATE",'PRODUCTFAMILY','Create product family: name=' + name,  null, function(err, log){
+            _createLog("CREATE",'PRODUCTFAMILY','Create product family: name=' + productfamily.name,  null, function(err, log){
                 if(next) return next(null, productfamily);
             });
         })
         .on('failure', function(err) {
-            console.log("---------");
-            console.log(err);
             if(next) next(err,false);
         })
 };
@@ -1038,20 +1214,9 @@ var _createProduct = function (name,part, next) {
 
     chainer.run()
         .on('success', function() {
-
-            var chainerAssociations = new Sequelize.Utils.QueryChainer
-            chainerAssociations
-                .run()
-                .on('success', function() { if(next) next(null, product); })
-                .on('failure', function(err) {
-                    console.log("---------");
-                    console.log(err);
-                    if(next) next(err,false);
-                })
+            if(next) next(err,false);
         })
         .on('failure', function(err) {
-            console.log("---------");
-            console.log(err);
             if(next) next(err,false);
         })
 };
@@ -1130,6 +1295,15 @@ var _updateProductById = function (id,name,part, next) {
 };
 exports.updateProductById = _updateProductById;
 
+var _getProductAllDetails = function(next){
+    var sql = "SELECT * from `view_productsalldetails`";
+    sequelize.query(sql, null, {raw: true})
+        .success(function(products) {
+            if (!products){ if(next) next("Products not found", false);}
+            if(next) next(null, products);
+    });
+}
+exports.getProductAllDetails = _getProductAllDetails
 
 var _createDefaultProducts = function(){
     _createProductWithProductFamilyName('VOICE','VoIP8-1 Daughterboard : 8 IP channels','3EH73063AC');
@@ -1424,3 +1598,92 @@ var _createLog = function(action,modelName,text,user,next)
 };
 exports.createLog = _createLog;
 
+
+
+
+
+
+/********************************
+ * VIEWS
+ ********************************/
+var _createViews = function() {
+    var chainer = new Sequelize.Utils.QueryChainer;
+    var chainerDrop = new Sequelize.Utils.QueryChainer;
+    /*
+    var view_devicesAllDetails_DROP = "DROP VIEW `view_devicesalldetails`";
+    var view_devicesAllDetails =
+        "CREATE VIEW `view_devicesalldetails` AS SELECT \
+         geolocations.id AS geolocation_id, geolocations.name AS geolocation_name, geolocations.code AS geolocation_code, geolocations.deleted AS geolocation_deleted, \
+         sites.id AS site_id, sites.name AS site_name, sites.code AS site_code, sites.canbedeleted AS site_canbedeleted, sites.category AS site_category, sites.deleted AS site_deleted, \
+         buildings.id AS building_id, buildings.name AS building_name, buildings.canbedeleted AS building_canbedeleted, buildings.deleted AS building_deleted, \
+         floors.id AS floor_id, floors.name AS floor_name, floors.canbedeleted AS floor_canbedeleted, floors.deleted AS floor_deleted, \
+         closets.id AS closet_id, closets.name AS closet_name, closets.spare AS closet_spare, closets.canbedeleted AS closet_canbedeleted, closets.deleted AS closet_deleted, \
+         devices.id AS devices_id, devices.name AS devices_name, devices.serial AS devices_serial, devices.deleted AS devices_deleted \
+         FROM \
+         geolocationssites INNER JOIN geolocations ON geolocationssites.geolocationId = geolocations.id \
+         INNER JOIN sites ON geolocationssites.siteId = sites.id \
+         INNER JOIN buildingssites ON sites.id = buildingssites.siteId \
+         INNER JOIN buildings ON buildingssites.buildingId = buildings.id \
+         INNER JOIN buildingsfloors ON buildings.id = buildingsfloors.buildingId \
+         INNER JOIN floors ON buildingsfloors.floorId = floors.id \
+         INNER JOIN closetsfloors ON floors.id = closetsfloors.floorId \
+         INNER JOIN closets ON closetsfloors.closetId = closets.id \
+         INNER JOIN closetsdevices ON closets.id = closetsdevices.closetId \
+         INNER JOIN devices ON closetsdevices.deviceId = devices.id ";
+    */
+    var view_productsAllDetails_DROP = "DROP VIEW `view_productsalldetails`";
+    var view_productsAllDetails =
+        "CREATE VIEW `view_productsalldetails` AS SELECT \
+        productfamilies.id as productfamilies_id, productfamilies.name as productfamilies_name, productfamilies.deleted  as productfamilies_deleted, \
+        products.id as product_id, products.name as product_name, products.part as product_part, products.deleted as product_deleted \
+        FROM productfamilies INNER JOIN products ON productfamilies.id = products.productfamilyId ";
+    var view_closetAllDetails_DROP="DROP VIEW `view_closetalldetails`";
+    var view_closetAllDetails =
+        "CREATE VIEW `view_closetalldetails` AS SELECT \
+        geolocations.id as geolocation_id, geolocations.name as geolocation_name, geolocations.code as geolocation_code, geolocations.deleted as geolocation_deleted, \
+        sites.id as site_id, sites.name as site_name, sites.code as site_code, sites.canbedeleted as site_canbedeleted, sites.category as site_category, sites.deleted as site_deleted, \
+        buildings.id as building_id, buildings.name as building_name, buildings.canbedeleted as building_canbedeleted, buildings.deleted as building_deleted, \
+        floors.id as floor_id, floors.name as floor_name, floors.canbedeleted as floor_canbedeleted, floors.deleted as floor_deleted, \
+        closets.id as closet_id, closets.name as closet_name, closets.spare as closet_spare, closets.canbedeleted as closet_canbedeleted, closets.deleted as closet_deleted \
+        FROM \
+        geolocationssites INNER JOIN geolocations ON geolocationssites.geolocationId = geolocations.id \
+        INNER JOIN sites ON geolocationssites.siteId = sites.id \
+        INNER JOIN buildingssites ON sites.id = buildingssites.siteId \
+        INNER JOIN buildings ON buildingssites.buildingId = buildings.id \
+        INNER JOIN buildingsfloors ON buildings.id = buildingsfloors.buildingId \
+        INNER JOIN floors ON buildingsfloors.floorId = floors.id \
+        INNER JOIN closetsfloors ON floors.id = closetsfloors.floorId \
+        INNER JOIN closets ON closetsfloors.closetId = closets.id";
+
+
+    //chainerDrop.add(sequelize.query(view_devicesAllDetails_DROP,null, {raw: true}));
+    //chainer.add(sequelize.query(view_devicesAllDetails,null, {raw: true}));
+    chainerDrop.add(sequelize.query(view_productsAllDetails_DROP,null, {raw: true}));
+    chainer.add(sequelize.query(view_productsAllDetails,null, {raw: true}));
+    chainerDrop.add(sequelize.query(view_closetAllDetails_DROP,null, {raw: true}));
+    chainer.add(sequelize.query(view_closetAllDetails,null, {raw: true}));
+
+    chainerDrop
+        .runSerially({ skipOnError: true })
+        .on('success', function() {
+            chainer
+                .run({ skipOnError: true })
+                .on('success', function() {
+                    console.log("Creating Views");
+                })
+                .on('failure', function(err) {
+                    console.log("Creating Views - error", err);
+                });
+        })
+        .on('failure', function(err) {
+            chainer
+                .run({ skipOnError: true })
+                .on('success', function() {
+                    console.log("Creating Views");
+                })
+                .on('failure', function(err) {
+                    console.log("Creating Views - error", err);
+                });
+        });
+
+};

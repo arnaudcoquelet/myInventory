@@ -79,6 +79,19 @@ exports.details_json = function(req, res, model){
     }
 };
 
+exports.listAllDetails_json = function(req, res, model){
+    if(model){
+        model.getProductAllDetails( function(err,products){
+            res.json(products);
+        });
+    }
+    else{ res.json([]);}
+};
+
+exports.selectView = function(req, res, model){
+    res.render('productSelect',{ title: 'MyInventory', breadcrumbs: [] });
+};
+
 exports.create = function(req, res, model){
     var productfamilyid = req.params.productfamilyid;
     var name = req.body.productName;
@@ -90,8 +103,7 @@ exports.create = function(req, res, model){
     if(!productfamilyid || productfamilyid==='') { error = 'Missing the Product family'; }
 
     model.createProductWithProductFamilyId(productfamilyid,name,part, function(err,site){
-        console.log("----------");
-        req.method = 'get';
+        res.method = 'get';
         res.redirect('/admin/productfamily/' + productfamilyid);
     } );
 

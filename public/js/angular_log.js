@@ -86,7 +86,6 @@ function ctrlLog($scope, $filter, $http, $templateCache) {
 
         $http({method: method, url: url, cache: $templateCache})
             .success(function(data, status) {
-                console.log(data);
                 $scope.items = data;
                 $scope.search();
             });
@@ -105,11 +104,12 @@ function ctrlLog($scope, $filter, $http, $templateCache) {
             $(this).removeClass().addClass('glyphicon glyphicon-sort');
         });
 
-        console.log('new_sorting_order:', newSortingOrder);
         if ($scope.reverse)
             $('th.'+newSortingOrder+' i').removeClass().addClass('glyphicon glyphicon-chevron-up');
         else
             $('th.'+newSortingOrder+' i').removeClass().addClass('glyphicon glyphicon-chevron-down');
+
+        $scope.search();
     };
 
     $scope.fecthItems();

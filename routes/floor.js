@@ -2,68 +2,55 @@
  * Created by ArnaudCoquelet on 10/4/13.
  */
 exports.list = function (req, res, model) {
-    var sitecode = req.params.sitecode;
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
-    var breadcrumbs = [
-        {name: 'Sites', url: '/sites', class: ''},
-        {name: sitecode, url: '', class: ''},
-        {name: buildingid, url: '', class: ''}
-    ];
 
-    if (sitecode && buildingid && model) {
-        model.findSiteByCode(sitecode, function (err, site) {
-            if (err) {
-                res.redirect("/sites/" + sitecode);
-            }
-            if (site) {
-                model.findBuildingById(buildingid, function (err, building) {
-                    if (err) {
-                        res.redirect("/sites/" + sitecode + "/building/" + buildingid);
-                    }
-                    if (building) {
-                        building.getFloors()
-                            .on('success', function (floors) {
+    if(model){
+        model.findGeolocationById(geolocationid, function(err, geolocation){
+            if(err){res.redirect('/geolocation');}
+            if(!geolocation){res.redirect('/geolocation');}
 
-                                breadcrumbs = [
-                                    {name: 'Sites', url: '/sites', class: ''},
-                                    {name: site.code, url: '/sites/' + site.code, class: ''},
-                                    {name: building.name, url: '', class: 'active'}
-                                ];
+            model.findSiteById(siteid, function(err, site){
+                if(err){res.redirect('/geolocation/' + geolocation.id + '/site');}
+                if(!site){res.redirect('/geolocation/' + geolocation.id + '/site');}
 
-                                res.render('floorList', { title: 'MyInventory',
-                                    site: site,
-                                    building: building,
-                                    floors: floors,
-                                    breadcrumbs: breadcrumbs });
-                            });
-                    }
-                });
-            }
-        })
+                model.findBuildingById(buildingid, function(err, building){
+                    if(err){res.redirect('/geolocation/' + geolocation.id + '/site/' + siteid + '/building');}
+                    if(!building){res.redirect('/geolocation/' + geolocation.id + '/site/' + siteid + '/building');}
+
+                    var breadcrumbs = [
+                        {name: 'Geolocation', url: '/geolocation', class: ''},
+                        {name: geolocation.name , url: '/geolocation/' + geolocation.id, class: ''},
+                        {name: site.name , url: '/geolocation/' + geolocation.id + '/site/' + site.id, class: ''},
+                        {name: building.name , url: '', class: 'active'}
+                    ];
+
+                    res.render('floorList',
+                        {
+                            title: 'MyInventory',
+                            geolocation: geolocation,
+                            site: site,
+                            building: building,
+                            breadcrumbs: breadcrumbs
+                        });
+
+                })
+            });
+        });
     }
-    else {
-        res.redirect("/Sites");
-    }
+    else {res.redirect('/geolocation'); }
 };
 
 exports.list_json = function (req, res, model) {
-    var sitecode = req.params.sitecode;
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
 
-    if (sitecode && buildingid && model) {
-        model.findSiteByCode(sitecode, function (err, site) {
-            if (err) { res.json([]);  }
-            if (site) {
-                model.findBuildingById(buildingid, function (err, building) {
-                    if (err) {res.json([]);}
-                    if (building) {
-                        building.getFloors()
-                            .on('success', function (floors) {
-                                res.json(floors);
-                            });
-                    }
-                });
-            }
+    if (model) {
+        model.findFloorAllByBuildingId(buildingid, function (err, floors) {
+            if (err) {res.json([]);}
+            res.json(floors);
         })
     }
     else {
@@ -71,82 +58,60 @@ exports.list_json = function (req, res, model) {
     }
 };
 
-exports.details = function (req, res, model) {
-    var sitecode = req.params.sitecode;
+exports.create = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
-    var floorid = req.params.floorid;
 
-    var breadcrumbs = [
-        {name: 'Sites', url: '/sites', class: ''}
-    ];
+    var name = req.body.name;
+    var error = '';
+    res.method = 'get';
 
-    if (sitecode && buildingid && floorid && model) {
-        model.findSiteByCode(sitecode, function (err, site) {
-            if (err) {
-                res.redirect("/sites/" + sitecode);
-            }
-            if (site) {
-                model.findBuildingById(buildingid, function (err, building) {
-                    if (err) {
-                        res.redirect("/sites/" + sitecode + "/building/" + buildingid);
-                    }
-                    if (building) {
-                        model.findFloorById(floorid, function (err, floor) {
-                            if (err) {
-                                res.redirect("/sites/" + sitecode + "/building/" + buildingid);
-                            }
+    if (!name || name === '') { error = 'Missing the Floor name'; }
 
-                            if (floor) {
-                                floor.getClosets()
-                                    .on('success', function (closets) {
-                                        breadcrumbs = [
-                                            {name: 'Sites', url: '/sites', class: ''},
-                                            {name: site.code, url: '/sites/' + site.code, class: ''},
-                                            {name: building.name, url: '/sites/' + site.code + '/building/' + building.id, class: ''},
-                                            {name: floor.name, url: '', class: 'active'}
-                                        ];
-
-                                        res.render('floorDetails', { title: 'MyInventory',
-                                            site: site,
-                                            building: building,
-                                            floor: floor,
-                                            closets: closets,
-                                            breadcrumbs: breadcrumbs });
-                                    });
-                            }
-                        });
-                    }
-                });
-            }
-        })
+    if(model){
+        model.createFloorWithBuildingId(buildingid,name, function (err, floor) {
+            res.redirect('/geolocation/' + geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floor.id);
+        });
     }
-    else {
-        res.redirect("/Sites");
-    }
+    else { res.redirect('/geolocation/' + geolocationid + '/site/' + siteid + '/building/' + buildingid);}
 };
 
-exports.create = function (req, res, model) {
-    var sitecode = req.params.sitecode,
-        buildingid = req.params.buildingid,
-        floorname = req.body.name;
+exports.update = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
+    var buildingid = req.params.buildingid;
 
+    var id   = req.body.id;
+    var name = req.body.name;
     var error = '';
-    if (!buildingid || buildingid === '') {
-        error = 'Missing the Building Id';
-    }
-    if (!floorname || floorname === '') {
-        error = 'Missing the Floor Name';
-    }
+    res.method = 'get';
 
-    model.createFloorWithBuildingId(buildingid, floorname, function (err, floor) {
-        console.log("----------");
-        req.method = 'get';
-        res.redirect('/Sites/' + sitecode + '/building/' + buildingid);
-    });
-
+    if (!id   ||   id === '') { error = 'Missing the Floor Id'; }
+    if (!name || name === '') { error = 'Missing the Floor'; }
+    if(model){
+        model.updateFloorById(id, name, function (err, floor) {
+            res.redirect('/geolocation/' + geolocationid + '/site/' + siteid + '/building/' + buildingid);
+        });
+    }
+    else { res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid + '/building/' + buildingid);}
 };
 
 exports.delete = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
+    var buildingid = req.params.buildingid;
 
-    res.render('siteList', { title: 'MyInventory' });
+    var id = req.body.id;
+    res.method = 'get';
+
+    if (!id   ||   id === '') { error = 'Missing the Floor Id'; }
+    if(id && model){
+        model.deleteFloorById(id, function(err, site){
+            res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid + '/building/' + buildingid);
+        })
+    }
+    else {
+        res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid + '/building/' + buildingid);
+    }
 };

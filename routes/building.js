@@ -1,126 +1,142 @@
 /**
  * Created by ArnaudCoquelet on 10/4/13.
  */
-exports.list = function(req, res, model){
-    var sitecode = req.params.sitecode;
-    var breadcrumbs = [{name:'Sites',url:'/sites',class: ''}];
+exports.list = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
 
-    if(sitecode && model){
-        model.findSiteByCode(sitecode, function(err,site){
-            if(err){res.redirect("/Sites/" + sitecode);}
-            if(site){
-                var buildings = site.getBuildings()
-                    .on('success', function(buildings){
-                        if(buildings && !buildings instanceof Array) {buildings=[];}
+    if(model){
+        model.findGeolocationById(geolocationid, function(err, geolocation){
+            if(err){res.redirect('/geolocation');}
+            if(!geolocation){res.redirect('/geolocation');}
 
-                        breadcrumbs = [{name:'Sites',url:'/sites',class: ''},{name:site.code + '-' + site.name,url:'',class: 'active'}];
+            model.findSiteById(siteid, function(err, site){
+                if(err){res.redirect('/geolocation/' + geolocation.id + '/site');}
+                if(!site){res.redirect('/geolocation/' + geolocation.id + '/site');}
 
-                        res.render('buildingList', { title: 'MyInventory',
-                            site: site,
-                            buildings: buildings,
-                            breadcrumbs: breadcrumbs });
+                var breadcrumbs = [
+                    {name: 'Geolocation', url: '/geolocation', class: ''},
+                    {name: geolocation.name , url: '/geolocation/' + geolocation.id, class: ''},
+                    {name: site.name , url: '', class: 'active'}
+                ];
+
+                res.render('buildingList',
+                    {
+                        title: 'MyInventory',
+                        geolocation: geolocation,
+                        site: site,
+                        breadcrumbs: breadcrumbs
                     });
-            }
-        })
+
+            });
+        });
     }
-    else
-    {
-        res.redirect("/Sites");
-    }
+    else {res.redirect('/geolocation'); }
 };
 
-exports.list_json = function(req, res, model){
-    var sitecode = req.params.sitecode;
+exports.list_json = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
 
-    if(sitecode && model){
-        model.findSiteByCode(sitecode, function(err,site){
-            if(err){res.json([]);}
-            if(site){
-                var buildings = site.getBuildings()
-                    .on('success', function(buildings){
-                        if(buildings && !buildings instanceof Array) {res.json([]);}
-
-                        res.json(buildings);
-                    });
-            }
+    if (model) {
+        model.findBuildingAllBySiteId(siteid, function (err, buidlings) {
+            if (err) {res.json([]);}
+            res.json(buidlings);
         })
     }
-    else
-    {
+    else {
         res.json([]);
     }
 };
 
-exports.details = function(req, res, model){
-    var sitecode = req.params.sitecode;
-    var buildingid = req.params.buildingid;
+/*
+exports.details = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
+    var id = req.params.id;
+    var breadcrumbs = [ {name: 'Geolocation', url: '/geolocation', class: ''} ];
 
-    var breadcrumbs = [ {name:'Sites',url:'/sites',class: ''},
-                        {name:sitecode,url:'/sites/' + sitecode,class: ''},
-                        {name:buildingid,url:'',class: 'active'}
-    ];
+    if (id && model) {
+        model.findGeolocationById(geolocationid, function(err, geolocation) {
+            if (err) { res.redirect("/geolocation"); }
+            if (! geolocation) { res.redirect("/geolocation"); }
 
-    if(buildingid && model){
-        model.findBuildingById(buildingid, function(err,building){
-            if(err){
-                console.log(err);
-                console.log("Corresponding Building not found");
-                res.redirect("/Sites/" + sitecode);}
+            model.findSiteById(siteid, function(err,site){
+                if (err) { res.redirect("/geolocation/" + geolocation.id + '/site'); }
+                if (! site) { res.redirect("/geolocation/" + geolocation.id + '/site'); }
 
-            if(building){
-                building.getSites()
+                site.getBuildings()
                     .on('success', function(sites){
-                        console.log(sites);
-                        if(sites && !sites instanceof Array) {
-                            console.log("Corresponding site information not found");
-                            res.redirect("/Sites/" + sitecode);
-                        }
+                        breadcrumbs = [
+                            {name: 'Geolocation', url: '/geolocation', class: ''},
+                            {name: geolocation.name, url: '', class: 'active'}
+                        ];
 
-                        building.getFloors()
-                            .on('success', function(floors){
-                                if(floors && !floors instanceof Array) {
-                                    floors = [];
-                                }
-
-                                var breadcrumbs = [ {name:'Sites',url:'/sites',class: ''},
-                                    {name:sitecode,url:'/sites/' + sitecode,class: ''},
-                                    {name:building.name,url:'',class: 'active'}
-                                ];
-
-                                res.render('buildingDetails', { title: 'MyInventory',
-                                    site: sites[0],
-                                    building: building,
-                                    floors: floors,
-                                    breadcrumbs: breadcrumbs
-                                });
-                            });
+                        res.render('siteList', { title: 'MyInventory',
+                            geolocation: geolocation,
+                            site: site,
+                            buildings: buildings,
+                            breadcrumbs: breadcrumbs });
                     });
-            }
+            });
+        });
+    }
+    else {
+        res.redirect("/geolocation");
+    }
+};
+*/
+
+exports.create = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
+    var name = req.body.name;
+    var error = '';
+    res.method = 'get';
+
+    if (!name || name === '') { error = 'Missing the Site name'; }
+
+    if(model){
+        model.createBuildingWithSiteId(siteid,name, function (err, buidling) {
+            res.redirect('/geolocation/' + geolocationid + '/site/' + siteid);
+        });
+    }
+    else { res.redirect('/geolocation/' + geolocationid + '/site/' + siteid);}
+};
+
+exports.update = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
+    var id   = req.body.id;
+    var name = req.body.name;
+    var code = req.body.code;
+    var error = '';
+    res.method = 'get';
+
+    if (!id   ||   id === '') { error = 'Missing the Geolocation Id'; }
+    if (!name || name === '') { error = 'Missing the Geolocation'; }
+    if (!code || code === '') { error = 'Missing the Code'; }
+    if(model){
+        model.updateBuildingById(id, name, function (err, buidling) {
+            res.redirect('/geolocation/' + geolocationid + '/site/' + siteid);
+        });
+    }
+    else { res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid);}
+};
+
+exports.delete = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+    var siteid = req.params.siteid;
+    var id = req.body.id;
+    res.method = 'get';
+
+    if (!id   ||   id === '') { error = 'Missing the Geolocation Id'; }
+    if(id && model){
+        model.deleteBuildingById(id, function(err, site){
+            res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid);
         })
     }
-    else
-    {
-        res.redirect("/Sites");
+    else {
+        res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid);
     }
-};
-
-exports.create = function(req, res, model){
-    var sitecode = req.params.sitecode,
-        buildingname = req.body.buildingname;
-
-    var error='';
-    if(!sitecode || sitecode==='') { error = 'Missing the Site Code'; }
-    if(!buildingname || buildingname==='') { error = 'Missing the Building Name'; }
-
-    model.createBuildingWithSitecode(sitecode, buildingname, function(err,building){
-        console.log("----------");
-        req.method = 'get';
-        res.redirect('/Sites/' + sitecode + '/building');
-    } );
-
-};
-
-exports.delete = function(req, res, model){
-
-    res.render('siteList', { title: 'MyInventory' });
 };

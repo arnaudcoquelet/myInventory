@@ -60,7 +60,7 @@ exports.create = function (req, res, model) {
     var name = req.body.name;
     var code = req.body.code;
     var error = '';
-    req.method = 'get';
+    res.method = 'get';
 
     if (!name || name === '') { error = 'Missing the Geolocation'; }
     if (!code || code === '') { error = 'Missing the Code'; }
@@ -77,7 +77,7 @@ exports.update = function (req, res, model) {
     var name = req.body.name;
     var code = req.body.code;
     var error = '';
-    req.method = 'get';
+    res.method = 'get';
 
     if (!id   ||   id === '') { error = 'Missing the Geolocation Id'; }
     if (!name || name === '') { error = 'Missing the Geolocation'; }
@@ -92,7 +92,7 @@ exports.update = function (req, res, model) {
 
 exports.delete = function (req, res, model) {
     var id = req.body.id;
-    req.method = 'get';
+    res.method = 'get';
 
     if (!id   ||   id === '') { error = 'Missing the Geolocation Id'; }
     if(id && model){

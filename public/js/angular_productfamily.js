@@ -20,8 +20,6 @@ function ctrlProductFamily($scope, $filter, $http, $templateCache) {
         return haystack.toString().toLowerCase().indexOf(needle.toLowerCase()) !== -1;
     };
 
-    console.log('productfamilyId:', $scope.productfamilyid);
-
     // init the filtered items
     $scope.search = function () {
         $scope.filteredItems = $filter('filter')($scope.items, function (item) {
@@ -86,8 +84,6 @@ function ctrlProductFamily($scope, $filter, $http, $templateCache) {
         var method = 'GET';
         var url = '/json/admin/productfamily/' + id;
 
-        console.log('productfamilyId:', id);
-
         $http({method: method, url: url, cache: $templateCache})
             .success(function(data, status) {
                 $scope.items = data;
@@ -108,11 +104,12 @@ function ctrlProductFamily($scope, $filter, $http, $templateCache) {
             $(this).removeClass().addClass('glyphicon glyphicon-sort');
         });
 
-        console.log('new_sorting_order:', newSortingOrder);
         if ($scope.reverse)
             $('th.'+newSortingOrder+' i').removeClass().addClass('glyphicon glyphicon-chevron-up');
         else
             $('th.'+newSortingOrder+' i').removeClass().addClass('glyphicon glyphicon-chevron-down');
+
+        $scope.search();
     };
 
 

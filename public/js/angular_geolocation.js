@@ -108,10 +108,11 @@ function ctrlGeolocation($scope, $filter, $http, $templateCache) {
             $(this).removeClass().addClass('glyphicon glyphicon-sort');
         });
 
-        console.log('new_sorting_order:', newSortingOrder);
         if ($scope.reverse)
             $('th.'+newSortingOrder+' i').removeClass().addClass('glyphicon glyphicon-chevron-up');
         else
             $('th.'+newSortingOrder+' i').removeClass().addClass('glyphicon glyphicon-chevron-down');
+
+        $scope.search();
     };
 };

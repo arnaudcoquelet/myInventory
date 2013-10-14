@@ -85,7 +85,7 @@ exports.create = function(req, res, model){
     if(!productfamilyName || productfamilyName==='') { error = 'Missing the product family name'; }
 
     model.createProductFamily(productfamilyName, function(err,productfamily){
-        req.method = 'get';
+        res.method = 'get';
         res.redirect('/admin/productfamily');
     } );
 

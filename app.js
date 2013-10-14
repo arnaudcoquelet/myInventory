@@ -119,64 +119,74 @@ app.get('/json/geolocation', function(req, res){geolocation.list_json(req, res, 
 app.get('/json/geolocation/details', function(req, res){geolocation.listdetails_json(req, res, model)});
 
 //Sites
-app.get('/geolocation/:geolocationid/site',ensureAuthenticated, function(req, res){site.list(req, res, model)});
+app.get ('/geolocation/:geolocationid/site',ensureAuthenticated, function(req, res){site.list(req, res, model)});
 app.post('/geolocation/:geolocationid/site/create',ensureAuthenticated, function(req, res){site.create(req, res, model)});
 app.post('/geolocation/:geolocationid/site/update',ensureAuthenticated, function(req, res){site.update(req, res, model)});
 app.post('/geolocation/:geolocationid/site/delete',ensureAuthenticated, function(req, res){site.delete(req, res, model)});
-app.get('/geolocation/:geolocationid/site/:sitecode',ensureAuthenticated, function(req, res){site.details(req, res, model)} );
-app.get('/json/geolocation/:geolocationid/site', function(req, res){site.list_json(req, res, model)});
-app.get('/json/geolocation/:geolocationid/site/details', function(req, res){site.listdetails_json(req, res, model)});
+app.get ('/geolocation/:geolocationid/site/:siteid',ensureAuthenticated, function(req, res){building.list(req, res, model)} );
+app.get ('/json/geolocation/:geolocationid/site', function(req, res){site.list_json(req, res, model)});
+app.get ('/json/geolocation/:geolocationid/site/details', function(req, res){site.listdetails_json(req, res, model)});
 
 //Buildings
-app.get('/sites/:sitecode/building',ensureAuthenticated, function(req, res){building.list(req, res, model)});
-app.post('/sites/:sitecode/building',ensureAuthenticated, function(req, res){building.create(req, res, model)});
-//app.delete('/sites/:sitecode/building/:buildingid',ensureAuthenticated, function(req, res){building.delete(req, res, model)} );
-app.get('/sites/:sitecode/building/:buildingid',ensureAuthenticated, function(req, res){building.details(req, res,model)} );
-app.get('/json/sites/:sitecode/building', function(req, res){building.list_json(req, res, model)});
-
+app.get ('/geolocation/:geolocationid/site/:siteid/building',ensureAuthenticated, function(req, res){building.list(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/create',ensureAuthenticated, function(req, res){building.create(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/update',ensureAuthenticated, function(req, res){building.update(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/delete',ensureAuthenticated, function(req, res){building.delete(req, res, model)});
+app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid',ensureAuthenticated, function(req, res){floor.list(req, res, model)} );
+app.get ('/json/geolocation/:geolocationid/site/:siteid/building', function(req, res){building.list_json(req, res, model)});
+app.get ('/json/geolocation/:geolocationid/site/:siteid/building/details', function(req, res){building.listdetails_json(req, res, model)});
 
 //Floors
-app.get('/sites/:sitecode/building/:buildingid/floor',ensureAuthenticated, function(req, res){floor.list(req, res, model)});
-app.post('/sites/:sitecode/building/:buildingid/floor',ensureAuthenticated, function(req, res){floor.create(req, res, model)});
-//app.delete('/sites/:sitecode/building/:buildingid/floor/:floorid',ensureAuthenticated, function(req, res){floor.delete(req, res, model)} );
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid',ensureAuthenticated, function(req, res){floor.details(req, res, model)} );
-app.get('/json/sites/:sitecode/building/:buildingid/floor', function(req, res){floor.list_json(req, res, model)});
+app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor',ensureAuthenticated, function(req, res){floor.list(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/create',ensureAuthenticated, function(req, res){floor.create(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/update',ensureAuthenticated, function(req, res){floor.update(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/delete',ensureAuthenticated, function(req, res){floor.delete(req, res, model)});
+app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid',ensureAuthenticated, function(req, res){closet.list(req, res, model)} );
+app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor', function(req, res){floor.list_json(req, res, model)});
+app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/details', function(req, res){floor.listdetails_json(req, res, model)});
+
 
 //Closets
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet',ensureAuthenticated, function(req, res){closet.list(req, res, model)});
-app.post('/sites/:sitecode/building/:buildingid/floor/:floorid/closet',ensureAuthenticated, function(req, res){closet.create(req, res, model)});
-//app.delete('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid',ensureAuthenticated, function(req, res){closet.delete(req, res, model)} );
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid',ensureAuthenticated, function(req, res){closet.details(req, res, model)} );
-app.get('/json/sites/:sitecode/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list_json(req, res, model)});
-
+app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet',ensureAuthenticated, function(req, res){closet.list(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/create',ensureAuthenticated, function(req, res){closet.create(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/update',ensureAuthenticated, function(req, res){closet.update(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/delete',ensureAuthenticated, function(req, res){closet.delete(req, res, model)});
+app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid',ensureAuthenticated, function(req, res){device.list(req, res, model)} );
+app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list_json(req, res, model)});
+app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/details', function(req, res){closet.listdetails_json(req, res, model)});
+app.get ('/json/closet/details', function(req, res){closet.listAllDetails_json(req, res, model)} );
 
 //Devices
-app.get('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device',ensureAuthenticated, function(req, res){device.getDeviceFromCloset(req, res, model)});
-app.post('/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device',ensureAuthenticated, function(req, res){device.createDeviceWithClosetId(req, res, model)});
-app.get('/json/sites/:sitecode/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.getDeviceFromCloset_json(req, res, model)});
+app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device',ensureAuthenticated, function(req, res){device.list(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/create',ensureAuthenticated, function(req, res){device.create(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/update',ensureAuthenticated, function(req, res){device.update(req, res, model)});
+app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/delete',ensureAuthenticated, function(req, res){device.delete(req, res, model)});
+app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.list_json(req, res, model)});
 
-app.get('/devices',ensureAuthenticated, function(req, res){device.listAll(req, res, model)});
+app.get ('/devices',ensureAuthenticated, function(req, res){device.listAll(req, res, model)});
 app.post('/devices',ensureAuthenticated, function(req, res){device.create(req, res, model)});
 //app.delete('/devices/:deviceid',ensureAuthenticated, function(req, res){device.delete(req, res, model)} );
-app.get('/devices/:deviceid',ensureAuthenticated, function(req, res){device.details(req, res, model)} );
-app.get('/json/devices', function(req, res){device.listAll_json(req, res, model)});
+app.get ('/devices/:deviceid',ensureAuthenticated, function(req, res){device.details(req, res, model)} );
+app.get ('/json/devices', function(req, res){device.listAll_json(req, res, model)});
 
 
 //Products family
-app.get('/admin/productfamily',ensureAuthenticated, function(req, res){productfamily.list(req, res, model)});
+app.get ('/admin/productfamily',ensureAuthenticated, function(req, res){productfamily.list(req, res, model)});
 app.post('/admin/productfamily',ensureAuthenticated, function(req, res){productfamily.create(req, res, model)});
-app.get('/admin/productfamily/:productfamilyid',ensureAuthenticated, function(req, res){productfamily.details(req, res, model)} );
+app.get ('/admin/productfamily/:productfamilyid',ensureAuthenticated, function(req, res){productfamily.details(req, res, model)} );
 app.delete('/admin/productfamily/:productfamilyid',ensureAuthenticated, function(req, res){productfamily.delete(req, res, model)} );
 app.post('/admin/productfamily/update',ensureAuthenticated, function(req, res){productfamily.update(req, res, model)});
 app.post('/admin/productfamily/delete',ensureAuthenticated, function(req, res){productfamily.delete(req, res, model)} );
-app.get('/json/productfamily', function(req, res){productfamily.list_json(req, res, model)});
-app.get('/json/productfamily/details', function(req, res){productfamily.listdetails_json(req, res, model)});
-app.get('/json/admin/productfamily/:productfamilyid', function(req, res){productfamily.details_json(req, res, model)} );
+app.get ('/json/productfamily', function(req, res){productfamily.list_json(req, res, model)});
+app.get ('/json/productfamily/details', function(req, res){productfamily.listdetails_json(req, res, model)});
+app.get ('/json/admin/productfamily/:productfamilyid', function(req, res){productfamily.details_json(req, res, model)} );
 
 //Products
 app.post('/admin/productfamily/:productfamilyid/product',ensureAuthenticated, function(req, res){product.create(req, res, model)});
 app.post('/admin/productfamily/:productfamilyid/product/update',ensureAuthenticated, function(req, res){product.update(req, res, model)});
 app.post('/admin/productfamily/:productfamilyid/product/delete',ensureAuthenticated, function(req, res){product.delete(req, res, model)} );
+app.get ('/admin/product/select', function(req, res){product.selectView(req, res, model)} );
+app.get ('/json/product/details', function(req, res){product.listAllDetails_json(req, res, model)} );
 
 //Logs
 app.get('/admin/audit', ensureAuthenticated, function(req, res){log.list(req, res, model)});

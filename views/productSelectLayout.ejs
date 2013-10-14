@@ -1,0 +1,62 @@
+<script src="/js/angular_productSelect.js"></script>
+<script type="text/javascript">
+    var sortingOrder = 'product_id';
+</script>
+
+<div ng-controller="ctrlProductSelect">
+    <div ng-init="fecthItems()"></div>
+    <input type="hidden" id="field_productId" name="field_productId" value="{{selectedItem.product_id}}"/>
+    <div ng-show="!selectedItem">
+    <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search" autofocus/>
+    <br/><br/>
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th class="id col-sm-1 "></th>
+            <th class="productfamilies_name col-sm-2"><small>Category &nbsp;<a ng-click="sort_by('productfamilies_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+            <th class="product_part col-sm-2"><small>Part &nbsp;<a ng-click="sort_by('product_part')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+            <th class="product_name col-sm-8"><small>Name &nbsp;<a ng-click="sort_by('product_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+            <td colspan="6">
+                <ul class="pager">
+                    <li ng-class="{disabled: currentPage == 0}">
+                        <a href ng-click="gotoPage(0)">First</a>
+                    </li>
+                    <li ng-class="{disabled: currentPage == 0}">
+                        <a href ng-click="prevPage()">« Prev</a>
+                    </li>
+                    <li ng-class="{disabled: currentPage == pagedItems.length - 1}">
+                        <a href ng-click="nextPage()">Next »</a>
+                    </li>
+                    <li ng-class="{disabled: currentPage == pagedItems.length - 1}">
+                        <a href ng-click="gotoPage(pagedItems.length - 1)">Last</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        </tfoot>
+        <tbody>
+        <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
+            <td>
+                <input type="radio" ng-model="$parent.selectedProduct" ng-change="changeSelection(item)" ng-value="item.product_id" value="{{item.product_id}}" name="selectedProduct">
+            </td>
+            <td><small>{{item.productfamilies_name}}</small></td>
+            <td><small>{{item.product_part}}</small></td>
+            <td><small>{{item.product_name}}</small></td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+    <div ng-show="selectedItem">
+        <table>
+            <tr>
+                <td class="col-sm-2"><a href="" ng-click="resetSelectedItem()">remove</a></td>
+                <td class="col-sm-2"><strong>{{selectedItem.product_part}}</strong></td>
+                <td class="col-sm-8">{{selectedItem.product_name}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

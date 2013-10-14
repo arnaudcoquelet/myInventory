@@ -2,17 +2,49 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eda3f60b-ace3-4fdc-8ac6-acb85ce8bf86" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_geolocation.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_site.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/routes/geolocation.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/geolocationList.ejs" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/views/siteList.ejs" afterPath="$PROJECT_DIR$/views/siteList_old.ejs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_building.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_closet.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_closetSelect.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_device.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_floor.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_productSelect.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/closetSelectLayout.ejs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/productSelect.ejs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/productSelectLayout.ejs" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\public\js\angular_closets.js" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\routes\building_old.js" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\routes\closet_old.js" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\routes\floor_old.js" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\routes\site_old.js" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\views\buildingDetails_old.ejs" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\views\buildingList_old.ejs" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\views\closetDetails_old.ejs" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\views\closetList_old.ejs" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\views\floorDetails_old.ejs" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\views\floorList_old.ejs" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\views\siteDetails_old.ejs" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\views\siteList_old.ejs" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/routes/device.js" afterPath="$PROJECT_DIR$/routes/device_old.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/views/deviceList.ejs" afterPath="$PROJECT_DIR$/views/deviceList_old.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_geolocation.js" afterPath="$PROJECT_DIR$/public/js/angular_geolocation.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_log.js" afterPath="$PROJECT_DIR$/public/js/angular_log.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_productfamily.js" afterPath="$PROJECT_DIR$/public/js/angular_productfamily.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_site.js" afterPath="$PROJECT_DIR$/public/js/angular_site.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/globalLayout.ejs" afterPath="$PROJECT_DIR$/views/globalLayout.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/building.js" afterPath="$PROJECT_DIR$/routes/building.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/buildingList.ejs" afterPath="$PROJECT_DIR$/views/buildingList.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/closet.js" afterPath="$PROJECT_DIR$/routes/closet.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/closetList.ejs" afterPath="$PROJECT_DIR$/views/closetList.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/device.js" afterPath="$PROJECT_DIR$/routes/device.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/deviceList.ejs" afterPath="$PROJECT_DIR$/views/deviceList.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/floor.js" afterPath="$PROJECT_DIR$/routes/floor.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/floorList.ejs" afterPath="$PROJECT_DIR$/views/floorList.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/geolocation.js" afterPath="$PROJECT_DIR$/routes/geolocation.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/model.js" afterPath="$PROJECT_DIR$/routes/model.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/product.js" afterPath="$PROJECT_DIR$/routes/product.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/productfamily.js" afterPath="$PROJECT_DIR$/routes/productfamily.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/site.js" afterPath="$PROJECT_DIR$/routes/site.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/siteList.ejs" afterPath="$PROJECT_DIR$/views/siteList.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/user.js" afterPath="$PROJECT_DIR$/routes/user.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="MyInventory.iws" />
@@ -36,56 +68,80 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="model.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="model.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="382" column="52" selection-start="13818" selection-end="13818" vertical-scroll-proportion="-11.04" vertical-offset="3583" max-vertical-offset="20434">
+            <state line="911" column="36" selection-start="31768" selection-end="31768" vertical-scroll-proportion="0.33333334" vertical-offset="6563" max-vertical-offset="11832">
               <folding>
-                <element signature="e#1266#1511#0" expanded="false" />
-                <element signature="e#1550#1861#0" expanded="false" />
-                <element signature="e#1906#2060#0" expanded="false" />
-                <element signature="e#2104#2298#0" expanded="false" />
-                <element signature="e#2356#2498#0" expanded="false" />
-                <element signature="e#2544#2766#0" expanded="false" />
-                <element signature="e#2810#3114#0" expanded="false" />
-                <element signature="e#3156#3382#0" expanded="false" />
-                <element signature="e#3430#3651#0" expanded="false" />
-                <element signature="e#8689#9044#0" expanded="false" />
-                <element signature="e#9151#9505#0" expanded="false" />
-                <element signature="e#9602#9816#0" expanded="false" />
-                <element signature="e#9923#11074#0" expanded="false" />
-                <element signature="e#11184#11705#0" expanded="false" />
-                <element signature="e#11813#12333#0" expanded="false" />
-                <element signature="e#12478#12541#0" expanded="false" />
-                <element signature="e#12749#13089#0" expanded="false" />
-                <element signature="e#13175#13466#0" expanded="false" />
-                <element signature="e#14145#14324#0" expanded="false" />
-                <element signature="e#14410#14608#0" expanded="false" />
-                <element signature="e#16092#16850#0" expanded="false" />
-                <element signature="e#16973#17438#0" expanded="false" />
-                <element signature="e#18101#19188#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="127" column="46" selection-start="5150" selection-end="5150" vertical-scroll-proportion="0.0" vertical-offset="1887" max-vertical-offset="3315">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="site.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/routes/site.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="109" column="14" selection-start="3448" selection-end="3455" vertical-scroll-proportion="0.33238637" vertical-offset="699" max-vertical-offset="1105">
-              <folding>
-                <element signature="e#91#781#0" expanded="false" />
-                <element signature="e#831#1081#0" expanded="false" />
-                <element signature="e#1129#2044#0" expanded="false" />
+                <element signature="e#107#200#0" expanded="false" />
+                <element signature="e#239#1254#0" expanded="false" />
+                <element signature="e#1292#1603#0" expanded="false" />
+                <element signature="e#1648#1802#0" expanded="false" />
+                <element signature="e#1846#2040#0" expanded="false" />
+                <element signature="e#2098#2240#0" expanded="false" />
+                <element signature="e#2286#2508#0" expanded="false" />
+                <element signature="e#2552#2856#0" expanded="false" />
+                <element signature="e#2898#3124#0" expanded="false" />
+                <element signature="e#3172#3393#0" expanded="false" />
+                <element signature="e#3439#3893#0" expanded="false" />
+                <element signature="e#3933#4285#0" expanded="false" />
+                <element signature="e#4339#4567#0" expanded="false" />
+                <element signature="e#6622#6883#0" expanded="false" />
+                <element signature="e#6972#7418#0" expanded="false" />
+                <element signature="e#7514#7881#0" expanded="false" />
+                <element signature="e#7955#8276#0" expanded="false" />
+                <element signature="e#8473#8828#0" expanded="false" />
+                <element signature="e#8935#9242#0" expanded="false" />
+                <element signature="e#9339#9546#0" expanded="false" />
+                <element signature="e#13301#13772#0" expanded="false" />
+                <element signature="e#13878#14057#0" expanded="false" />
+                <element signature="e#14139#14337#0" expanded="false" />
+                <element signature="e#14427#15707#0" expanded="false" />
+                <element signature="e#16702#17167#0" expanded="false" />
+                <element signature="e#17254#17704#0" expanded="false" />
+                <element signature="e#17830#18917#0" expanded="false" />
+                <element signature="e#19114#19441#0" expanded="false" />
+                <element signature="e#19530#19706#0" expanded="false" />
+                <element signature="e#19808#20253#0" expanded="false" />
+                <element signature="e#20360#21378#0" expanded="false" />
+                <element signature="e#21481#22042#0" expanded="false" />
+                <element signature="e#22173#22742#0" expanded="false" />
+                <element signature="e#22862#23329#0" expanded="false" />
+                <element signature="e#23428#23884#0" expanded="false" />
+                <element signature="e#24070#24370#0" expanded="false" />
+                <element signature="e#24450#24611#0" expanded="false" />
+                <element signature="e#24712#25168#0" expanded="false" />
+                <element signature="e#26296#26859#0" expanded="false" />
+                <element signature="e#26974#27417#0" expanded="false" />
+                <element signature="e#27507#27936#0" expanded="false" />
+                <element signature="e#28118#28427#0" expanded="false" />
+                <element signature="e#28510#28676#0" expanded="false" />
+                <element signature="e#28774#29215#0" expanded="false" />
+                <element signature="e#29890#30448#0" expanded="false" />
+                <element signature="e#30560#31011#0" expanded="false" />
+                <element signature="e#31104#31541#0" expanded="false" />
+                <element signature="e#32084#32393#0" expanded="false" />
+                <element signature="e#32492#33017#0" expanded="false" />
+                <element signature="e#33120#33286#0" expanded="false" />
+                <element signature="e#33980#34528#0" expanded="false" />
+                <element signature="e#34677#35244#0" expanded="false" />
+                <element signature="e#35347#35402#0" expanded="false" />
+                <element signature="e#35460#35927#0" expanded="false" />
+                <element signature="e#36020#36458#0" expanded="false" />
+                <element signature="e#36657#37045#0" expanded="false" />
+                <element signature="e#37149#37351#0" expanded="false" />
+                <element signature="e#37461#37695#0" expanded="false" />
+                <element signature="e#38450#38995#0" expanded="false" />
+                <element signature="e#39114#39608#0" expanded="false" />
+                <element signature="e#39747#40453#0" expanded="false" />
+                <element signature="e#40659#40984#0" expanded="false" />
+                <element signature="e#41099#41674#0" expanded="false" />
+                <element signature="e#41794#41965#0" expanded="false" />
+                <element signature="e#42060#42408#0" expanded="false" />
+                <element signature="e#44434#44957#0" expanded="false" />
+                <element signature="e#45063#45539#0" expanded="false" />
+                <element signature="e#45632#45898#0" expanded="false" />
+                <element signature="e#45992#69934#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -94,16 +150,87 @@
       <file leaf-file-name="angular_site.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/js/angular_site.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="82" column="65" selection-start="2419" selection-end="2419" vertical-scroll-proportion="0.0" vertical-offset="1130" max-vertical-offset="2091">
+            <state line="109" column="0" selection-start="3193" selection-end="3193" vertical-scroll-proportion="0.0" vertical-offset="1707" max-vertical-offset="2074">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="siteList.ejs" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/siteList.ejs">
+      <file leaf-file-name="product.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/routes/product.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="78" column="39" selection-start="4166" selection-end="4166" vertical-scroll-proportion="-40.96154" vertical-offset="261" max-vertical-offset="3060">
+            <state line="104" column="89" selection-start="3706" selection-end="3706" vertical-scroll-proportion="0.0" vertical-offset="354" max-vertical-offset="731">
+              <folding>
+                <element signature="e#90#573#0" expanded="false" />
+                <element signature="e#621#803#0" expanded="false" />
+                <element signature="e#849#2082#0" expanded="false" />
+                <element signature="e#2133#2857#0" expanded="false" />
+                <element signature="e#2915#3068#0" expanded="false" />
+                <element signature="e#3856#4330#0" expanded="false" />
+                <element signature="e#4375#4828#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular_closet.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/js/angular_closet.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="109" column="0" selection-start="3267" selection-end="3267" vertical-scroll-proportion="0.0" vertical-offset="1720" max-vertical-offset="2108">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular_closetSelect.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/js/angular_closetSelect.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="27" column="37" selection-start="790" selection-end="790" vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="2329">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular_device.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/js/angular_device.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="109" column="0" selection-start="3291" selection-end="3291" vertical-scroll-proportion="0.0" vertical-offset="1728" max-vertical-offset="2108">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular_floor.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/js/angular_floor.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="109" column="0" selection-start="3243" selection-end="3243" vertical-scroll-proportion="0.0" vertical-offset="1720" max-vertical-offset="2108">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular_geolocation.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/js/angular_geolocation.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="109" column="0" selection-start="3173" selection-end="3173" vertical-scroll-proportion="0.0" vertical-offset="1720" max-vertical-offset="2108">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular_log.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/js/angular_log.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="105" column="0" selection-start="3048" selection-end="3048" vertical-scroll-proportion="0.0" vertical-offset="1656" max-vertical-offset="2074">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular_productfamily.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/js/angular_productfamily.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="105" column="0" selection-start="3071" selection-end="3071" vertical-scroll-proportion="0.0" vertical-offset="1663" max-vertical-offset="2074">
               <folding />
             </state>
           </provider>
@@ -127,22 +254,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/views/adminLayout.ejs" />
-        <option value="$PROJECT_DIR$/views/productfamilyList.ejs" />
-        <option value="$PROJECT_DIR$/routes/log.js" />
-        <option value="$PROJECT_DIR$/public/js/angular_log.js" />
-        <option value="$PROJECT_DIR$/routes/productfamily.js" />
-        <option value="$PROJECT_DIR$/views/logList.ejs" />
-        <option value="$PROJECT_DIR$/views/globalLayout.ejs" />
-        <option value="$PROJECT_DIR$/public/js/angular_geolocation.js" />
-        <option value="$PROJECT_DIR$/views/geolocationList.ejs" />
-        <option value="$PROJECT_DIR$/views/geolocationDetails.ejs" />
+        <option value="$PROJECT_DIR$/routes/device.js" />
+        <option value="$PROJECT_DIR$/routes/device_old.js" />
         <option value="$PROJECT_DIR$/routes/geolocation.js" />
-        <option value="$PROJECT_DIR$/app.js" />
+        <option value="$PROJECT_DIR$/routes/productfamily.js" />
+        <option value="$PROJECT_DIR$/routes/user.js" />
+        <option value="$PROJECT_DIR$/public/js/angular_building.js" />
+        <option value="$PROJECT_DIR$/public/js/angular_closet.js" />
+        <option value="$PROJECT_DIR$/public/js/angular_closetSelect.js" />
+        <option value="$PROJECT_DIR$/public/js/angular_device.js" />
+        <option value="$PROJECT_DIR$/public/js/angular_floor.js" />
+        <option value="$PROJECT_DIR$/public/js/angular_geolocation.js" />
+        <option value="$PROJECT_DIR$/public/js/angular_log.js" />
+        <option value="$PROJECT_DIR$/public/js/angular_productfamily.js" />
         <option value="$PROJECT_DIR$/public/js/angular_site.js" />
-        <option value="$PROJECT_DIR$/views/siteList.ejs" />
+        <option value="$PROJECT_DIR$/routes/product.js" />
         <option value="$PROJECT_DIR$/routes/model.js" />
-        <option value="$PROJECT_DIR$/routes/site.js" />
       </list>
     </option>
   </component>
@@ -194,26 +321,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyInventory" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyInventory" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="myInventory" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -235,55 +342,29 @@
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="views">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="myInventory">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
             <PATH_ELEMENT USER_OBJECT="routes">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
           <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="myInventory">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="public">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MyInventory" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MyInventory" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="myInventory">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="public">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="js">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
+            <PATH_ELEMENT>
+              <option name="myItemId" value="myInventory" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -293,32 +374,24 @@
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="options.lastSelected" value="Errors" />
     <property name="recentsLimit" value="5" />
-    <property name="restartRequiresConfirmation" value="true" />
+    <property name="options.lastSelected" value="Errors" />
     <property name="last_opened_file_path" value="C:/Program Files (x86)/nodejs/node.exe" />
+    <property name="restartRequiresConfirmation" value="true" />
     <property name="FullScreen" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Dev\myInventory\routes" />
-      <recent name="C:\Dev\myInventory\public\js" />
       <recent name="C:\Dev\myInventory\views" />
+      <recent name="C:\Dev\myInventory\public\js" />
+      <recent name="C:\Dev\myInventory\routes" />
       <recent name="C:\Users\ArnaudCoquelet\Documents\GitHub\myInventory\public\js" />
       <recent name="C:\Program Files (x86)\MyICPhone SDK\work\myInventory\views" />
     </key>
   </component>
   <component name="RunManager" selected="Node.js.app.js">
-    <configuration default="true" type="DartUnitRunConfigurationType" factoryName="DartUnit">
-      <option name="VMOptions" />
-      <option name="arguments" />
-      <option name="filePath" />
-      <option name="scope" value="ALL" />
-      <option name="testName" />
-      <method />
-    </configuration>
     <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
       <option name="VMOptions" />
       <option name="arguments" />
@@ -329,8 +402,12 @@
       <option name="showConsoleOnStdOut" value="false" />
       <method />
     </configuration>
-    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma" singleton="true" config-file="">
-      <envs />
+    <configuration default="true" type="DartUnitRunConfigurationType" factoryName="DartUnit">
+      <option name="VMOptions" />
+      <option name="arguments" />
+      <option name="filePath" />
+      <option name="scope" value="ALL" />
+      <option name="testName" />
       <method />
     </configuration>
     <configuration default="true" type="JSTestDriver:ConfigurationType" factoryName="JsTestDriver">
@@ -338,6 +415,14 @@
       <setting name="settingsFile" value="" />
       <setting name="serverType" value="INTERNAL" />
       <setting name="preferredDebugBrowser" value="CHROME" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma" singleton="true" config-file="">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSRemoteDebug" factoryName="Node.js Remote Debug">
+      <node-js-remote-debug />
       <method />
     </configuration>
     <configuration default="true" type="NodeunitConfigurationType" factoryName="Nodeunit">
@@ -348,10 +433,6 @@
       <setting name="workingDirectory" value="$PROJECT_DIR$" />
       <setting name="testType" value="JS_FILE" />
       <setting name="jsFile" value="" />
-      <method />
-    </configuration>
-    <configuration default="true" type="NodeJSRemoteDebug" factoryName="Node.js Remote Debug">
-      <node-js-remote-debug />
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
@@ -398,47 +479,27 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="54" y="-8" width="1320" height="784" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18657298" sideWeight="0.64274323" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.51384616" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35725677" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34019205" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854864" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-    </layout>
-    <layout-to-restore>
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34019205" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.51384616" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854864" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33971292" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.0952381" sideWeight="0.6602871" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.51384616" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.261563" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854864" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27088213" sideWeight="0.64274323" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35725677" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-    </layout-to-restore>
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+    </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -453,165 +514,212 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="4" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/routes/device.js</url>
+          <line>141</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="5" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/routes/user.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="23" selection-start="1177" selection-end="1177" vertical-scroll-proportion="0.8604119" vertical-offset="236" max-vertical-offset="816">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/routes/productfamily.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="0" selection-start="3186" selection-end="3186" vertical-scroll-proportion="0.24054053" vertical-offset="404" max-vertical-offset="986">
+        <state line="87" column="11" selection-start="3197" selection-end="3197" vertical-scroll-proportion="0.2948113" vertical-offset="1354" max-vertical-offset="2210">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/angular_productSelect.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="128" column="24" selection-start="3719" selection-end="3735" vertical-scroll-proportion="0.6956522" vertical-offset="1634" max-vertical-offset="2091">
           <folding>
-            <element signature="e#621#803#0" expanded="false" />
-            <element signature="e#849#2082#0" expanded="false" />
-            <element signature="e#2133#2890#0" expanded="false" />
-            <element signature="e#3802#4207#0" expanded="false" />
+            <element signature="e#2620#2896#0" expanded="false" />
+            <element signature="e#2933#3074#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/logList.ejs">
+    <entry file="file://$PROJECT_DIR$/routes/device.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="41" selection-start="859" selection-end="859" vertical-scroll-proportion="0.0" vertical-offset="357" max-vertical-offset="1275" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="437">
+          <folding>
+            <element signature="e#91#2945#0" expanded="false" />
+            <element signature="e#2995#3422#0" expanded="false" />
+            <element signature="e#3469#4458#0" expanded="false" />
+            <element signature="e#4505#5473#0" expanded="false" />
+            <element signature="e#5520#6263#0" expanded="false" />
+          </folding>
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/log.js">
+    <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="14" selection-start="371" selection-end="371" vertical-scroll-proportion="0.45257902" vertical-offset="0" max-vertical-offset="601">
+        <state line="17" column="34" selection-start="626" selection-end="626" vertical-scroll-proportion="0.0" vertical-offset="146" max-vertical-offset="3485">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/angular_building.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="110" column="0" selection-start="3222" selection-end="3222" vertical-scroll-proportion="0.0" vertical-offset="1720" max-vertical-offset="2108">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/angular_closet.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="0" selection-start="3267" selection-end="3267" vertical-scroll-proportion="0.0" vertical-offset="1720" max-vertical-offset="2108">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/angular_closetSelect.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="37" selection-start="790" selection-end="790" vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="2329">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/angular_device.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="0" selection-start="3291" selection-end="3291" vertical-scroll-proportion="0.0" vertical-offset="1728" max-vertical-offset="2108">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/angular_floor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="0" selection-start="3243" selection-end="3243" vertical-scroll-proportion="0.0" vertical-offset="1720" max-vertical-offset="2108">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/angular_geolocation.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="0" selection-start="3173" selection-end="3173" vertical-scroll-proportion="0.0" vertical-offset="1720" max-vertical-offset="2108">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/angular_log.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="35" selection-start="497" selection-end="497" vertical-scroll-proportion="0.0" vertical-offset="149" max-vertical-offset="1598">
+        <state line="105" column="0" selection-start="3048" selection-end="3048" vertical-scroll-proportion="0.0" vertical-offset="1656" max-vertical-offset="2074">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/product.js">
+    <entry file="file://$PROJECT_DIR$/public/js/angular_productfamily.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="118" column="17" selection-start="4047" selection-end="4047" vertical-scroll-proportion="0.44925123" vertical-offset="2" max-vertical-offset="646">
-          <folding>
-            <element signature="e#90#573#0" expanded="false" />
-            <element signature="e#621#803#0" expanded="false" />
-            <element signature="e#849#2082#0" expanded="false" />
-            <element signature="e#2133#2857#0" expanded="false" />
-            <element signature="e#2902#3508#0" expanded="false" />
-            <element signature="e#3553#4027#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/globalLayout.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="70" selection-start="1036" selection-end="1036" vertical-scroll-proportion="0.47240618" vertical-offset="245" max-vertical-offset="952">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/mainLayout.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1156">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/adminLayout.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="578" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/angular_geolocation.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="50" selection-start="410" selection-end="410" vertical-scroll-proportion="0.0" vertical-offset="181" max-vertical-offset="714">
-          <folding>
-            <element signature="e#410#576#0" expanded="false" />
-            <element signature="e#642#1211#0" expanded="false" />
-            <element signature="e#1283#1685#0" expanded="false" />
-            <element signature="e#1729#1935#0" expanded="false" />
-            <element signature="e#1972#2061#0" expanded="false" />
-            <element signature="e#2098#2214#0" expanded="false" />
-            <element signature="e#2250#2294#0" expanded="false" />
-            <element signature="e#2331#2603#0" expanded="false" />
-            <element signature="e#2640#2781#0" expanded="false" />
-            <element signature="e#2857#3482#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/geolocationList.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="63" selection-start="3000" selection-end="3000" vertical-scroll-proportion="0.6804734" vertical-offset="688" max-vertical-offset="1411">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/geolocation.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="13" selection-start="1532" selection-end="1532" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="782">
+        <state line="105" column="0" selection-start="3071" selection-end="3071" vertical-scroll-proportion="0.0" vertical-offset="1663" max-vertical-offset="2074">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/angular_site.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="82" column="65" selection-start="2419" selection-end="2419" vertical-scroll-proportion="0.0" vertical-offset="1130" max-vertical-offset="2091">
+        <state line="109" column="0" selection-start="3193" selection-end="3193" vertical-scroll-proportion="0.0" vertical-offset="1707" max-vertical-offset="2074">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/siteList.ejs">
+    <entry file="file://$PROJECT_DIR$/routes/product.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="39" selection-start="4166" selection-end="4166" vertical-scroll-proportion="-40.96154" vertical-offset="261" max-vertical-offset="3060">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="127" column="46" selection-start="5150" selection-end="5150" vertical-scroll-proportion="0.0" vertical-offset="1887" max-vertical-offset="3315">
-          <folding />
+        <state line="104" column="89" selection-start="3706" selection-end="3706" vertical-scroll-proportion="0.0" vertical-offset="354" max-vertical-offset="731">
+          <folding>
+            <element signature="e#90#573#0" expanded="false" />
+            <element signature="e#621#803#0" expanded="false" />
+            <element signature="e#849#2082#0" expanded="false" />
+            <element signature="e#2133#2857#0" expanded="false" />
+            <element signature="e#2915#3068#0" expanded="false" />
+            <element signature="e#3856#4330#0" expanded="false" />
+            <element signature="e#4375#4828#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/model.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="382" column="52" selection-start="13818" selection-end="13818" vertical-scroll-proportion="-11.04" vertical-offset="3583" max-vertical-offset="20434">
+        <state line="911" column="36" selection-start="31768" selection-end="31768" vertical-scroll-proportion="0.33333334" vertical-offset="6563" max-vertical-offset="11832">
           <folding>
-            <element signature="e#1266#1511#0" expanded="false" />
-            <element signature="e#1550#1861#0" expanded="false" />
-            <element signature="e#1906#2060#0" expanded="false" />
-            <element signature="e#2104#2298#0" expanded="false" />
-            <element signature="e#2356#2498#0" expanded="false" />
-            <element signature="e#2544#2766#0" expanded="false" />
-            <element signature="e#2810#3114#0" expanded="false" />
-            <element signature="e#3156#3382#0" expanded="false" />
-            <element signature="e#3430#3651#0" expanded="false" />
-            <element signature="e#8689#9044#0" expanded="false" />
-            <element signature="e#9151#9505#0" expanded="false" />
-            <element signature="e#9602#9816#0" expanded="false" />
-            <element signature="e#9923#11074#0" expanded="false" />
-            <element signature="e#11184#11705#0" expanded="false" />
-            <element signature="e#11813#12333#0" expanded="false" />
-            <element signature="e#12478#12541#0" expanded="false" />
-            <element signature="e#12749#13089#0" expanded="false" />
-            <element signature="e#13175#13466#0" expanded="false" />
-            <element signature="e#14145#14324#0" expanded="false" />
-            <element signature="e#14410#14608#0" expanded="false" />
-            <element signature="e#16092#16850#0" expanded="false" />
-            <element signature="e#16973#17438#0" expanded="false" />
-            <element signature="e#18101#19188#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/site.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="109" column="14" selection-start="3448" selection-end="3455" vertical-scroll-proportion="0.33238637" vertical-offset="699" max-vertical-offset="1105">
-          <folding>
-            <element signature="e#91#781#0" expanded="false" />
-            <element signature="e#831#1081#0" expanded="false" />
-            <element signature="e#1129#2044#0" expanded="false" />
+            <element signature="e#107#200#0" expanded="false" />
+            <element signature="e#239#1254#0" expanded="false" />
+            <element signature="e#1292#1603#0" expanded="false" />
+            <element signature="e#1648#1802#0" expanded="false" />
+            <element signature="e#1846#2040#0" expanded="false" />
+            <element signature="e#2098#2240#0" expanded="false" />
+            <element signature="e#2286#2508#0" expanded="false" />
+            <element signature="e#2552#2856#0" expanded="false" />
+            <element signature="e#2898#3124#0" expanded="false" />
+            <element signature="e#3172#3393#0" expanded="false" />
+            <element signature="e#3439#3893#0" expanded="false" />
+            <element signature="e#3933#4285#0" expanded="false" />
+            <element signature="e#4339#4567#0" expanded="false" />
+            <element signature="e#6622#6883#0" expanded="false" />
+            <element signature="e#6972#7418#0" expanded="false" />
+            <element signature="e#7514#7881#0" expanded="false" />
+            <element signature="e#7955#8276#0" expanded="false" />
+            <element signature="e#8473#8828#0" expanded="false" />
+            <element signature="e#8935#9242#0" expanded="false" />
+            <element signature="e#9339#9546#0" expanded="false" />
+            <element signature="e#13301#13772#0" expanded="false" />
+            <element signature="e#13878#14057#0" expanded="false" />
+            <element signature="e#14139#14337#0" expanded="false" />
+            <element signature="e#14427#15707#0" expanded="false" />
+            <element signature="e#16702#17167#0" expanded="false" />
+            <element signature="e#17254#17704#0" expanded="false" />
+            <element signature="e#17830#18917#0" expanded="false" />
+            <element signature="e#19114#19441#0" expanded="false" />
+            <element signature="e#19530#19706#0" expanded="false" />
+            <element signature="e#19808#20253#0" expanded="false" />
+            <element signature="e#20360#21378#0" expanded="false" />
+            <element signature="e#21481#22042#0" expanded="false" />
+            <element signature="e#22173#22742#0" expanded="false" />
+            <element signature="e#22862#23329#0" expanded="false" />
+            <element signature="e#23428#23884#0" expanded="false" />
+            <element signature="e#24070#24370#0" expanded="false" />
+            <element signature="e#24450#24611#0" expanded="false" />
+            <element signature="e#24712#25168#0" expanded="false" />
+            <element signature="e#26296#26859#0" expanded="false" />
+            <element signature="e#26974#27417#0" expanded="false" />
+            <element signature="e#27507#27936#0" expanded="false" />
+            <element signature="e#28118#28427#0" expanded="false" />
+            <element signature="e#28510#28676#0" expanded="false" />
+            <element signature="e#28774#29215#0" expanded="false" />
+            <element signature="e#29890#30448#0" expanded="false" />
+            <element signature="e#30560#31011#0" expanded="false" />
+            <element signature="e#31104#31541#0" expanded="false" />
+            <element signature="e#32084#32393#0" expanded="false" />
+            <element signature="e#32492#33017#0" expanded="false" />
+            <element signature="e#33120#33286#0" expanded="false" />
+            <element signature="e#33980#34528#0" expanded="false" />
+            <element signature="e#34677#35244#0" expanded="false" />
+            <element signature="e#35347#35402#0" expanded="false" />
+            <element signature="e#35460#35927#0" expanded="false" />
+            <element signature="e#36020#36458#0" expanded="false" />
+            <element signature="e#36657#37045#0" expanded="false" />
+            <element signature="e#37149#37351#0" expanded="false" />
+            <element signature="e#37461#37695#0" expanded="false" />
+            <element signature="e#38450#38995#0" expanded="false" />
+            <element signature="e#39114#39608#0" expanded="false" />
+            <element signature="e#39747#40453#0" expanded="false" />
+            <element signature="e#40659#40984#0" expanded="false" />
+            <element signature="e#41099#41674#0" expanded="false" />
+            <element signature="e#41794#41965#0" expanded="false" />
+            <element signature="e#42060#42408#0" expanded="false" />
+            <element signature="e#44434#44957#0" expanded="false" />
+            <element signature="e#45063#45539#0" expanded="false" />
+            <element signature="e#45632#45898#0" expanded="false" />
+            <element signature="e#45992#69934#0" expanded="false" />
           </folding>
         </state>
       </provider>

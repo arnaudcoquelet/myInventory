@@ -98,10 +98,10 @@ exports.update = function (req, res, model) {
     if (!code || code === '') { error = 'Missing the Code'; }
     if(model){
         model.updateSiteById(id, name, code, function (err, site) {
-            res.redirect('/geolocation/' + geolocationid + '/site/');
+            res.redirect('/geolocation/' + geolocationid + '/site');
         });
     }
-    else { res.redirect('/geolocation/'+ geolocationid + '/site/');}
+    else { res.redirect('/geolocation/'+ geolocationid + '/site');}
 };
 
 exports.delete = function (req, res, model) {
@@ -112,10 +112,10 @@ exports.delete = function (req, res, model) {
     if (!id   ||   id === '') { error = 'Missing the Geolocation Id'; }
     if(id && model){
         model.deleteSiteById(id, function(err, site){
-            res.redirect('/geolocation/'+ geolocationid + '/site/');
+            res.redirect('/geolocation/'+ geolocationid + '/site');
         })
     }
     else {
-        res.redirect('/geolocation/'+ geolocationid + '/site/');
+        res.redirect('/geolocation/'+ geolocationid + '/site');
     }
 };
