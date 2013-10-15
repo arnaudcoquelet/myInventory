@@ -1020,11 +1020,55 @@ var _createDeviceWithClosetId = function (closetid,productid, name, serial, next
 };
 exports.createDeviceWithClosetId = _createDeviceWithClosetId;
 
-var _findDeviceAllDetails = function(){
-    var sql = "SELECT * from device_fulldetails";
-
-
+var _findDeviceAllDetails = function(next){
+    var sql = "SELECT * from view_devicesalldetails where device_deleted=0";
+    sequelize.query(sql, null, {raw: true})
+        .success(function(devices) {
+            if (!devices){ if(next) next("Devices not found", false);}
+            if(next) next(null, devices);
+        });
 };
+exports.findDeviceAllDetails = _findDeviceAllDetails;
+
+var _findDeviceAllGeolocationDetails = function(geolocationid, next){
+    var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND geolocation_id=" + geolocationid;
+    sequelize.query(sql, null, {raw: true})
+        .success(function(devices) {
+            if (!devices){ if(next) next("Devices not found", false);}
+            if(next) next(null, devices);
+        });
+};
+exports.findDeviceAllGeolocationDetails = _findDeviceAllGeolocationDetails;
+
+var _findDeviceAllSiteDetails = function(siteid, next){
+    var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND site_id=" + siteid;
+    sequelize.query(sql, null, {raw: true})
+        .success(function(devices) {
+            if (!devices){ if(next) next("Devices not found", false);}
+            if(next) next(null, devices);
+        });
+};
+exports.findDeviceAllSiteDetails = _findDeviceAllSiteDetails;
+
+var _findDeviceAllBuildingDetails = function(buildingid, next){
+    var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND building_id=" + buildingid;
+    sequelize.query(sql, null, {raw: true})
+        .success(function(devices) {
+            if (!devices){ if(next) next("Devices not found", false);}
+            if(next) next(null, devices);
+        });
+};
+exports.findDeviceAllBuildingDetails = _findDeviceAllBuildingDetails;
+
+var _findDeviceAllFloorDetails = function(floorid, next){
+    var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND floor_id=" + floorid;
+    sequelize.query(sql, null, {raw: true})
+        .success(function(devices) {
+            if (!devices){ if(next) next("Devices not found", false);}
+            if(next) next(null, devices);
+        });
+};
+exports.findDeviceAllFloorDetails = _findDeviceAllFloorDetails;
 
 var _updateDeviceById = function(id, name,serial, next){
     _findDeviceById(id, function(err, device){
@@ -1609,28 +1653,33 @@ exports.createLog = _createLog;
 var _createViews = function() {
     var chainer = new Sequelize.Utils.QueryChainer;
     var chainerDrop = new Sequelize.Utils.QueryChainer;
-    /*
+
     var view_devicesAllDetails_DROP = "DROP VIEW `view_devicesalldetails`";
     var view_devicesAllDetails =
         "CREATE VIEW `view_devicesalldetails` AS SELECT \
-         geolocations.id AS geolocation_id, geolocations.name AS geolocation_name, geolocations.code AS geolocation_code, geolocations.deleted AS geolocation_deleted, \
-         sites.id AS site_id, sites.name AS site_name, sites.code AS site_code, sites.canbedeleted AS site_canbedeleted, sites.category AS site_category, sites.deleted AS site_deleted, \
-         buildings.id AS building_id, buildings.name AS building_name, buildings.canbedeleted AS building_canbedeleted, buildings.deleted AS building_deleted, \
-         floors.id AS floor_id, floors.name AS floor_name, floors.canbedeleted AS floor_canbedeleted, floors.deleted AS floor_deleted, \
-         closets.id AS closet_id, closets.name AS closet_name, closets.spare AS closet_spare, closets.canbedeleted AS closet_canbedeleted, closets.deleted AS closet_deleted, \
-         devices.id AS devices_id, devices.name AS devices_name, devices.serial AS devices_serial, devices.deleted AS devices_deleted \
-         FROM \
-         geolocationssites INNER JOIN geolocations ON geolocationssites.geolocationId = geolocations.id \
-         INNER JOIN sites ON geolocationssites.siteId = sites.id \
-         INNER JOIN buildingssites ON sites.id = buildingssites.siteId \
-         INNER JOIN buildings ON buildingssites.buildingId = buildings.id \
-         INNER JOIN buildingsfloors ON buildings.id = buildingsfloors.buildingId \
-         INNER JOIN floors ON buildingsfloors.floorId = floors.id \
-         INNER JOIN closetsfloors ON floors.id = closetsfloors.floorId \
-         INNER JOIN closets ON closetsfloors.closetId = closets.id \
-         INNER JOIN closetsdevices ON closets.id = closetsdevices.closetId \
-         INNER JOIN devices ON closetsdevices.deviceId = devices.id ";
-    */
+        geolocations.id as geolocation_id, geolocations.name as geolocation_name, geolocations.code as geolocation_code, geolocations.deleted as geolocation_deleted, \
+        sites.id as site_id, sites.name as site_name, sites.code as site_code, sites.canbedeleted  as site_canbedeleted, sites.category as site_category, sites.deleted as site_deleted, \
+        buildings.id as building_id, buildings.name as building_name, buildings.canbedeleted as building_canbedeleted, buildings.deleted as building_deleted, \
+        floors.id as floor_id, floors.name as floor_name, floors.canbedeleted as floor_canbedeleted, floors.deleted as floor_deleted, \
+        closets.id as closet_id, closets.name as closet_name, closets.spare as closet_spare, closets.canbedeleted as closet_canbedeleted, closets.deleted as closet_deleted, \
+        devices.id as device_id, devices.name as device_name, devices.serial as device_serial, devices.deleted as device_deleted, \
+        products.id as product_id, products.name as product_name, products.part as product_part, products.deleted as product_deleted, \
+        productfamilies.id as productfamily_id, productfamilies.name as productfamily_name, productfamilies.deleted  as productfamily_deleted \
+        FROM \
+        geolocationssites INNER JOIN geolocations ON geolocationssites.geolocationId = geolocations.id \
+        INNER JOIN sites ON geolocationssites.siteId = sites.id \
+        INNER JOIN buildingssites ON sites.id = buildingssites.siteId \
+        INNER JOIN buildings ON buildingssites.buildingId = buildings.id \
+        INNER JOIN buildingsfloors ON buildings.id = buildingsfloors.buildingId \
+        INNER JOIN floors ON buildingsfloors.floorId = floors.id \
+        INNER JOIN closetsfloors ON floors.id = closetsfloors.floorId \
+        INNER JOIN closets ON closetsfloors.closetId = closets.id \
+        INNER JOIN closetsdevices ON closets.id = closetsdevices.closetId \
+        INNER JOIN devices ON closetsdevices.deviceId = devices.id \
+        INNER JOIN devicesproducts ON devices.id = devicesproducts.deviceId \
+        INNER JOIN products ON devicesproducts.productId = products.id \
+        INNER JOIN productfamilies ON products.productfamilyId = productfamilies.id";
+
     var view_productsAllDetails_DROP = "DROP VIEW `view_productsalldetails`";
     var view_productsAllDetails =
         "CREATE VIEW `view_productsalldetails` AS SELECT \
@@ -1656,8 +1705,8 @@ var _createViews = function() {
         INNER JOIN closets ON closetsfloors.closetId = closets.id";
 
 
-    //chainerDrop.add(sequelize.query(view_devicesAllDetails_DROP,null, {raw: true}));
-    //chainer.add(sequelize.query(view_devicesAllDetails,null, {raw: true}));
+    chainerDrop.add(sequelize.query(view_devicesAllDetails_DROP,null, {raw: true}));
+    chainer.add(sequelize.query(view_devicesAllDetails,null, {raw: true}));
     chainerDrop.add(sequelize.query(view_productsAllDetails_DROP,null, {raw: true}));
     chainer.add(sequelize.query(view_productsAllDetails,null, {raw: true}));
     chainerDrop.add(sequelize.query(view_closetAllDetails_DROP,null, {raw: true}));

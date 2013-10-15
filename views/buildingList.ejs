@@ -4,6 +4,7 @@
 <script type="text/javascript">
     var geolocationId = <%= geolocation.id %>;
     var siteId = <%= site.id %>;
+    var devicePath = '/json/devices/site/<%=site.id%>';
     var sortingOrder = 'id';
 </script>
 
@@ -66,6 +67,8 @@
     </div>
 </div>
 <br/>
+
+<% include deviceListAll_partial %>
 
 <!--Modals-->
 <div class="modal" tabindex="-1" role="dialog" id="modalAdd" aria-labelledby="modalAddLabel"

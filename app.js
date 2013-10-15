@@ -7,22 +7,16 @@ var flash = require('connect-flash');
 var LocalStrategy = require('passport-local').Strategy;
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        console.log("LocalStrategy()");
         if(model){
             model.findUserByUsername(username, function(err, user) {
                 if(err) { return done(null, false, err);   }
                 if (!user) {
                     return done(null, false, { message: 'Incorrect username.' });
                 }
-                console.log("User:");
-                console.log(user);
-                console.log("User Password:" + user.getDataValue('password'));
-                console.log("Entered Password:" + password);
                 if (user.getDataValue('password') !== password) {
                     return done(null, false, { message: 'Incorrect password.' });
                 }
 
-                console.log("User " + username + " identified");
                 done(null, user);
             });
         }
@@ -34,14 +28,10 @@ passport.use(new LocalStrategy(
 ));
 
 passport.serializeUser(function(user, done) {
-    console.log('serializeUser()');
-    console.log(user.getDataValue('id'));
-
     return done(null, user.getDataValue('id'));
 });
 
 passport.deserializeUser(function(id, done) {
-    console.log('deserializeUser()');
     if(!model){ return done(null, false, { message: 'Model not load.' });}
 
     model.findUserById(id, function(err, user) {
@@ -94,7 +84,6 @@ if ('development' == app.get('env')) {
 
 
 var ensureAuthenticated = function (req, res, next) {
-    console.log('ensureAuthenticated()');
     if (req.isAuthenticated()) { return next(); }
     res.redirect('/login')
 };
@@ -102,7 +91,7 @@ var ensureAuthenticated = function (req, res, next) {
 
 app.get('/',ensureAuthenticated, routes.index);
 app.get('/login', login.login);
-app.post('/login', passport.authenticate('local', { successRedirect: '/geolocation', failureRedirect: '/login', failureFlash: false }));
+app.post('/login', passport.authenticate('local', { successRedirect: '/geolocation', failureRedirect: '/login', failureFlash: true, failureFlash: 'Invalid username or password.', successFlash: 'Welcome!' }));
 app.get('/users',ensureAuthenticated, user.list);
 app.get('/register', user.register);
 app.post('/register', function(req, res){user.registration(req, res, model)} );
@@ -168,7 +157,10 @@ app.post('/devices',ensureAuthenticated, function(req, res){device.create(req, r
 //app.delete('/devices/:deviceid',ensureAuthenticated, function(req, res){device.delete(req, res, model)} );
 app.get ('/devices/:deviceid',ensureAuthenticated, function(req, res){device.details(req, res, model)} );
 app.get ('/json/devices', function(req, res){device.listAll_json(req, res, model)});
-
+app.get ('/json/devices/geolocation/:geolocationid', function(req, res){device.listAllGeolocation_json(req, res, model)});
+app.get ('/json/devices/site/:siteid', function(req, res){device.listAllSite_json(req, res, model)});
+app.get ('/json/devices/building/:buildingid', function(req, res){device.listAllBuilding_json(req, res, model)});
+app.get ('/json/devices/floor/:floorid', function(req, res){device.listAllFloor_json(req, res, model)});
 
 //Products family
 app.get ('/admin/productfamily',ensureAuthenticated, function(req, res){productfamily.list(req, res, model)});

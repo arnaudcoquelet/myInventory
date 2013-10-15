@@ -6,6 +6,7 @@
     var siteId = <%= site.id %>;
     var buildingId = <%= building.id %>;
     var floorId = <%= floor.id %>;
+    var devicePath = '/json/devices/floor/<%=floor.id%>';
     var sortingOrder = 'id';
 </script>
 
@@ -68,6 +69,8 @@
     </div>
 </div>
 <br/>
+
+<% include deviceListAll_partial %>
 
 <!--Modals-->
 <div class="modal" tabindex="-1" role="dialog" id="modalAdd" aria-labelledby="modalAddLabel"

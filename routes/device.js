@@ -77,12 +77,12 @@ exports.create = function (req, res, model) {
     var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
     var floorid = req.params.floorid;
-    //var closetid = req.params.closetid;
+    var closetid = req.params.closetid;
 
     var name = req.body.name;
     var serial = req.body.serial;
     var productid = req.body.field_productId;
-    var closetid = req.body.field_closetId;
+    var closetid2 = req.body.field_closetId;
     var error = '';
     res.method = 'get';
 
@@ -90,7 +90,10 @@ exports.create = function (req, res, model) {
     if (!serial || serial === '') { error = 'Missing the Serial #'; }
 
     if(model){
-        model.createDeviceWithClosetId(closetid,productid,name,serial, function (err, device) {
+        console.log('productid', productid);
+        console.log('closetid2', closetid2);
+
+        model.createDeviceWithClosetId(closetid2,productid,name,serial, function (err, device) {
             res.redirect('/geolocation/' + geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid );
         });
     }
@@ -141,4 +144,84 @@ exports.delete = function (req, res, model) {
     else {
         res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);
     }
+};
+
+
+exports.listAll = function (req, res, model) {
+    if(model){
+        var breadcrumbs = [{name: 'Devices'    , url: '', class: 'active'}];
+        res.render('deviceListAll',
+            {
+                title: 'MyInventory',
+                breadcrumbs: breadcrumbs
+            });
+    }
+    else {res.redirect('/'); }
+};
+
+exports.listAll_json = function (req, res, model) {
+    if(model){
+        model.findDeviceAllDetails(function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.json(devices);
+        });
+    }
+    else {res.json([]); }
+};
+
+exports.listAllGeolocation_json = function (req, res, model) {
+    var geolocationid = req.params.geolocationid;
+
+    if(model){
+        model.findDeviceAllGeolocationDetails(geolocationid, function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.json(devices);
+        });
+    }
+    else {res.json([]); }
+};
+
+exports.listAllSite_json = function (req, res, model) {
+    var siteid = req.params.siteid;
+
+    if(model){
+        model.findDeviceAllSiteDetails(siteid,function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.json(devices);
+        });
+    }
+    else {res.json([]); }
+};
+
+exports.listAllBuilding_json = function (req, res, model) {
+    var buildingid = req.params.buildingid;
+    if(model){
+        model.findDeviceAllBuildingDetails(buildingid,function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.json(devices);
+        });
+    }
+    else {res.json([]); }
+};
+
+exports.listAllFloor_json = function (req, res, model) {
+    var floorid = req.params.floorid;
+
+    if(model){
+        model.findDeviceAllFloorDetails(floorid,function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.json(devices);
+        });
+    }
+    else {res.json([]); }
 };
