@@ -22,32 +22,11 @@ function ctrlDeviceListAll($scope, $filter, $http, $templateCache) {
     // init the filtered items
     $scope.search = function () {
         $scope.filteredItems = $filter('filter')($scope.items, function (item) {
-            var filterResult = true;
-            if($scope.filterItem){
-                for(var attr in item) {
-                    if($scope.filterItem){
-                        if($scope.filterItem[attr]){
-                            if (! searchMatch(item[attr], $scope.filterItem[attr])){
-                                filterResult = filterResult && false;
-                            }
-                        }
-                    }
-                    else{
-                        return true;
-                    }
-                    //console.log(attr, item[attr], $scope.query, $scope.filterItem);
-                    //if (searchMatch(item[attr], $scope.query))
-                    //    return true;
-                }
-                return filterResult;
+            for(var attr in item) {
+                if (searchMatch(item[attr], $scope.query))
+                    return true;
             }
-            else
-            {
-                return true;
-            }
-
-
-            //return false;
+            return false;
         });
         // take care of the sorting order
         if ($scope.sortingOrder !== '') {

@@ -1,0 +1,24 @@
+a.custom-tooltip {
+    position: relative;
+    text-decoration: none;
+}
+a.custom-tooltip span.custom-tooltip {display: none;}
+a.custom-tooltip:hover span.custom-tooltip {
+    display: block;
+    position: absolute;
+    padding: .5em;
+    content: attr(title);
+    min-width: 200px;
+    min-height: 200px;
+    width: auto;
+    height: auto;
+    white-space: nowrap;
+    top: -30px;
+    left: 30px;
+    background: rgba(0,114,64,.8);
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    border-radius:10px;
+    color: #fff;
+    font-size: .86em;
+}

@@ -14,30 +14,30 @@
                 </div>
 
                 <div class="panel-body">
-                    <!-- <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search"/> -->
+                    <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search"/>
                     <br/><br/>
                     <table class="table table-striped table-hover">
                         <thead>
                         <tr>
-                            <th class="device_id col-sm-1">
+                            <th class="device_id">
                                 <small># &nbsp;<a ng-click="sort_by('device_id')"><i
-                                                class="glyphicon glyphicon-sort"></i></a></small>
+                                            class="glyphicon glyphicon-sort"></i></a></small>
                             </th>
                             <th class="device_serial col-sm-1">
                                 <small>Serial # &nbsp;<a ng-click="sort_by('device_serial')"><i
-                                                class="glyphicon glyphicon-sort"></i></a></small>
+                                            class="glyphicon glyphicon-sort"></i></a></small>
                             </th>
                             <th class="device_name col-sm-1">
                                 <small>Name &nbsp;<a ng-click="sort_by('device_name')"><i
-                                                class="glyphicon glyphicon-sort"></i></a></small>
+                                            class="glyphicon glyphicon-sort"></i></a></small>
                             </th>
                             <th class="productfamily_name col-sm-1">
                                 <small>Category &nbsp;<a ng-click="sort_by('productfamily_name')"><i
-                                                class="glyphicon glyphicon-sort"></i></a></small>
+                                            class="glyphicon glyphicon-sort"></i></a></small>
                             </th>
                             <th class="product_name">
                                 <small>Product &nbsp;<a ng-click="sort_by('product_name')"><i
-                                                class="glyphicon glyphicon-sort"></i></a></small>
+                                            class="glyphicon glyphicon-sort"></i></a></small>
                             </th>
                             <th class="location">
                                 <small>Location</small>
@@ -45,26 +45,6 @@
                             <th class="col-sm-1"><a href="#modalAddDevice" role="button" data-toggle="modal"
                                                     class="glyphicon glyphicon-plus-sign"></a></th>
                         </tr>
-                        <tr>
-                            <th class="device_id">
-                            </th>
-                            <th class="device_serial col-sm-1">
-                                <input type="text" ng-model="filterItem.device_serial" ng-change="search()" placeholder="Serial"/>
-                            </th>
-                            <th class="device_name col-sm-1">
-                                <input type="text" ng-model="filterItem.device_name" ng-change="search()" placeholder="Name"/>
-                            </th>
-                            <th class="productfamily_name col-sm-1">
-                                <input type="text" ng-model="filterItem.productfamily_name" ng-change="search()" placeholder="Category"/>
-                            </th>
-                            <th class="product_name">
-                                <input type="text" ng-model="filterItem.product_name" ng-change="search()" placeholder="Product"/>
-                            </th>
-                            <th class="location">
-                            </th>
-                            <th class="col-sm-1"></th>
-                        </tr>
-
                         </thead>
                         <tfoot>
                         <tr>
@@ -88,7 +68,7 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
-                            <td><a href="#" class="custom-tooltip"><span class="label label-info">i</span><span class="custom-tooltip">{{item.device_name}}</span></a>  <small>{{item.device_id}}</small></td>
+                            <td><small>{{item.device_id}}</small></td>
                             <td><small>{{item.device_serial}}</small></td>
                             <td><small>{{item.device_name}}</small></td>
                             <td><small>{{item.productfamily_name}}</small></td>
@@ -105,7 +85,6 @@
                             <td>
                                 <a href="#modalEditDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" class="open-EditDevice glyphicon glyphicon-pencil" title="edit"></a>
                                 <a href="#modalDeleteDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" class="open-DeleteDevice glyphicon glyphicon-remove" title="delete"></a>
-                                <a href="#modalCommentDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" class="open-CommentDevice glyphicon glyphicon-comment" title="comments ()"></a>
                             </td>
                         </tr>
                         </tbody>
