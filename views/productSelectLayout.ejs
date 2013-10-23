@@ -13,7 +13,7 @@
         <thead>
         <tr>
             <th class="id col-sm-1 "></th>
-            <th class="productfamilies_name col-sm-2"><small>Category &nbsp;<a ng-click="sort_by('productfamilies_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+            <th class="productcategories_name col-sm-2"><small>Category &nbsp;<a ng-click="sort_by('productcategories_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
             <th class="product_part col-sm-2"><small>Part &nbsp;<a ng-click="sort_by('product_part')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
             <th class="product_name col-sm-8"><small>Name &nbsp;<a ng-click="sort_by('product_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
         </tr>
@@ -43,7 +43,7 @@
             <td>
                 <input type="radio" ng-model="$parent.selectedProduct" ng-change="changeSelection(item)" ng-value="item.product_id" value="{{item.product_id}}" name="selectedProduct">
             </td>
-            <td><small>{{item.productfamilies_name}}</small></td>
+            <td><small>{{item.productcategories_name}}</small></td>
             <td><small>{{item.product_part}}</small></td>
             <td><small>{{item.product_name}}</small></td>
         </tr>

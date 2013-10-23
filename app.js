@@ -48,13 +48,13 @@ var model = require('./routes/model');
 var http = require('http');
 var path = require('path');
 
-var geolocation = require('./routes/geolocation');
+var sitegroup = require('./routes/sitegroup');
 var site = require('./routes/site');
 var building = require('./routes/building');
 var floor = require('./routes/floor');
 var closet = require('./routes/closet');
 var device = require('./routes/device');
-var productfamily = require('./routes/productfamily');
+var ProductCategory = require('./routes/ProductCategory');
 var product = require('./routes/product');
 var log = require('./routes/log');
 
@@ -91,92 +91,92 @@ var ensureAuthenticated = function (req, res, next) {
 
 app.get('/',ensureAuthenticated, routes.index);
 app.get('/login', login.login);
-app.post('/login', passport.authenticate('local', { successRedirect: '/geolocation', failureRedirect: '/login', failureFlash: true, failureFlash: 'Invalid username or password.', successFlash: 'Welcome!' }));
+app.post('/login', passport.authenticate('local', { successRedirect: '/sitegroup', failureRedirect: '/login', failureFlash: true, failureFlash: 'Invalid username or password.', successFlash: 'Welcome!' }));
 app.get('/users',ensureAuthenticated, user.list);
 app.get('/register', user.register);
 app.post('/register', function(req, res){user.registration(req, res, model)} );
 app.get('/logout',ensureAuthenticated, function(req, res){req.logout();res.redirect('/');});
 
 
-//Geolocations
-app.get('/geolocation',ensureAuthenticated, function(req, res){geolocation.list(req, res, model)});
-app.post('/geolocation/create',ensureAuthenticated, function(req, res){geolocation.create(req, res, model)});
-app.post('/geolocation/update',ensureAuthenticated, function(req, res){geolocation.update(req, res, model)});
-app.post('/geolocation/delete',ensureAuthenticated, function(req, res){geolocation.delete(req, res, model)});
-app.get('/geolocation/:geolocationid',ensureAuthenticated, function(req, res){site.list(req, res, model)} );
-app.get('/json/geolocation', function(req, res){geolocation.list_json(req, res, model)});
-app.get('/json/geolocation/details', function(req, res){geolocation.listdetails_json(req, res, model)});
+//SiteGroups
+app.get('/sitegroup',ensureAuthenticated, function(req, res){sitegroup.list(req, res, model)});
+app.post('/sitegroup/create',ensureAuthenticated, function(req, res){sitegroup.create(req, res, model)});
+app.post('/sitegroup/update',ensureAuthenticated, function(req, res){sitegroup.update(req, res, model)});
+app.post('/sitegroup/delete',ensureAuthenticated, function(req, res){sitegroup.delete(req, res, model)});
+app.get('/sitegroup/:sitegroupid',ensureAuthenticated, function(req, res){site.list(req, res, model)} );
+app.get('/json/sitegroup', function(req, res){sitegroup.list_json(req, res, model)});
+app.get('/json/sitegroup/details', function(req, res){sitegroup.listdetails_json(req, res, model)});
 
 //Sites
-app.get ('/geolocation/:geolocationid/site',ensureAuthenticated, function(req, res){site.list(req, res, model)});
-app.post('/geolocation/:geolocationid/site/create',ensureAuthenticated, function(req, res){site.create(req, res, model)});
-app.post('/geolocation/:geolocationid/site/update',ensureAuthenticated, function(req, res){site.update(req, res, model)});
-app.post('/geolocation/:geolocationid/site/delete',ensureAuthenticated, function(req, res){site.delete(req, res, model)});
-app.get ('/geolocation/:geolocationid/site/:siteid',ensureAuthenticated, function(req, res){building.list(req, res, model)} );
-app.get ('/json/geolocation/:geolocationid/site', function(req, res){site.list_json(req, res, model)});
-app.get ('/json/geolocation/:geolocationid/site/details', function(req, res){site.listdetails_json(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site',ensureAuthenticated, function(req, res){site.list(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/create',ensureAuthenticated, function(req, res){site.create(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/update',ensureAuthenticated, function(req, res){site.update(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/delete',ensureAuthenticated, function(req, res){site.delete(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site/:siteid',ensureAuthenticated, function(req, res){building.list(req, res, model)} );
+app.get ('/json/sitegroup/:sitegroupid/site', function(req, res){site.list_json(req, res, model)});
+app.get ('/json/sitegroup/:sitegroupid/site/details', function(req, res){site.listdetails_json(req, res, model)});
 
 //Buildings
-app.get ('/geolocation/:geolocationid/site/:siteid/building',ensureAuthenticated, function(req, res){building.list(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/create',ensureAuthenticated, function(req, res){building.create(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/update',ensureAuthenticated, function(req, res){building.update(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/delete',ensureAuthenticated, function(req, res){building.delete(req, res, model)});
-app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid',ensureAuthenticated, function(req, res){floor.list(req, res, model)} );
-app.get ('/json/geolocation/:geolocationid/site/:siteid/building', function(req, res){building.list_json(req, res, model)});
-app.get ('/json/geolocation/:geolocationid/site/:siteid/building/details', function(req, res){building.listdetails_json(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site/:siteid/building',ensureAuthenticated, function(req, res){building.list(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/create',ensureAuthenticated, function(req, res){building.create(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/update',ensureAuthenticated, function(req, res){building.update(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/delete',ensureAuthenticated, function(req, res){building.delete(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid',ensureAuthenticated, function(req, res){floor.list(req, res, model)} );
+app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building', function(req, res){building.list_json(req, res, model)});
+app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/details', function(req, res){building.listdetails_json(req, res, model)});
 
 //Floors
-app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor',ensureAuthenticated, function(req, res){floor.list(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/create',ensureAuthenticated, function(req, res){floor.create(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/update',ensureAuthenticated, function(req, res){floor.update(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/delete',ensureAuthenticated, function(req, res){floor.delete(req, res, model)});
-app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid',ensureAuthenticated, function(req, res){closet.list(req, res, model)} );
-app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor', function(req, res){floor.list_json(req, res, model)});
-app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/details', function(req, res){floor.listdetails_json(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor',ensureAuthenticated, function(req, res){floor.list(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/create',ensureAuthenticated, function(req, res){floor.create(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/update',ensureAuthenticated, function(req, res){floor.update(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/delete',ensureAuthenticated, function(req, res){floor.delete(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid',ensureAuthenticated, function(req, res){closet.list(req, res, model)} );
+app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor', function(req, res){floor.list_json(req, res, model)});
+app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/details', function(req, res){floor.listdetails_json(req, res, model)});
 
 
 //Closets
-app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet',ensureAuthenticated, function(req, res){closet.list(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/create',ensureAuthenticated, function(req, res){closet.create(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/update',ensureAuthenticated, function(req, res){closet.update(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/delete',ensureAuthenticated, function(req, res){closet.delete(req, res, model)});
-app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid',ensureAuthenticated, function(req, res){device.list(req, res, model)} );
-app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list_json(req, res, model)});
-app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/details', function(req, res){closet.listdetails_json(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet',ensureAuthenticated, function(req, res){closet.list(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/create',ensureAuthenticated, function(req, res){closet.create(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/update',ensureAuthenticated, function(req, res){closet.update(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/delete',ensureAuthenticated, function(req, res){closet.delete(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid',ensureAuthenticated, function(req, res){device.list(req, res, model)} );
+app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list_json(req, res, model)});
+app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/details', function(req, res){closet.listdetails_json(req, res, model)});
 app.get ('/json/closet/details', function(req, res){closet.listAllDetails_json(req, res, model)} );
 
 //Devices
-app.get ('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device',ensureAuthenticated, function(req, res){device.list(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/create',ensureAuthenticated, function(req, res){device.create(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/update',ensureAuthenticated, function(req, res){device.update(req, res, model)});
-app.post('/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/delete',ensureAuthenticated, function(req, res){device.delete(req, res, model)});
-app.get ('/json/geolocation/:geolocationid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.list_json(req, res, model)});
+app.get ('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device',ensureAuthenticated, function(req, res){device.list(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/create',ensureAuthenticated, function(req, res){device.create(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/update',ensureAuthenticated, function(req, res){device.update(req, res, model)});
+app.post('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device/delete',ensureAuthenticated, function(req, res){device.delete(req, res, model)});
+app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device', function(req, res){device.list_json(req, res, model)});
 
 app.get ('/devices',ensureAuthenticated, function(req, res){device.listAll(req, res, model)});
 app.post('/devices',ensureAuthenticated, function(req, res){device.create(req, res, model)});
 //app.delete('/devices/:deviceid',ensureAuthenticated, function(req, res){device.delete(req, res, model)} );
 app.get ('/devices/:deviceid',ensureAuthenticated, function(req, res){device.details(req, res, model)} );
 app.get ('/json/devices', function(req, res){device.listAll_json(req, res, model)});
-app.get ('/json/devices/geolocation/:geolocationid', function(req, res){device.listAllGeolocation_json(req, res, model)});
+app.get ('/json/devices/sitegroup/:sitegroupid', function(req, res){device.listAllSiteGroup_json(req, res, model)});
 app.get ('/json/devices/site/:siteid', function(req, res){device.listAllSite_json(req, res, model)});
 app.get ('/json/devices/building/:buildingid', function(req, res){device.listAllBuilding_json(req, res, model)});
 app.get ('/json/devices/floor/:floorid', function(req, res){device.listAllFloor_json(req, res, model)});
 
-//Products family
-app.get ('/admin/productfamily',ensureAuthenticated, function(req, res){productfamily.list(req, res, model)});
-app.post('/admin/productfamily',ensureAuthenticated, function(req, res){productfamily.create(req, res, model)});
-app.get ('/admin/productfamily/:productfamilyid',ensureAuthenticated, function(req, res){productfamily.details(req, res, model)} );
-app.delete('/admin/productfamily/:productfamilyid',ensureAuthenticated, function(req, res){productfamily.delete(req, res, model)} );
-app.post('/admin/productfamily/update',ensureAuthenticated, function(req, res){productfamily.update(req, res, model)});
-app.post('/admin/productfamily/delete',ensureAuthenticated, function(req, res){productfamily.delete(req, res, model)} );
-app.get ('/json/productfamily', function(req, res){productfamily.list_json(req, res, model)});
-app.get ('/json/productfamily/details', function(req, res){productfamily.listdetails_json(req, res, model)});
-app.get ('/json/admin/productfamily/:productfamilyid', function(req, res){productfamily.details_json(req, res, model)} );
+//Products Category
+app.get ('/admin/ProductCategory',ensureAuthenticated, function(req, res){ProductCategory.list(req, res, model)});
+app.post('/admin/ProductCategory',ensureAuthenticated, function(req, res){ProductCategory.create(req, res, model)});
+app.get ('/admin/ProductCategory/:ProductCategoryid',ensureAuthenticated, function(req, res){ProductCategory.details(req, res, model)} );
+app.delete('/admin/ProductCategory/:ProductCategoryid',ensureAuthenticated, function(req, res){ProductCategory.delete(req, res, model)} );
+app.post('/admin/ProductCategory/update',ensureAuthenticated, function(req, res){ProductCategory.update(req, res, model)});
+app.post('/admin/ProductCategory/delete',ensureAuthenticated, function(req, res){ProductCategory.delete(req, res, model)} );
+app.get ('/json/ProductCategory', function(req, res){ProductCategory.list_json(req, res, model)});
+app.get ('/json/ProductCategory/details', function(req, res){ProductCategory.listdetails_json(req, res, model)});
+app.get ('/json/admin/ProductCategory/:ProductCategoryid', function(req, res){ProductCategory.details_json(req, res, model)} );
 
 //Products
-app.post('/admin/productfamily/:productfamilyid/product',ensureAuthenticated, function(req, res){product.create(req, res, model)});
-app.post('/admin/productfamily/:productfamilyid/product/update',ensureAuthenticated, function(req, res){product.update(req, res, model)});
-app.post('/admin/productfamily/:productfamilyid/product/delete',ensureAuthenticated, function(req, res){product.delete(req, res, model)} );
+app.post('/admin/ProductCategory/:ProductCategoryid/product',ensureAuthenticated, function(req, res){product.create(req, res, model)});
+app.post('/admin/ProductCategory/:ProductCategoryid/product/update',ensureAuthenticated, function(req, res){product.update(req, res, model)});
+app.post('/admin/ProductCategory/:ProductCategoryid/product/delete',ensureAuthenticated, function(req, res){product.delete(req, res, model)} );
 app.get ('/admin/product/select', function(req, res){product.selectView(req, res, model)} );
 app.get ('/json/product/details', function(req, res){product.listAllDetails_json(req, res, model)} );
 

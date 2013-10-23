@@ -2,7 +2,7 @@
 </br></br>
 <script src="/js/angular_building.js"></script>
 <script type="text/javascript">
-    var geolocationId = <%= geolocation.id %>;
+    var sitegroupId = <%= sitegroup.id %>;
     var siteId = <%= site.id %>;
     var devicePath = '/json/devices/site/<%=site.id%>';
     var sortingOrder = 'id';
@@ -53,7 +53,7 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
-                            <td><a href="/geolocation/<%= geolocation.id%>/site/<%=site.id%>/building/{{item.id}}">{{item.id}}</a></td>
+                            <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/{{item.id}}">{{item.id}}</a></td>
                             <td>{{item.name}}</td>
                             <td>
                                 <a href="#modalEdit" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-Edit glyphicon glyphicon-pencil" title="edit"></a>
@@ -80,7 +80,7 @@
                 <h3>Add a new Buidling</h3>
             </div>
             <div class="modal-body">
-                <form role="form" class="form-horizontal" action="/geolocation/<%= geolocation.id%>/site/<%= site.id%>/building/create" method="post">
+                <form role="form" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/create" method="post">
                     <div class="form-group">
                         <div class="col-lg-10">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
@@ -114,7 +114,7 @@
                 <h3>Edit</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="editForm" class="form-horizontal" action="/geolocation/<%= geolocation.id%>/site/<%= site.id%>/building/update" method="post">
+                <form role="form" id="editForm" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/update" method="post">
                     <div class="form-group">
                         <div class="editFields">
                             <input type="hidden" class="form-control" id="id" name="id"/>
@@ -149,7 +149,7 @@
                 <h3>You are about to delete</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="deleteForm" class="form-horizontal" action="/geolocation/<%= geolocation.id%>/site/<%= site.id%>/building/delete" method="post">
+                <form role="form" id="deleteForm" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/delete" method="post">
                     <div class="form-group">
                         <div class="deleteFields">
                             <input type="hidden" class="form-control" id="id" name="id"/>

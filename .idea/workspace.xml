@@ -2,12 +2,39 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eda3f60b-ace3-4fdc-8ac6-acb85ce8bf86" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/js/angular_deviceListAll_old.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/stylesheets/custom-tooltip.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/deviceListAll_partial_old.ejs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_deviceListAll.js" afterPath="$PROJECT_DIR$/public/js/angular_deviceListAll.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/routes/productcategory.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/routes/sitegroup.js" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\routes\geolocation.js" afterPath="" />
+      <change type="DELETED" beforePath="C:\Dev\myInventory\routes\productfamily.js" afterPath="" />
+      <change type="MOVED" beforePath="C:\Dev\myInventory\public\js\angular_geolocation.js" afterPath="$PROJECT_DIR$/public/js/angular_sitegroup.js" />
+      <change type="MOVED" beforePath="C:\Dev\myInventory\public\js\angular_productfamily.js" afterPath="$PROJECT_DIR$/public/js/angular_productcategory.js" />
+      <change type="MOVED" beforePath="C:\Dev\myInventory\views\geolocationList.ejs" afterPath="$PROJECT_DIR$/views/sitegroupList.ejs" />
+      <change type="MOVED" beforePath="C:\Dev\myInventory\views\productfamilyDetails.ejs" afterPath="$PROJECT_DIR$/views/productcategoryDetails.ejs" />
+      <change type="MOVED" beforePath="C:\Dev\myInventory\views\productfamilyList.ejs" afterPath="$PROJECT_DIR$/views/productcategoryList.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_building.js" afterPath="$PROJECT_DIR$/public/js/angular_building.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_closet.js" afterPath="$PROJECT_DIR$/public/js/angular_closet.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_device.js" afterPath="$PROJECT_DIR$/public/js/angular_device.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_floor.js" afterPath="$PROJECT_DIR$/public/js/angular_floor.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_log.js" afterPath="$PROJECT_DIR$/public/js/angular_log.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/angular_site.js" afterPath="$PROJECT_DIR$/public/js/angular_site.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/building.js" afterPath="$PROJECT_DIR$/routes/building.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/buildingList.ejs" afterPath="$PROJECT_DIR$/views/buildingList.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/closet.js" afterPath="$PROJECT_DIR$/routes/closet.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/closetList.ejs" afterPath="$PROJECT_DIR$/views/closetList.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/closetSelectLayout.ejs" afterPath="$PROJECT_DIR$/views/closetSelectLayout.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/device.js" afterPath="$PROJECT_DIR$/routes/device.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/deviceList.ejs" afterPath="$PROJECT_DIR$/views/deviceList.ejs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/deviceListAll_partial.ejs" afterPath="$PROJECT_DIR$/views/deviceListAll_partial.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/deviceListAll_partial_old.ejs" afterPath="$PROJECT_DIR$/views/deviceListAll_partial_old.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/floor.js" afterPath="$PROJECT_DIR$/routes/floor.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/floorList.ejs" afterPath="$PROJECT_DIR$/views/floorList.ejs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/globalLayout.ejs" afterPath="$PROJECT_DIR$/views/globalLayout.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/model.js" afterPath="$PROJECT_DIR$/routes/model.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/product.js" afterPath="$PROJECT_DIR$/routes/product.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/productSelectLayout.ejs" afterPath="$PROJECT_DIR$/views/productSelectLayout.ejs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/site.js" afterPath="$PROJECT_DIR$/routes/site.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/siteList.ejs" afterPath="$PROJECT_DIR$/views/siteList.ejs" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="MyInventory.iws" />
@@ -34,64 +61,23 @@
       <file leaf-file-name="app.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="93" column="203" selection-start="2961" selection-end="2961" vertical-scroll-proportion="0.0" vertical-offset="1581" max-vertical-offset="3349">
+            <state line="164" column="19" selection-start="9949" selection-end="9949" vertical-scroll-proportion="-4.44" vertical-offset="2677" max-vertical-offset="3349">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="deviceListAll.ejs" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/deviceListAll.ejs">
+      <file leaf-file-name="model.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/routes/model.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="32" selection-start="182" selection-end="182" vertical-scroll-proportion="-4.576923" vertical-offset="0" max-vertical-offset="255">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="deviceListAll_partial.ejs" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/views/deviceListAll_partial.ejs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="103" column="4" selection-start="6662" selection-end="6662" vertical-scroll-proportion="0.5975976" vertical-offset="1552" max-vertical-offset="2091">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="custom-tooltip.css" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/stylesheets/custom-tooltip.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="11" selection-start="392" selection-end="392" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="globalLayout.ejs" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/globalLayout.ejs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="60" selection-start="323" selection-end="323" vertical-scroll-proportion="-4.576923" vertical-offset="0" max-vertical-offset="969">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="deviceList.ejs" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/deviceList.ejs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="3400">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="angular_deviceListAll.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/js/angular_deviceListAll.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="32" selection-start="644" selection-end="644" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1717">
+            <state line="141" column="10" selection-start="6052" selection-end="6052" vertical-scroll-proportion="0.49394673" vertical-offset="2193" max-vertical-offset="27455">
               <folding>
-                <element signature="e#644#1934#0" expanded="false" />
-                <element signature="e#2006#2408#0" expanded="false" />
+                <element signature="e#35305#35711#0" expanded="false" />
+                <element signature="e#35821#36033#0" expanded="false" />
+                <element signature="e#36149#36393#0" expanded="false" />
+                <element signature="e#36522#36994#0" expanded="false" />
+                <element signature="e#37803#38337#0" expanded="false" />
+                <element signature="e#38484#39206#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -115,22 +101,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/views/deviceListAllGeolocation_partial.ejs" />
-        <option value="$PROJECT_DIR$/views/geolocationList.ejs" />
-        <option value="$PROJECT_DIR$/views/siteList.ejs" />
-        <option value="$PROJECT_DIR$/routes/device.js" />
-        <option value="$PROJECT_DIR$/views/buildingList.ejs" />
-        <option value="$PROJECT_DIR$/views/floorList.ejs" />
-        <option value="$PROJECT_DIR$/views/closetList.ejs" />
-        <option value="$PROJECT_DIR$/app.js" />
-        <option value="$PROJECT_DIR$/routes/login.js" />
-        <option value="$PROJECT_DIR$/views/login.ejs" />
-        <option value="$PROJECT_DIR$/views/deviceListAll_partial2.ejs" />
         <option value="$PROJECT_DIR$/public/js/angular_deviceListAll2.js" />
         <option value="$PROJECT_DIR$/views/deviceListAll.ejs" />
         <option value="$PROJECT_DIR$/views/globalLayout.ejs" />
         <option value="$PROJECT_DIR$/public/stylesheets/custom-tooltip.css" />
         <option value="$PROJECT_DIR$/views/deviceListAll_partial.ejs" />
+        <option value="$PROJECT_DIR$/app.js" />
+        <option value="$PROJECT_DIR$/views/productcategoryList.ejs" />
+        <option value="$PROJECT_DIR$/routes/building.js" />
+        <option value="$PROJECT_DIR$/routes/closet.js" />
+        <option value="$PROJECT_DIR$/routes/device.js" />
+        <option value="$PROJECT_DIR$/routes/floor.js" />
+        <option value="$PROJECT_DIR$/routes/product.js" />
+        <option value="$PROJECT_DIR$/routes/productcategory.js" />
+        <option value="$PROJECT_DIR$/routes/site.js" />
+        <option value="$PROJECT_DIR$/routes/sitegroup.js" />
+        <option value="$PROJECT_DIR$/routes/model.js" />
       </list>
     </option>
   </component>
@@ -182,26 +168,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyInventory" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MyInventory" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="myInventory" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -223,7 +189,7 @@
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="views">
+            <PATH_ELEMENT USER_OBJECT="routes">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -240,6 +206,26 @@
             <PATH_ELEMENT USER_OBJECT="public">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MyInventory" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MyInventory" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="myInventory" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -359,20 +345,20 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33811802" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23887588" sideWeight="0.6347687" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24324325" sideWeight="0.76076555" order="1" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960254" sideWeight="0.6363636" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.51384616" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36523125" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23923445" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33971292" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32854864" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -409,103 +395,20 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/routes/device.js</url>
-          <line>144</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
       <option name="time" value="5" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/views/deviceListAll_partial_old.ejs">
+    <entry file="file://$PROJECT_DIR$/views/globalLayout.ejs">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="154" selection-start="653" selection-end="653" vertical-scroll-proportion="-10.461538" vertical-offset="0" max-vertical-offset="1734">
+        <state line="7" column="60" selection-start="323" selection-end="323" vertical-scroll-proportion="0.0" vertical-offset="119" max-vertical-offset="969">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/device.js">
+    <entry file="file://$PROJECT_DIR$/public/stylesheets/custom-tooltip.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="214" column="55" selection-start="8073" selection-end="8073" vertical-scroll-proportion="0.0" vertical-offset="953" max-vertical-offset="1377">
-          <folding>
-            <element signature="e#2995#3422#0" expanded="false" />
-            <element signature="e#3469#4549#0" expanded="false" />
-            <element signature="e#4596#5564#0" expanded="false" />
-            <element signature="e#5611#6354#0" expanded="false" />
-            <element signature="e#6403#6680#0" expanded="false" />
-            <element signature="e#6733#6961#0" expanded="false" />
-            <element signature="e#7025#7330#0" expanded="false" />
-            <element signature="e#7387#7663#0" expanded="false" />
-            <element signature="e#7724#8015#0" expanded="false" />
-            <element signature="e#8073#8353#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/buildingList.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="55" selection-start="204" selection-end="255" vertical-scroll-proportion="0.2562814" vertical-offset="0" max-vertical-offset="1989" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/siteList.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="0" selection-start="3893" selection-end="3929" vertical-scroll-proportion="-8.5" vertical-offset="0" max-vertical-offset="2091" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/floorList.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="4" selection-start="242" selection-end="301" vertical-scroll-proportion="-4.4615383" vertical-offset="3" max-vertical-offset="2006" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/closetList.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="50" selection-start="324" selection-end="324" vertical-scroll-proportion="-5.1538463" vertical-offset="2" max-vertical-offset="2023" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/model.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1070" column="63" selection-start="37472" selection-end="37472" vertical-scroll-proportion="0.0" vertical-offset="6478" max-vertical-offset="11237">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/login.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="25" selection-start="210" selection-end="210" vertical-scroll-proportion="0.16915423" vertical-offset="0" max-vertical-offset="603">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/login.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="91" selection-start="1462" selection-end="1462" vertical-scroll-proportion="0.5979203" vertical-offset="301" max-vertical-offset="901">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/angular_deviceListAll.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="32" selection-start="644" selection-end="644" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1717">
-          <folding>
-            <element signature="e#644#1934#0" expanded="false" />
-            <element signature="e#2006#2408#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/deviceList.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3400">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="93" column="203" selection-start="2961" selection-end="2961" vertical-scroll-proportion="0.0" vertical-offset="1485" max-vertical-offset="3349">
+        <state line="16" column="11" selection-start="392" selection-end="392" vertical-scroll-proportion="0.45107794" vertical-offset="0" max-vertical-offset="603">
           <folding />
         </state>
       </provider>
@@ -517,24 +420,143 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/globalLayout.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="60" selection-start="323" selection-end="323" vertical-scroll-proportion="-4.576923" vertical-offset="0" max-vertical-offset="969">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/stylesheets/custom-tooltip.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="11" selection-start="392" selection-end="392" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="493">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/deviceListAll_partial.ejs">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="103" column="4" selection-start="6662" selection-end="6662" vertical-scroll-proportion="0.5975976" vertical-offset="1552" max-vertical-offset="2091">
+        <state line="103" column="4" selection-start="6662" selection-end="6662" vertical-scroll-proportion="3.10461" vertical-offset="0" max-vertical-offset="2091">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/angular_productcategory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2074">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/building.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="0" selection-start="2485" selection-end="2485" vertical-scroll-proportion="0.0" vertical-offset="478" max-vertical-offset="867">
+          <folding>
+            <element signature="e#91#1214#0" expanded="false" />
+            <element signature="e#1264#1567#0" expanded="false" />
+            <element signature="e#1615#2113#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/closet.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="112" column="47" selection-start="4282" selection-end="4282" vertical-scroll-proportion="0.0" vertical-offset="563" max-vertical-offset="1326">
+          <folding>
+            <element signature="e#91#2181#0" expanded="false" />
+            <element signature="e#2231#2612#0" expanded="false" />
+            <element signature="e#2670#2820#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/floor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="79" column="44" selection-start="2897" selection-end="2897" vertical-scroll-proportion="0.0" vertical-offset="20" max-vertical-offset="578">
+          <folding>
+            <element signature="e#91#1782#0" expanded="false" />
+            <element signature="e#1832#2178#0" expanded="false" />
+            <element signature="e#2225#2850#0" expanded="false" />
+            <element signature="e#2897#3569#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/productcategoryList.ejs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="20" selection-start="272" selection-end="272" vertical-scroll-proportion="0.35714287" vertical-offset="11" max-vertical-offset="2652">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/product.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="130" column="42" selection-start="4502" selection-end="4502" vertical-scroll-proportion="0.0" vertical-offset="53" max-vertical-offset="442">
+          <folding>
+            <element signature="e#90#593#0" expanded="false" />
+            <element signature="e#641#829#0" expanded="false" />
+            <element signature="e#875#2148#0" expanded="false" />
+            <element signature="e#2199#2941#0" expanded="false" />
+            <element signature="e#2999#3152#0" expanded="false" />
+            <element signature="e#3201#3279#0" expanded="false" />
+            <element signature="e#3324#3926#0" expanded="false" />
+            <element signature="e#3971#4457#0" expanded="false" />
+            <element signature="e#4502#4981#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/productcategory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="116" column="102" selection-start="4200" selection-end="4201" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="612">
+          <folding>
+            <element signature="e#90#593#0" expanded="false" />
+            <element signature="e#641#829#0" expanded="false" />
+            <element signature="e#875#2148#0" expanded="false" />
+            <element signature="e#2199#2978#0" expanded="false" />
+            <element signature="e#3023#3383#0" expanded="false" />
+            <element signature="e#3428#3893#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/site.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="87" column="44" selection-start="2630" selection-end="2630" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
+          <folding>
+            <element signature="e#91#757#0" expanded="false" />
+            <element signature="e#807#1053#0" expanded="false" />
+            <element signature="e#1101#1990#0" expanded="false" />
+            <element signature="e#2037#2583#0" expanded="false" />
+            <element signature="e#2630#3253#0" expanded="false" />
+            <element signature="e#3300#3703#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="164" column="19" selection-start="9949" selection-end="9949" vertical-scroll-proportion="-4.44" vertical-offset="2677" max-vertical-offset="3349">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/sitegroup.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="85" column="54" selection-start="2511" selection-end="2511" vertical-scroll-proportion="0.0" vertical-offset="963" max-vertical-offset="1649">
+          <folding>
+            <element signature="e#1611#2061#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/device.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="95" column="38" selection-start="4064" selection-end="4088" vertical-scroll-proportion="-0.56" vertical-offset="462" max-vertical-offset="2805">
+          <folding>
+            <element signature="e#91#2877#0" expanded="false" />
+            <element signature="e#2927#3350#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/model.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="141" column="10" selection-start="6052" selection-end="6052" vertical-scroll-proportion="0.49394673" vertical-offset="2193" max-vertical-offset="27455">
+          <folding>
+            <element signature="e#35305#35711#0" expanded="false" />
+            <element signature="e#35821#36033#0" expanded="false" />
+            <element signature="e#36149#36393#0" expanded="false" />
+            <element signature="e#36522#36994#0" expanded="false" />
+            <element signature="e#37803#38337#0" expanded="false" />
+            <element signature="e#38484#39206#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

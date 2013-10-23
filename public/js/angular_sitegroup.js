@@ -1,7 +1,7 @@
 /**
  * Created by Arnaud on 10/11/13.
  */
-function ctrlGeolocation($scope, $filter, $http, $templateCache) {
+function ctrlSiteGroup($scope, $filter, $http, $templateCache) {
     // init
     $scope.sortingOrder = sortingOrder;
     $scope.reverse = false;
@@ -80,7 +80,7 @@ function ctrlGeolocation($scope, $filter, $http, $templateCache) {
 
     $scope.fecthItems = function(){
         var method = 'GET';
-        var url = '/json/geolocation';
+        var url = '/json/sitegroup';
 
         $http({method: method, url: url, cache: $templateCache})
             .success(function(data, status) {

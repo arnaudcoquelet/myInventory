@@ -80,7 +80,7 @@ function ctrlSite($scope, $filter, $http, $templateCache) {
 
     $scope.fecthItems = function(){
         var method = 'GET';
-        var url = '/json/geolocation/' + geolocationId + '/site';
+        var url = '/json/sitegroup/' + sitegroupId + '/site';
 
         $http({method: method, url: url, cache: $templateCache})
             .success(function(data, status) {

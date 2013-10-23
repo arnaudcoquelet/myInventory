@@ -2,36 +2,24 @@
  * Created by ArnaudCoquelet on 10/4/13.
  */
 exports.list = function (req, res, model) {
-    var id = req.params.sitegroupid;
+    var sitegroupid = req.params.sitegroupid;
+    var breadcrumbs = [
+        {name: 'SiteGroup', url: '', class: ''}
+    ];
 
-    if(model){
-        model.findSiteGroupById(id, function(err, sitegroup){
-            if(err){res.redirect('/sitegroup');}
-            if(!sitegroup){res.redirect('/sitegroup');}
-
-            var breadcrumbs = [
-                {name: 'SiteGroup', url: '/sitegroup', class: ''},
-                {name: sitegroup.name , url: '', class: 'active'}
-            ];
-
-            res.render('siteList',
-                {
-                    title: 'MyInventory',
-                    sitegroup: sitegroup,
-                    breadcrumbs: breadcrumbs
-                });
-
-        });
-    }
-    else {res.redirect('/sitegroup'); }
+    res.render('sitegroupList',
+        {
+            title: 'MyInventory',
+            breadcrumbs: breadcrumbs
+        }
+    );
 };
 
 exports.list_json = function (req, res, model) {
-    var id = req.params.sitegroupid;
     if (model) {
-        model.findSiteAllBySiteGroupId(id, function (err, sites) {
+        model.findSiteGroupAll(function (err, sitegroups) {
             if (err) {res.json([]);}
-            res.json(sites);
+            if (sitegroups) { res.json(sitegroups); }
         })
     }
     else {
@@ -69,24 +57,22 @@ exports.details = function (req, res, model) {
 };
 
 exports.create = function (req, res, model) {
-    var sitegroupid = req.params.sitegroupid;
     var name = req.body.name;
     var code = req.body.code;
     var error = '';
     res.method = 'get';
 
-    if (!name || name === '') { error = 'Missing the Site name'; }
+    if (!name || name === '') { error = 'Missing the SiteGroup'; }
     if (!code || code === '') { error = 'Missing the Code'; }
     if(model){
-        model.createSiteWithSiteGroupId(sitegroupid,{name: name,code: code}, function (err, site) {
-            res.redirect('/sitegroup/' + sitegroupid + '/site');
+        model.createSiteGroup({name: name, code: code}, function (err, sitegroup) {
+            res.redirect('/sitegroup/' + sitegroup.id);
         });
     }
-    else { res.redirect('/sitegroup/' + sitegroupid + '/site');}
+    else { res.redirect('/sitegroup');}
 };
 
 exports.update = function (req, res, model) {
-    var sitegroupid = req.params.sitegroupid;
     var id   = req.body.id;
     var name = req.body.name;
     var code = req.body.code;
@@ -97,25 +83,24 @@ exports.update = function (req, res, model) {
     if (!name || name === '') { error = 'Missing the SiteGroup'; }
     if (!code || code === '') { error = 'Missing the Code'; }
     if(model){
-        model.updateSiteById(id, {name:name, code:code}, function (err, site) {
-            res.redirect('/sitegroup/' + sitegroupid + '/site');
+        model.updateSiteGroupById(id, {name:name, code:code} , function (err, sitegroup) {
+            res.redirect('/sitegroup/' + sitegroup.id);
         });
     }
-    else { res.redirect('/sitegroup/'+ sitegroupid + '/site');}
+    else { res.redirect('/sitegroup');}
 };
 
 exports.delete = function (req, res, model) {
-    var sitegroupid = req.params.sitegroupid;
     var id = req.body.id;
     res.method = 'get';
 
     if (!id   ||   id === '') { error = 'Missing the SiteGroup Id'; }
     if(id && model){
-        model.deleteSiteById(id, function(err, site){
-            res.redirect('/sitegroup/'+ sitegroupid + '/site');
+        model.deleteSiteGroupById(id, function(err, sitegroup){
+            res.redirect('/sitegroup');
         })
     }
     else {
-        res.redirect('/sitegroup/'+ sitegroupid + '/site');
+        res.redirect('/sitegroup');
     }
 };

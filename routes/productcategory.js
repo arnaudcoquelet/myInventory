@@ -57,21 +57,21 @@ exports.details = function(req, res, model){
 };
 
 exports.details_json = function(req, res, model){
-    var productid = req.params.productid;
+    var ProductCategoryid = req.params.ProductCategoryid;
     var breadcrumbs = [{name:'Product Category',url:'/admin/ProductCategory',class: ''}, {name:ProductCategoryid,url:'',class: 'active'}];
 
-    if(ProductCategoryid && model){/*
+    if(ProductCategoryid && model){
         model.findProductCategoryById(ProductCategoryid, function(err,ProductCategory){
             if(err){}
 
             if(ProductCategory){
-                var products = ProductCategory.getProducts({attributes: ['id', 'name', 'part']})
+                var products = ProductCategory.getProducts({where: {deleted: false} ,attributes: ['id', 'name', 'part']})
                     .on('success', function(products){
                         if(products && !products instanceof Array) {res.json([]);}
                         res.json(products);
                 });
             }
-        })*/
+        })
     }
     else
     {
@@ -79,69 +79,47 @@ exports.details_json = function(req, res, model){
     }
 };
 
-exports.listAllDetails_json = function(req, res, model){
-    if(model){
-        model.getProductAllDetails( function(err,products){
-            res.json(products);
-        });
-    }
-    else{ res.json([]);}
-};
-
-exports.selectView = function(req, res, model){
-    res.render('productSelect',{ title: 'MyInventory', breadcrumbs: [] });
-};
-
 exports.create = function(req, res, model){
-    var ProductCategoryid = req.params.ProductCategoryid;
-    var name = req.body.productName;
-    var part = req.body.productPart;
-
+    var ProductCategoryName = req.body.ProductCategory;
     var error='';
-    if(!name || name==='') { error = 'Missing the Product name'; }
-    if(!part || part==='') { error = 'Missing the Product part #'; }
-    if(!ProductCategoryid || ProductCategoryid==='') { error = 'Missing the Product family'; }
+    if(!ProductCategoryName || ProductCategoryName==='') { error = 'Missing the product family name'; }
 
-    model.createProductWithProductCategoryId(ProductCategoryid,{name: name, part: part}, function(err,site){
+    model.createProductCategory({name: ProductCategoryName}, function(err,ProductCategory){
         res.method = 'get';
-        res.redirect('/admin/ProductCategory/' + ProductCategoryid);
+        res.redirect('/admin/ProductCategory');
     } );
 
 };
 
 exports.delete = function(req, res, model){
-    var ProductCategoryid = req.params.ProductCategoryid;
-    var productid = req.params.productid;
+    var ProductCategoryid = req.params.ProductCategoryId;
+    if(! ProductCategoryid || ProductCategoryid==='undefined' ) {ProductCategoryid = req.body.ProductCategoryId;}
 
-    if(! productid || productid==='undefined' ) {productid = req.body.productId;}
-
-    if(model && productid)
+    if(model && ProductCategoryid)
     {
-        model.deleteProductById(productid, function(err, product){
+        model.deleteProductCategoryById(ProductCategoryid, function(err, ProductCategory){
             if(err){}
 
-            res.redirect('/admin/ProductCategory/' + ProductCategoryid);
+            res.redirect('/admin/ProductCategory');
         });
     }
     else{
-        res.redirect('/admin/ProductCategory/' + ProductCategoryid);
+        res.redirect('/admin/ProductCategory');
     }
 };
 
 exports.update = function(req, res, model){
-    var ProductCategoryid = req.params.ProductCategoryid;
-    var id = req.body.productId;
-    var name = req.body.productName;
-    var part = req.body.productPart;
+    var ProductCategoryid = req.body.ProductCategoryId;
+    var productcategoryname = req.body.ProductCategoryName;
 
-    if(model && id)
+    if(model && ProductCategoryid)
     {
-        model.updateProductById(id, {name: name, part: part}, function(err, product){
+        model.updateProductCategoryById(ProductCategoryid, {name: productcategoryname}, function(err, ProductCategory){
             if(err){}
-            res.redirect('/admin/ProductCategory/' +ProductCategoryid );
+            res.redirect('/admin/ProductCategory');
         });
     }
     else{
-        res.redirect('/admin/ProductCategory/' +ProductCategoryid );
+        res.redirect('/admin/ProductCategory');
     }
 };

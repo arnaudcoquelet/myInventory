@@ -80,7 +80,7 @@ function ctrlLog($scope, $filter, $http, $templateCache) {
     };
 
     $scope.fecthItems = function(id){
-        $scope.productfamilyid = id;
+        $scope.ProductCategoryid = id;
         var method = 'GET';
         var url = '/json/admin/log';
 
@@ -114,4 +114,4 @@ function ctrlLog($scope, $filter, $http, $templateCache) {
 
     $scope.fecthItems();
 };
-//ctrlProductFamily.$inject = ['$scope', '$filter'];
+//ctrlProductCategory.$inject = ['$scope', '$filter'];

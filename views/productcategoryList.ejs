@@ -6,9 +6,9 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <i class="glyphicon glyphicon-tasks"></i>
-                    Product Families
-                    <% if(productfamilies) { %>
-                    (<%= productfamilies.length %>)
+                    Product Categories
+                    <% if(productcategories) { %>
+                    (<%= productcategories.length %>)
                     <% } %>
                 </div>
                 <div class="panel-body">
@@ -18,21 +18,21 @@
                     <tr>
                         <th class="col-sm-1">#</th>
                         <th>Name</th>
-                        <th class="col-sm-1"><a href="#modalAdd" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign" title="Add a Product Family"></a></th>
+                        <th class="col-sm-1"><a href="#modalAdd" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign" title="Add a Product Category"></a></th>
                     </tr>
-                    <% if(productfamilies && productfamilies instanceof Array && productfamilies.length > 0 ) { %>
-                    <% for(var i = 0; i < productfamilies.length; i++) { %>
+                    <% if(productcategories && productcategories instanceof Array && productcategories.length > 0 ) { %>
+                    <% for(var i = 0; i < productcategories.length; i++) { %>
                     <tr>
                         <td>
-                            <a href="/admin/productfamily/<%= productfamilies[i].id %>"><%= productfamilies[i].id %></a>
-                            <% if(productfamilies[i].products) {%>
-                            <span class="label label-primary pull-right"> <%= productfamilies[i].products.length%> </span>
+                            <a href="/admin/ProductCategory/<%= productcategories[i].id %>"><%= productcategories[i].id %></a>
+                            <% if(productcategories[i].products) {%>
+                            <span class="label label-primary pull-right"> <%= productcategories[i].products.length%> </span>
                             <% } %>
                         </td>
-                        <td><a href="/admin/productfamily/<%= productfamilies[i].id %>"><%= productfamilies[i].name %></a></td>
+                        <td><a href="/admin/ProductCategory/<%= productcategories[i].id %>"><%= productcategories[i].name %></a></td>
                         <td>
-                            <a href="#modalEdit" data-toggle="modal" data-id="<%= productfamilies[i].id %>" data-name="<%= productfamilies[i].name %>" class="open-EditProductFamily glyphicon glyphicon-pencil" title="edit"></a>
-                            <a href="#modalDelete" data-toggle="modal" data-id="<%= productfamilies[i].id %>" data-name="<%= productfamilies[i].name %>" class="open-DeleteProductFamily glyphicon glyphicon-remove" title="delete"></a>
+                            <a href="#modalEdit" data-toggle="modal" data-id="<%= productcategories[i].id %>" data-name="<%= productcategories[i].name %>" class="open-EditProductCategory glyphicon glyphicon-pencil" title="edit"></a>
+                            <a href="#modalDelete" data-toggle="modal" data-id="<%= productcategories[i].id %>" data-name="<%= productcategories[i].name %>" class="open-DeleteProductCategory glyphicon glyphicon-remove" title="delete"></a>
                         </td>
                     </tr>
                     <% } %>
@@ -59,13 +59,13 @@
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">&times;</a>
 
-                <h3>Add a Product Family</h3>
+                <h3>Add a Product Category</h3>
             </div>
             <div class="modal-body">
-                <form role="form" class="form-horizontal" action="/admin/productfamily" method="post">
+                <form role="form" class="form-horizontal" action="/admin/ProductCategory" method="post">
                     <div class="form-group">
                         <div class="">
-                            <input type="text" class="form-control" id="productfamily" name="productfamily" placeholder="Product family name" autofocus/>
+                            <input type="text" class="form-control" id="ProductCategory" name="ProductCategory" placeholder="Product family name" autofocus/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -81,11 +81,11 @@
 </div>
 
 <script>
-    $(document).on("click", ".open-EditProductFamily", function () {
+    $(document).on("click", ".open-EditProductCategory", function () {
         var id = $(this).data('id');
         var name = $(this).data('name');
-        $(".editProductFamilyFields #productfamilyId").val( id );
-        $(".editProductFamilyFields #productfamilyName").val( name );
+        $(".editProductCategoryFields #ProductCategoryId").val( id );
+        $(".editProductCategoryFields #ProductCategoryName").val( name );
     })
 </script>
 <div class="modal" role="dialog" id="modalEdit" aria-labelledby="modalEditLabel" aria-hidden="true">
@@ -96,11 +96,11 @@
                 <h3>Edit product family</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="editname" class="form-horizontal" action="/admin/productfamily/update" method="post">
+                <form role="form" id="editname" class="form-horizontal" action="/admin/ProductCategory/update" method="post">
                     <div class="form-group">
-                        <div class="editProductFamilyFields">
-                            <input type="hidden" class="form-control" id="productfamilyId" name="productfamilyId">
-                            <input type="text" class="form-control" id="productfamilyName" name="productfamilyName" placeholder="Product family name" autofocus/>
+                        <div class="editProductCategoryFields">
+                            <input type="hidden" class="form-control" id="ProductCategoryId" name="ProductCategoryId">
+                            <input type="text" class="form-control" id="ProductCategoryName" name="ProductCategoryName" placeholder="Product family name" autofocus/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -116,11 +116,11 @@
 </div>
 
 <script>
-    $(document).on("click", ".open-DeleteProductFamily", function () {
+    $(document).on("click", ".open-DeleteProductCategory", function () {
         var id = $(this).data('id');
         var name = $(this).data('name');
-        $(".deleteProductFamilyFields #productfamilyId").val( id );
-        $(".deleteProductFamilyFields #productfamilyName").val( name );
+        $(".deleteProductCategoryFields #ProductCategoryId").val( id );
+        $(".deleteProductCategoryFields #ProductCategoryName").val( name );
     })
 </script>
 <div class="modal" role="dialog" id="modalDelete" aria-labelledby="modalDeleteLabel" aria-hidden="true">
@@ -131,11 +131,11 @@
                 <h3>Are you about to delete</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="editname" class="form-horizontal" action="/admin/productfamily/delete" method="post">
+                <form role="form" id="editname" class="form-horizontal" action="/admin/ProductCategory/delete" method="post">
                     <div class="form-group">
-                        <div class="deleteProductFamilyFields">
-                            <input type="hidden" class="form-control" id="productfamilyId" name="productfamilyId">
-                            <input type="text" class="form-control" id="productfamilyName" name="productfamilyName" placeholder="Product family name" autofocus/>
+                        <div class="deleteProductCategoryFields">
+                            <input type="hidden" class="form-control" id="ProductCategoryId" name="ProductCategoryId">
+                            <input type="text" class="form-control" id="ProductCategoryName" name="ProductCategoryName" placeholder="Product family name" autofocus/>
                         </div>
                     </div>
                     <div class="form-group">

@@ -31,8 +31,8 @@
                                 <small>Name &nbsp;<a ng-click="sort_by('device_name')"><i
                                                 class="glyphicon glyphicon-sort"></i></a></small>
                             </th>
-                            <th class="productfamily_name col-sm-1">
-                                <small>Category &nbsp;<a ng-click="sort_by('productfamily_name')"><i
+                            <th class="ProductCategory_name col-sm-1">
+                                <small>Category &nbsp;<a ng-click="sort_by('ProductCategory_name')"><i
                                                 class="glyphicon glyphicon-sort"></i></a></small>
                             </th>
                             <th class="product_name">
@@ -54,8 +54,8 @@
                             <th class="device_name col-sm-1">
                                 <input type="text" ng-model="filterItem.device_name" ng-change="search()" placeholder="Name"/>
                             </th>
-                            <th class="productfamily_name col-sm-1">
-                                <input type="text" ng-model="filterItem.productfamily_name" ng-change="search()" placeholder="Category"/>
+                            <th class="ProductCategory_name col-sm-1">
+                                <input type="text" ng-model="filterItem.ProductCategory_name" ng-change="search()" placeholder="Category"/>
                             </th>
                             <th class="product_name">
                                 <input type="text" ng-model="filterItem.product_name" ng-change="search()" placeholder="Product"/>
@@ -91,15 +91,15 @@
                             <td><a href="#" class="custom-tooltip"><span class="label label-info">i</span><span class="custom-tooltip">{{item.device_name}}</span></a>  <small>{{item.device_id}}</small></td>
                             <td><small>{{item.device_serial}}</small></td>
                             <td><small>{{item.device_name}}</small></td>
-                            <td><small>{{item.productfamily_name}}</small></td>
+                            <td><small>{{item.ProductCategory_name}}</small></td>
                             <td><small>{{item.product_name}}</small></td>
                             <td>
                                 <small>
-                                    <a href="/geolocation/{{item.geolocation_id}}">{{item.geolocation_name}}</a> /
-                                    <a href="/geolocation/{{item.geolocation_id}}/site/{{item.site_id}}">{{item.site_name}}</a> /
-                                    <a href="/geolocation/{{item.geolocation_id}}/site/{{item.site_id}}/building/{{item.building_id}}">{{item.building_name}}</a> /
-                                    <a href="/geolocation/{{item.geolocation_id}}/site/{{item.site_id}}/building/{{item.building_id}}/floor/{{item.floor_id}}">{{item.floor_name}}</a> /
-                                    <a href="/geolocation/{{item.geolocation_id}}/site/{{item.site_id}}/building/{{item.building_id}}/floor/{{item.floor_id}}/closet/{{item.closet_id}}">{{item.closet_name}}</a>
+                                    <a href="/sitegroup/{{item.sitegroup_id}}">{{item.sitegroup_name}}</a> /
+                                    <a href="/sitegroup/{{item.sitegroup_id}}/site/{{item.site_id}}">{{item.site_name}}</a> /
+                                    <a href="/sitegroup/{{item.sitegroup_id}}/site/{{item.site_id}}/building/{{item.building_id}}">{{item.building_name}}</a> /
+                                    <a href="/sitegroup/{{item.sitegroup_id}}/site/{{item.site_id}}/building/{{item.building_id}}/floor/{{item.floor_id}}">{{item.floor_name}}</a> /
+                                    <a href="/sitegroup/{{item.sitegroup_id}}/site/{{item.site_id}}/building/{{item.building_id}}/floor/{{item.floor_id}}/closet/{{item.closet_id}}">{{item.closet_name}}</a>
                                 </small>
                             </td>
                             <td>

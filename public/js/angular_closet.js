@@ -80,7 +80,7 @@ function ctrlCloset($scope, $filter, $http, $templateCache) {
 
     $scope.fecthItems = function(){
         var method = 'GET';
-        var url = '/json/geolocation/' + geolocationId + '/site/' + siteId + '/building/' + buildingId + '/floor/' + floorId + '/closet';
+        var url = '/json/sitegroup/' + sitegroupId + '/site/' + siteId + '/building/' + buildingId + '/floor/' + floorId + '/closet';
 
         $http({method: method, url: url, cache: $templateCache})
             .success(function(data, status) {

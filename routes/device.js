@@ -2,43 +2,43 @@
  * Created by ArnaudCoquelet on 10/4/13.
  */
 exports.list = function (req, res, model) {
-    var geolocationid = req.params.geolocationid;
+    var sitegroupid = req.params.sitegroupid;
     var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
     var floorid = req.params.floorid;
     var closetid = req.params.closetid;
 
     if(model){
-        model.findGeolocationById(geolocationid, function(err, geolocation){
-            if(err){res.redirect('/geolocation');}
-            if(!geolocation){res.redirect('/geolocation');}
+        model.findSiteGroupById(sitegroupid, function(err, sitegroup){
+            if(err){res.redirect('/sitegroup');}
+            if(!sitegroup){res.redirect('/sitegroup');}
 
             model.findSiteById(siteid, function(err, site){
-                if(err){res.redirect('/geolocation/' + geolocation.id + '/site');}
-                if(!site){res.redirect('/geolocation/' + geolocation.id + '/site');}
+                if(err){res.redirect('/sitegroup/' + sitegroup.id + '/site');}
+                if(!site){res.redirect('/sitegroup/' + sitegroup.id + '/site');}
 
                 model.findBuildingById(buildingid, function(err, building){
-                    if(err){res.redirect('/geolocation/' + geolocation.id + '/site/' + siteid + '/building');}
-                    if(!building){res.redirect('/geolocation/' + geolocation.id + '/site/' + siteid + '/building');}
+                    if(err){res.redirect('/sitegroup/' + sitegroup.id + '/site/' + siteid + '/building');}
+                    if(!building){res.redirect('/sitegroup/' + sitegroup.id + '/site/' + siteid + '/building');}
 
                     model.findFloorById(floorid, function(err,floor){
-                        if(err){res.redirect('/geolocation/' + geolocation.id + '/site/' + siteid + '/building/' + buildingid);}
-                        if(!floor){res.redirect('/geolocation/' + geolocation.id + '/site/' + siteid + '/building/' + buildingid);}
+                        if(err){res.redirect('/sitegroup/' + sitegroup.id + '/site/' + siteid + '/building/' + buildingid);}
+                        if(!floor){res.redirect('/sitegroup/' + sitegroup.id + '/site/' + siteid + '/building/' + buildingid);}
 
                         model.findClosetById(closetid, function(err, closet){
                             var breadcrumbs = [
-                                {name: 'Geolocation'    , url: '/geolocation', class: ''},
-                                {name: geolocation.name , url: '/geolocation/' + geolocation.id, class: ''},
-                                {name: site.name        , url: '/geolocation/' + geolocation.id + '/site/' + site.id, class: ''},
-                                {name: building.name    , url: '/geolocation/' + geolocation.id + '/site/' + site.id + '/building/' + building.id, class: ''},
-                                {name: floor.name       , url: '/geolocation/' + geolocation.id + '/site/' + site.id + '/building/' + building.id + '/closet/' + closet.id, class: ''},
+                                {name: 'SiteGroup'    , url: '/sitegroup', class: ''},
+                                {name: sitegroup.name , url: '/sitegroup/' + sitegroup.id, class: ''},
+                                {name: site.name        , url: '/sitegroup/' + sitegroup.id + '/site/' + site.id, class: ''},
+                                {name: building.name    , url: '/sitegroup/' + sitegroup.id + '/site/' + site.id + '/building/' + building.id, class: ''},
+                                {name: floor.name       , url: '/sitegroup/' + sitegroup.id + '/site/' + site.id + '/building/' + building.id + '/closet/' + closet.id, class: ''},
                                 {name: closet.name      , url: '', class: 'active'}
                             ];
 
                             res.render('deviceList',
                                 {
                                     title: 'MyInventory',
-                                    geolocation: geolocation,
+                                    sitegroup: sitegroup,
                                     site: site,
                                     building: building,
                                     floor: floor,
@@ -51,11 +51,11 @@ exports.list = function (req, res, model) {
             });
         });
     }
-    else {res.redirect('/geolocation'); }
+    else {res.redirect('/sitegroup'); }
 };
 
 exports.list_json = function (req, res, model) {
-    var geolocationid = req.params.geolocationid;
+    var sitegroupid = req.params.sitegroupid;
     var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
     var floorid = req.params.floorid;
@@ -73,7 +73,7 @@ exports.list_json = function (req, res, model) {
 };
 
 exports.create = function (req, res, model) {
-    var geolocationid = req.params.geolocationid;
+    var sitegroupid = req.params.sitegroupid;
     var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
     var floorid = req.params.floorid;
@@ -93,15 +93,15 @@ exports.create = function (req, res, model) {
         console.log('productid', productid);
         console.log('closetid2', closetid2);
 
-        model.createDeviceWithClosetId(closetid2,productid,name,serial, function (err, device) {
-            res.redirect('/geolocation/' + geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid );
+        model.createDeviceWithClosetId(closetid2,productid,{name: name, serial: serial}, function (err, device) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid );
         });
     }
-    else { res.redirect('/geolocation/' + geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);}
+    else { res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);}
 };
 
 exports.update = function (req, res, model) {
-    var geolocationid = req.params.geolocationid;
+    var sitegroupid = req.params.sitegroupid;
     var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
     var floorid = req.params.floorid;
@@ -118,15 +118,15 @@ exports.update = function (req, res, model) {
     if (!serial || serial === '') { error = 'Missing the Serial #'; }
 
     if(model){
-        model.updateDeviceById(id, name, serial, function (err, device) {
-            res.redirect('/geolocation/' + geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);
+        model.updateDeviceById(id, {name: name, serial: serial}, function (err, device) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);
         });
     }
-    else { res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);}
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);}
 };
 
 exports.delete = function (req, res, model) {
-    var geolocationid = req.params.geolocationid;
+    var sitegroupid = req.params.sitegroupid;
     var siteid = req.params.siteid;
     var buildingid = req.params.buildingid;
     var floorid = req.params.floorid;
@@ -138,11 +138,11 @@ exports.delete = function (req, res, model) {
     if (!id   ||   id === '') { error = 'Missing the Closet Id'; }
     if(id && model){
         model.deleteDeviceById(id, function(err, device){
-            res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);
+            res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);
         })
     }
     else {
-        res.redirect('/geolocation/'+ geolocationid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);
+        res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);
     }
 };
 
@@ -171,11 +171,11 @@ exports.listAll_json = function (req, res, model) {
     else {res.json([]); }
 };
 
-exports.listAllGeolocation_json = function (req, res, model) {
-    var geolocationid = req.params.geolocationid;
+exports.listAllSiteGroup_json = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
 
     if(model){
-        model.findDeviceAllGeolocationDetails(geolocationid, function(err, devices){
+        model.findDeviceAllSiteGroupDetails(sitegroupid, function(err, devices){
             if(err){res.json([]);}
             if(!devices){res.json([]);}
 

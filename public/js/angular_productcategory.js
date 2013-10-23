@@ -1,7 +1,7 @@
 /**
  * Created by Arnaud on 10/11/13.
  */
-function ctrlProductFamily($scope, $filter, $http, $templateCache) {
+function ctrlProductCategory($scope, $filter, $http, $templateCache) {
     // init
     $scope.sortingOrder = sortingOrder;
     $scope.reverse = false;
@@ -11,7 +11,7 @@ function ctrlProductFamily($scope, $filter, $http, $templateCache) {
     $scope.pagedItems = [];
     $scope.currentPage = 0;
     $scope.items = [];
-    $scope.productfamilyid = -1;
+    $scope.ProductCategoryid = -1;
 
     var searchMatch = function (haystack, needle) {
         if (!needle) {
@@ -80,9 +80,9 @@ function ctrlProductFamily($scope, $filter, $http, $templateCache) {
     };
 
     $scope.fecthItems = function(id){
-        $scope.productfamilyid = id;
+        $scope.ProductCategoryid = id;
         var method = 'GET';
-        var url = '/json/admin/productfamily/' + id;
+        var url = '/json/admin/ProductCategory/' + id;
 
         $http({method: method, url: url, cache: $templateCache})
             .success(function(data, status) {
@@ -114,4 +114,4 @@ function ctrlProductFamily($scope, $filter, $http, $templateCache) {
 
 
 };
-//ctrlProductFamily.$inject = ['$scope', '$filter'];
+//ctrlProductCategory.$inject = ['$scope', '$filter'];

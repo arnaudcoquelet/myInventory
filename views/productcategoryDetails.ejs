@@ -1,18 +1,18 @@
 <% layout('adminLayout') -%>
 </br></br>
-<script src="/js/angular_geolocation.js"></script>
+<script src="/js/angular_ProductCategory.js"></script>
 <script type="text/javascript">
-    var sortingOrder = 'id';
+    var sortingOrder = 'name';
 </script>
 
 <div class="row">
-    <div ng-controller="ctrlGeolocation">
+    <div ng-controller="ctrlProductCategory">
         <div class="panel panel-primary">
-                <div ng-init="fecthItems()"></div>
+                <div ng-init="fecthItems(<%= ProductCategoryId %>)"></div>
 
                 <div class="panel-heading">
                     <i class="glyphicon glyphicon-tasks"></i>
-                    Geolocations ({{countItems()}})
+                    Products <% if(products) { %> (<%= products.length %>) <% } %>
                 </div>
 
                 <div class="panel-body">
@@ -23,9 +23,9 @@
                         <tr>
                             <th class="id col-sm-1"># &nbsp;<a ng-click="sort_by('id')"><i
                                             class="glyphicon glyphicon-sort"></i></a></th>
-                            <th class="code col-sm-2">Code &nbsp;<a ng-click="sort_by('code')"><i
+                            <th class="part col-sm-2">Part # &nbsp;<a ng-click="sort_by('part')"><i
                                             class="glyphicon glyphicon-sort"></i></a></th>
-                            <th class="name">Geolocation &nbsp;<a ng-click="sort_by('name')"><i
+                            <th class="name">Description &nbsp;<a ng-click="sort_by('name')"><i
                                             class="glyphicon glyphicon-sort"></i></a></th>
                             <th class="col-sm-1"><a href="#modalAdd" role="button" data-toggle="modal"
                                                     class="glyphicon glyphicon-plus-sign"></a></th>
@@ -52,12 +52,12 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
-                            <td><a href="/geolocation/{{item.id}}">{{item.id}}</a></td>
-                            <td>{{item.code}}</td>
+                            <td>{{item.id}}</td>
+                            <td>{{item.part}}</td>
                             <td>{{item.name}}</td>
                             <td>
-                                <a href="#modalEdit" data-toggle="modal" data-id="{{item.id}}" data-code="{{item.code}}" data-name="{{item.name}}" class="open-Edit glyphicon glyphicon-pencil" title="edit"></a>
-                                <a href="#modalDelete" data-toggle="modal" data-id="{{item.id}}" data-code="{{item.code}}" data-name="{{item.name}}" class="open-Delete glyphicon glyphicon-remove" title="delete"></a>
+                                <a href="#modalEdit" data-toggle="modal" data-id="{{item.id}}" data-part="{{item.part}}" data-name="{{item.name}}" class="open-EditProduct glyphicon glyphicon-pencil" title="edit"></a>
+                                <a href="#modalDelete" data-toggle="modal" data-id="{{item.id}}" data-part="{{item.part}}" data-name="{{item.name}}" class="open-DeleteProduct glyphicon glyphicon-remove" title="delete"></a>
                             </td>
                         </tr>
                         </tbody>
@@ -75,14 +75,16 @@
         <div class="modal-content">
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">&times;</a>
-                <h3>Add a new Geolocation</h3>
+
+                <h3>Add a new Products to <%= ProductCategory.name %></h3>
             </div>
             <div class="modal-body">
-                <form role="form" class="form-horizontal" action="/geolocation/create" method="post">
+                <form role="form" class="form-horizontal" action="/admin/ProductCategory/<%= ProductCategory.id %>/product"
+                      method="post">
                     <div class="form-group">
                         <div class="col-lg-10">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
-                            <input type="text" class="form-control" id="code" name="code" placeholder="Code"/>
+                            <input type="text" class="form-control" id="productPart" name="productPart" placeholder="Part #" autofocus/>
+                            <input type="text" class="form-control" id="productName" name="productName" placeholder="Name"/>
                         </div>
                     </div>
 
@@ -98,29 +100,29 @@
 </div>
 
 <script>
-    $(document).on("click", ".open-Edit", function () {
+    $(document).on("click", ".open-EditProduct", function () {
         var id = $(this).data('id');
         var name = $(this).data('name');
-        var code = $(this).data('code');
-        $(".editFields #id").val( id );
-        $(".editFields #name").val( name );
-        $(".editFields #code").val( code );
+        var part = $(this).data('part');
+        $(".editProductFields #productId").val( id );
+        $(".editProductFields #productName").val( name );
+        $(".editProductFields #productPart").val( part );
     })
 </script>
-<div class="modal" role="dialog" id="modalEdit" aria-labelledby="modalEditLabel" aria-hidden="true">
+<div class="modal" role="dialog" id="modalEdit" aria-labelledby="modalEditProductLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content col-md-8">
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">&times;</a>
-                <h3>Edit</h3>
+                <h3>Edit product</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="editForm" class="form-horizontal" action="/geolocation/update" method="post">
+                <form role="form" id="editProductForm" class="form-horizontal" action="/admin/ProductCategory/<%= ProductCategory.id %>/product/update" method="post">
                     <div class="form-group">
-                        <div class="editFields">
-                            <input type="hidden" class="form-control" id="id" name="id"/>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name"/>
-                            <input type="text" class="form-control" id="code" name="code" placeholder="Code" autofocus/>
+                        <div class="editProductFields">
+                            <input type="hidden" class="form-control" id="productId" name="productId"/>
+                            <input type="text" class="form-control" id="productPart" name="productPart" placeholder="Part #" autofocus/>
+                            <input type="text" class="form-control" id="productName" name="productName" placeholder="Name"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -136,29 +138,30 @@
 </div>
 
 <script>
-    $(document).on("click", ".open-Delete", function () {
+    $(document).on("click", ".open-DeleteProduct", function () {
         var id = $(this).data('id');
         var name = $(this).data('name');
-        var code = $(this).data('code');
-        $(".deleteFields #id").val( id );
-        $(".deleteFields #name").val( name );
-        $(".deleteFields #code").val( code );
+        var part = $(this).data('part');
+        $(".deleteProductFields #productId").val( id );
+        $(".deleteProductFields #productName").val( name );
+        $(".deleteProductFields #productPart").val( part );
+
     })
 </script>
-<div class="modal" role="dialog" id="modalDelete" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+<div class="modal" role="dialog" id="modalDelete" aria-labelledby="modalDeleteProductLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content col-md-8">
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">&times;</a>
-                <h3>You are about to delete</h3>
+                <h3>Are you about to delete</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="deleteForm" class="form-horizontal" action="/geolocation/delete" method="post">
+                <form role="form" id="deleteProductForm" class="form-horizontal" action="/admin/ProductCategory/<%= ProductCategory.id %>/product/delete" method="post">
                     <div class="form-group">
-                        <div class="deleteFields">
-                            <input type="hidden" class="form-control" id="id" name="id"/>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
-                            <input type="text" class="form-control" id="code" name="code" placeholder="Code" autofocus/>
+                        <div class="deleteProductFields">
+                            <input type="hidden" class="form-control" id="productId" name="productId"/>
+                            <input type="text" class="form-control" id="productPart" name="productPart" placeholder="Part #" autofocus/>
+                            <input type="text" class="form-control" id="productName" name="productName" placeholder="Name"/>
                         </div>
                     </div>
                     <div class="form-group">
