@@ -7,6 +7,10 @@ module.exports = (function(){
     throw new Error('Define the query method!')
   }
 
+  ConnectorManager.prototype.afterTransactionSetup = function(callback) {
+    callback()
+  }
+
   ConnectorManager.prototype.connect = function() {
     throw new Error('Define the connect method!')
   }
@@ -18,6 +22,12 @@ module.exports = (function(){
   ConnectorManager.prototype.reconnect = function() {
     this.disconnect()
     this.connect()
+  }
+
+  ConnectorManager.prototype.cleanup = function() {
+    if (this.onProcessExit) {
+      process.removeListener('exit', this.onProcessExit)
+    }
   }
 
   return ConnectorManager

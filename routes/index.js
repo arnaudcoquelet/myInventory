@@ -4,6 +4,6 @@
  */
 
 exports.index = function(req, res){
-    res.redirect('/sites');
+    res.redirect('/sitegroup');
     //res.render('index', { user: req.user, title: 'MyInventory' });
 };

@@ -31,7 +31,7 @@ exports.list = function (req, res, model) {
                                 {name: sitegroup.name , url: '/sitegroup/' + sitegroup.id, class: ''},
                                 {name: site.name        , url: '/sitegroup/' + sitegroup.id + '/site/' + site.id, class: ''},
                                 {name: building.name    , url: '/sitegroup/' + sitegroup.id + '/site/' + site.id + '/building/' + building.id, class: ''},
-                                {name: floor.name       , url: '/sitegroup/' + sitegroup.id + '/site/' + site.id + '/building/' + building.id + '/closet/' + closet.id, class: ''},
+                                {name: floor.name       , url: '/sitegroup/' + sitegroup.id + '/site/' + site.id + '/building/' + building.id + '/floor/' + floor.id, class: ''},
                                 {name: closet.name      , url: '', class: 'active'}
                             ];
 
@@ -43,6 +43,7 @@ exports.list = function (req, res, model) {
                                     building: building,
                                     floor: floor,
                                     closet: closet,
+                                    displayLevel: 5,
                                     breadcrumbs: breadcrumbs
                                 });
                         });
@@ -94,7 +95,11 @@ exports.create = function (req, res, model) {
         console.log('closetid2', closetid2);
 
         model.createDeviceWithClosetId(closetid2,productid,{name: name, serial: serial}, function (err, device) {
-            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid );
+
+            model.findDeviceById(device.id, function (err, dev) {
+                console.log('device:',dev);
+                res.redirect('/sitegroup/' + dev[0].sitegroup_id + '/site/' + dev[0].site_id + '/building/' + dev[0].building_id + '/floor/' + dev[0].floor_id + '/closet/' + dev[0].closet_id );
+            });
         });
     }
     else { res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid + '/building/' + buildingid + '/floor/' + floorid + '/closet/' + closetid);}
@@ -153,6 +158,7 @@ exports.listAll = function (req, res, model) {
         res.render('deviceListAll',
             {
                 title: 'MyInventory',
+                displayLevel: -1,
                 breadcrumbs: breadcrumbs
             });
     }
@@ -166,6 +172,19 @@ exports.listAll_json = function (req, res, model) {
             if(!devices){res.json([]);}
 
             res.json(devices);
+        });
+    }
+    else {res.json([]); }
+};
+exports.listAll_csv = function (req, res, model) {
+    //var csv = require('express-csv');
+    if(model){
+        model.findDeviceAllDetails(function(err, devices){
+            var data = '';
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.csv(devices, "devices.csv", ["sitegroup_name", "site_name", "building_name","floor_name", "closet_name", "productcategories_name", "device_name", "device_serial", "product_part", "product_name" ]);
         });
     }
     else {res.json([]); }
@@ -184,6 +203,19 @@ exports.listAllSiteGroup_json = function (req, res, model) {
     }
     else {res.json([]); }
 };
+exports.listAllSiteGroup_csv = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+
+    if(model){
+        model.findDeviceAllSiteGroupDetails(sitegroupid, function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.csv(devices, "devices.csv", ["sitegroup_name", "site_name", "building_name","floor_name", "closet_name", "productcategories_name", "device_name", "device_serial", "product_part", "product_name" ]);
+        });
+    }
+    else {res.json([]); }
+};
 
 exports.listAllSite_json = function (req, res, model) {
     var siteid = req.params.siteid;
@@ -198,6 +230,19 @@ exports.listAllSite_json = function (req, res, model) {
     }
     else {res.json([]); }
 };
+exports.listAllSite_csv = function (req, res, model) {
+    var siteid = req.params.siteid;
+
+    if(model){
+        model.findDeviceAllSiteDetails(siteid,function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.csv(devices, "devices.csv", ["sitegroup_name", "site_name", "building_name","floor_name", "closet_name", "productcategories_name", "device_name", "device_serial", "product_part", "product_name" ]);
+        });
+    }
+    else {res.json([]); }
+};
 
 exports.listAllBuilding_json = function (req, res, model) {
     var buildingid = req.params.buildingid;
@@ -207,6 +252,18 @@ exports.listAllBuilding_json = function (req, res, model) {
             if(!devices){res.json([]);}
 
             res.json(devices);
+        });
+    }
+    else {res.json([]); }
+};
+exports.listAllBuilding_csv = function (req, res, model) {
+    var buildingid = req.params.buildingid;
+    if(model){
+        model.findDeviceAllBuildingDetails(buildingid,function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.csv(devices, "devices.csv", ["sitegroup_name", "site_name", "building_name","floor_name", "closet_name", "productcategories_name", "device_name", "device_serial", "product_part", "product_name" ]);
         });
     }
     else {res.json([]); }
@@ -225,3 +282,44 @@ exports.listAllFloor_json = function (req, res, model) {
     }
     else {res.json([]); }
 };
+exports.listAllFloor_csv = function (req, res, model) {
+    var floorid = req.params.floorid;
+
+    if(model){
+        model.findDeviceAllFloorDetails(floorid,function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.csv(devices, "devices.csv", ["sitegroup_name", "site_name", "building_name","floor_name", "closet_name", "productcategories_name", "device_name", "device_serial", "product_part", "product_name" ]);
+        });
+    }
+    else {res.json([]); }
+};
+
+exports.listAllCloset_json = function (req, res, model) {
+    var closetid = req.params.closetid;
+
+    if(model){
+        model.findDeviceAllClosetDetails(closetid,function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.json(devices);
+        });
+    }
+    else {res.json([]); }
+};
+exports.listAllCloset_csv = function (req, res, model) {
+    var closetid = req.params.closetid;
+
+    if(model){
+        model.findDeviceAllClosetDetails(closetid,function(err, devices){
+            if(err){res.json([]);}
+            if(!devices){res.json([]);}
+
+            res.csv(devices, "devices.csv", ["sitegroup_name", "site_name", "building_name","floor_name", "closet_name", "productcategories_name", "device_name", "device_serial", "product_part", "product_name" ]);
+        });
+    }
+    else {res.json([]); }
+};
+

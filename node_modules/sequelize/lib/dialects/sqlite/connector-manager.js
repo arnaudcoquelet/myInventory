@@ -5,6 +5,7 @@ var sqlite3
 module.exports = (function() {
   var ConnectorManager = function(sequelize, config) {
     this.sequelize = sequelize
+    this.config    = config
 
     if (config.dialectModulePath) {
       sqlite3 = require(config.dialectModulePath).verbose()
@@ -18,6 +19,7 @@ module.exports = (function() {
   ConnectorManager.prototype.connect = function() {
     var emitter = new (require('events').EventEmitter)()
       , self = this
+      , db
 
     this.database = db = new sqlite3.Database(self.sequelize.options.storage || ':memory:', function(err) {
       if (err) {

@@ -10721,12 +10721,12 @@ var htmlAnchorDirective = valueFn({
  *
  * The buggy way to write it:
  * <pre>
- * <a href="http://www.gravatar.com/avatar/{{hash}}"/>
+ * <a href="http://www.gravatar.com/avatars/{{hash}}"/>
  * </pre>
  *
  * The correct way to write it:
  * <pre>
- * <a ng-href="http://www.gravatar.com/avatar/{{hash}}"/>
+ * <a ng-href="http://www.gravatar.com/avatars/{{hash}}"/>
  * </pre>
  *
  * @element A
@@ -10800,12 +10800,12 @@ var htmlAnchorDirective = valueFn({
  *
  * The buggy way to write it:
  * <pre>
- * <img src="http://www.gravatar.com/avatar/{{hash}}"/>
+ * <img src="http://www.gravatar.com/avatars/{{hash}}"/>
  * </pre>
  *
  * The correct way to write it:
  * <pre>
- * <img ng-src="http://www.gravatar.com/avatar/{{hash}}"/>
+ * <img ng-src="http://www.gravatar.com/avatars/{{hash}}"/>
  * </pre>
  *
  * @element IMG

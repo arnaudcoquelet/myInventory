@@ -36,6 +36,7 @@ exports.list = function (req, res, model) {
                                 site: site,
                                 building: building,
                                 floor: floor,
+                                displayLevel: 4,
                                 breadcrumbs: breadcrumbs
                             });
                     });
@@ -53,6 +54,62 @@ exports.list_json = function (req, res, model) {
     var floorid = req.params.floorid;
 
     if (model) {
+        model.findClosetAllByFloorId_2(floorid, function (err, closets) {
+            if (err) {res.json([]);}
+            res.json(closets);
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
+exports.listBySiteGroup_json = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+
+    if (model) {
+        model.findClosetAllBySiteGroupId(sitegroupid, function (err, closets) {
+            if (err) {res.json([]);}
+            res.json(closets);
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
+exports.listBySite_json = function (req, res, model) {
+    var siteid = req.params.siteid;
+
+    if (model) {
+        model.findClosetAllBySiteId(siteid, function (err, closets) {
+            if (err) {res.json([]);}
+            res.json(closets);
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
+exports.listByBuilding_json = function (req, res, model) {
+    var buildingid = req.params.buildingid;
+
+    if (model) {
+        model.findClosetAllByBuildingId(buildingid, function (err, closets) {
+            if (err) {res.json([]);}
+            res.json(closets);
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
+exports.listByFloor_json = function (req, res, model) {
+    var floorid = req.params.floorid;
+
+    if (model) {
         model.findClosetAllByFloorId(floorid, function (err, closets) {
             if (err) {res.json([]);}
             res.json(closets);
@@ -61,6 +118,21 @@ exports.list_json = function (req, res, model) {
     else {
         res.json([]);
     }
+};
+
+
+exports.listByCloset_json = function (req, res, model) {
+    var closetid = req.params.closetid;
+
+        if (model) {
+            model.findClosetAllByClosetId(closetid, function (err, closets) {
+                if (err) {res.json([]);}
+                res.json(closets);
+            })
+        }
+        else {
+            res.json([]);
+        }
 };
 
 exports.listAllDetails_json = function(req, res, model){

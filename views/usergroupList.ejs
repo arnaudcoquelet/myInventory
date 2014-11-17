@@ -1,0 +1,177 @@
+<% layout('adminLayout') -%>
+</br></br>
+<script src="/js/angular_usergroup.js"></script>
+<script type="text/javascript">
+    var sortingOrder = 'name';
+</script>
+
+<div class="row">
+    <div ng-controller="ctrlUserGroup">
+        <div class="panel panel-info">
+                <div ng-init="fecthItems()"></div>
+
+                <div class="panel-heading">
+                    <i class="fa fa-users"></i>
+                    User Groups ({{countItems()}})
+                </div>
+
+                <div class="panel-body">
+                    <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search" autofocus/>
+                    <br/><br/>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th class="name">Name &nbsp;<a ng-click="sort_by('name')"><i
+                                            class="glyphicon glyphicon-sort"></i></a></th>
+                            <th class="code col-sm-2">Role &nbsp;<a ng-click="sort_by('role')"><i
+                                            class="glyphicon glyphicon-sort"></i></a></th>
+                            <th class="col-sm-1"><a href="#modalAddUserGroup" role="button" data-toggle="modal"
+                                                    class="glyphicon glyphicon-plus-sign text-success"></a></th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <td colspan="6">
+                                    <ul class="pager">
+                                        <li ng-class="{disabled: currentPage == 0}">
+                                            <a href ng-click="prevPage()">« Prev</a>
+                                        </li>
+                                        <li ng-repeat="n in range(pagedItems.length)"
+                                            ng-class="{active: n == currentPage}"
+                                            ng-click="setPage()">
+                                            <a href ng-bind="n + 1">1</a>
+                                        </li>
+                                        <li ng-class="{disabled: currentPage == pagedItems.length - 1}">
+                                            <a href ng-click="nextPage()">Next »</a>
+                                        </li>
+                                    </ul>
+                            </td>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                        <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
+                            <td><a href="/admin/usergroup/{{item.id}}">{{item.name}}</a></td>
+                            <td>{{item.role}}</td>
+                            <td>
+                                <a href="#modalEditUserGroup" data-toggle="modal" data-id="{{item.id}}" data-role="{{item.role}}" data-name="{{item.name}}" class="open-EditUserGroup glyphicon glyphicon-pencil" title="edit"></a>
+                                <a href="#modalDeleteUserGroup" data-toggle="modal" data-id="{{item.id}}" data-role="{{item.role}}" data-name="{{item.name}}" class="open-DeleteUserGroup glyphicon glyphicon-remove text-danger" title="delete"></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+</div>
+<br/>
+
+<div class="row">
+<% include userListAll_partial %>
+</div>
+<!--Modals-->
+<div class="modal" tabindex="-1" role="dialog" id="modalAddUserGroup" aria-labelledby="modalAddLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-lg-6">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Add a new UserGroup</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal" action="/admin/usergroup/create" method="post">
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                            <input type="text" class="form-control" id="role" name="role" placeholder="Role"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                        <button type="submit" class="btn btn-block btn-success">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on("click", ".open-EditUserGroup", function () {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var role = $(this).data('role');
+        $(".editUserGroupFields #id").val( id );
+        $(".editUserGroupFields #name").val( name );
+        $(".editUserGroupFields #role").val( role );
+    })
+</script>
+<div class="modal" role="dialog" id="modalEditUserGroup" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Edit UserGroup</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editForm" class="form-horizontal" action="/admin/usergroup/update" method="post">
+                    <div class="form-group">
+                        <div class="editUserGroupFields">
+                            <input type="hidden" class="form-control" id="id" name="id"/>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                            <input type="text" class="form-control" id="role" name="role" placeholder="Role"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="submit" class="btn btn-primary btn-block">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $(document).on("click", ".open-DeleteUserGroup", function () {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var role = $(this).data('role');
+            $(".deleteUserGroupFields #id").val( id );
+            $(".deleteUserGroupFields #name").val( name );
+            $(".deleteUserGroupFields #role").val( role );
+        })
+    })
+
+</script>
+<div class="modal" role="dialog" id="modalDeleteUserGroup" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>You are about to delete a UserGroup</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="deleteForm" class="form-horizontal" action="/admin/usergroup/delete" method="post">
+                    <div class="form-group">
+                        <div class="deleteUserGroupFields">
+                            <input type="hidden" class="form-control" id="id" name="id"/>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                            <input type="text" class="form-control" id="role" name="role" placeholder="Role"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="submit" class="btn btn-danger btn-block">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

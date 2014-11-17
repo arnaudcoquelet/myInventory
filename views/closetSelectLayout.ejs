@@ -13,11 +13,11 @@
         <thead>
         <tr>
             <th class="id col-sm-1 "></th>
-            <th class="sitegroup_name col-sm-2"><small>Geo &nbsp;<a ng-click="sort_by('sitegroup_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
-            <th class="site_name col-sm-2"><small>Site &nbsp;<a ng-click="sort_by('site_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
-            <th class="building_name col-sm-8"><small>Building &nbsp;<a ng-click="sort_by('building_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
-            <th class="floor_name col-sm-8"><small>Floor &nbsp;<a ng-click="sort_by('floor_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
-            <th class="closet_name col-sm-8"><small>Closet &nbsp;<a ng-click="sort_by('closet_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+            <th class="sitegroup_name"><small>Geo &nbsp;<a ng-click="sort_by('sitegroup_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+            <th class="site_name"><small>Site &nbsp;<a ng-click="sort_by('site_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+            <th class="building_name"><small>Building &nbsp;<a ng-click="sort_by('building_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+            <th class="floor_name"><small>Floor &nbsp;<a ng-click="sort_by('floor_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
+            <th class="closet_name"><small>Closet &nbsp;<a ng-click="sort_by('closet_name')"><i class="glyphicon glyphicon-sort"></i></a></small></th>
         </tr>
         </thead>
         <tfoot>
@@ -35,6 +35,8 @@
                     </li>
                     <li ng-class="{disabled: currentPage == pagedItems.length - 1}">
                         <a href ng-click="gotoPage(pagedItems.length - 1)">Last</a>
+                    </li>
+                    <li ng-class="{hidden: showAll == true}" class="pull-right"><a href ng-click="showAllClosets()">More</a>
                     </li>
                 </ul>
             </td>

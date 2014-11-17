@@ -1,7 +1,14 @@
 <% layout('adminLayout') -%>
 </br></br>
 <script type="text/javascript">
+    var sitegroupId = <%= sitegroup.id %>;
+    var siteId = <%= site.id %>;
+    var buildingId = <%= building.id %>;
+    var floorId = <%= floor.id %>;
+    var closetId = <%= closet.id %>;
+
     var devicePath = '/json/devices';
+    var closetPath = '/json/closet/<%=closet.id%>';
     var sortingOrder = 'id';
 </script>
 

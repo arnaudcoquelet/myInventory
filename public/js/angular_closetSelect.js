@@ -12,6 +12,7 @@ function ctrlClosetSelect($scope, $filter, $http, $templateCache) {
     $scope.currentPage = 0;
     $scope.items = [];
     $scope.selectedCloset = null;
+    $scope.showAll = false;
 
     var searchMatch = function (haystack, needle) {
         if (!needle) return true;
@@ -20,8 +21,7 @@ function ctrlClosetSelect($scope, $filter, $http, $templateCache) {
         return haystack.toString().toLowerCase().indexOf(needle.toLowerCase()) !== -1;
     };
 
-    $scope.resetSelectedCloset = function()
-    {
+    $scope.resetSelectedCloset = function() {
         $scope.selectedCloset = null;
     };
     $scope.changeSelection = function(item){
@@ -95,6 +95,8 @@ function ctrlClosetSelect($scope, $filter, $http, $templateCache) {
         var method = 'GET';
         var url = '/json/closet/details';
 
+        if(closetPath){url=closetPath;}
+
         $http({method: method, url: url, cache: $templateCache})
             .success(function(data, status) {
                 $scope.items = data;
@@ -127,5 +129,12 @@ function ctrlClosetSelect($scope, $filter, $http, $templateCache) {
             $('th.'+newSortingOrder+' i').removeClass().addClass('glyphicon glyphicon-chevron-down');
 
         $scope.search();
+    };
+
+
+    $scope.showAllClosets = function(){
+        closetPath = '/json/closet/details';
+        $scope.showAll = true;
+        $scope.fecthItems();
     };
 };

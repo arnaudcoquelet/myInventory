@@ -18,6 +18,7 @@ exports.list = function (req, res, model) {
                 {
                     title: 'MyInventory',
                     sitegroup: sitegroup,
+                    displayLevel: 1,
                     breadcrumbs: breadcrumbs
                 });
 
@@ -30,6 +31,45 @@ exports.list_json = function (req, res, model) {
     var id = req.params.sitegroupid;
     if (model) {
         model.findSiteAllBySiteGroupId(id, function (err, sites) {
+            if (err) {res.json([]);}
+            res.json(sites);
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
+exports.listAddresses_json = function (req, res, model) {
+    var id = req.params.siteid;
+    if (model) {
+        model.findAddressBySiteId(id, function (err, sites) {
+            if (err) {res.json([]);}
+            res.json(sites);
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
+exports.listContacts_json = function (req, res, model) {
+    var id = req.params.siteid;
+    if (model) {
+        model.findContactBySiteId(id, function (err, sites) {
+            if (err) {res.json([]);}
+            res.json(sites);
+        })
+    }
+    else {
+        res.json([]);
+    }
+};
+
+exports.listNotes_json = function (req, res, model) {
+    var id = req.params.siteid;
+    if (model) {
+        model.findNoteBySiteId(id, function (err, sites) {
             if (err) {res.json([]);}
             res.json(sites);
         })
@@ -118,4 +158,119 @@ exports.delete = function (req, res, model) {
     else {
         res.redirect('/sitegroup/'+ sitegroupid + '/site');
     }
+};
+
+exports.addAddress = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+    var siteid   = req.body.siteid;
+    var address = {};
+    address.address1 = req.body.address1;
+    address.city = req.body.city;
+    address.state = req.body.state;
+    address.zipcode = req.body.zipcode;
+
+    var error = '';
+    res.method = 'get';
+    if (!sitegroupid   ||   sitegroupid === '') { error = 'Missing the SiteGroup Id'; }
+    if (!siteid   ||   siteid === '') { error = 'Missing the Site Id'; }
+
+    if(model){
+        model.addAddressToSiteById(siteid, address, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid);
+        });
+    }
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid);}
+};
+
+exports.removeAddress = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+    var siteid   = req.body.siteid;
+    var addressid   = req.body.addressid;
+    var error = '';
+    res.method = 'get';
+
+    if (!sitegroupid   ||   sitegroupid === '') { error = 'Missing the SiteGroup Id'; }
+    if (!siteid   ||   siteid === '') { error = 'Missing the Site Id'; }
+    if (!addressid   ||   addressid === '') { error = 'Missing the Addressid Id'; }
+    if(model){
+        model.removeAddressToSiteById(siteid,addressid, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/'+ siteid);
+        });
+    }
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/'+ siteid);}
+};
+
+exports.addContact = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+    var siteid   = req.body.siteid;
+    var userid = req.body.selectedUser;
+    var error = '';
+    res.method = 'get';
+
+    if (!sitegroupid   ||   sitegroupid === '') { error = 'Missing the SiteGroup Id'; }
+    if (!siteid   ||   siteid === '') { error = 'Missing the Site Id'; }
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+    if(model){
+        model.addContactToSiteById(siteid, userid, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid);
+        });
+    }
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid);}
+};
+
+exports.removeContact = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+    var siteid   = req.body.siteid;
+    var contactid   = req.body.contactid;
+    var error = '';
+    res.method = 'get';
+
+    if (!sitegroupid   ||   sitegroupid === '') { error = 'Missing the SiteGroup Id'; }
+    if (!siteid   ||   siteid === '') { error = 'Missing the Site Id'; }
+    if (!contactid   ||   contactid === '') { error = 'Missing the User Id'; }
+
+    if(model){
+        model.removeContactToSiteById(siteid, contactid, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid);
+        });
+    }
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid);}
+};
+
+exports.addNote = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+    var id   = req.body.id;
+    var name = req.body.name;
+    var code = req.body.code;
+    var error = '';
+    res.method = 'get';
+
+    if (!id   ||   id === '') { error = 'Missing the SiteGroup Id'; }
+    if (!name || name === '') { error = 'Missing the SiteGroup'; }
+    if (!code || code === '') { error = 'Missing the Code'; }
+    if(model){
+        model.updateSiteById(id, {name:name, code:code}, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site');
+        });
+    }
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site');}
+};
+
+exports.removeNote = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+    var id   = req.body.id;
+    var name = req.body.name;
+    var code = req.body.code;
+    var error = '';
+    res.method = 'get';
+
+    if (!id   ||   id === '') { error = 'Missing the SiteGroup Id'; }
+    if (!name || name === '') { error = 'Missing the SiteGroup'; }
+    if (!code || code === '') { error = 'Missing the Code'; }
+    if(model){
+        model.updateSiteById(id, {name:name, code:code}, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site');
+        });
+    }
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site');}
 };

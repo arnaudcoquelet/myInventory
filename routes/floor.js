@@ -32,6 +32,7 @@ exports.list = function (req, res, model) {
                             sitegroup: sitegroup,
                             site: site,
                             building: building,
+                            displayLevel: 3,
                             breadcrumbs: breadcrumbs
                         });
 

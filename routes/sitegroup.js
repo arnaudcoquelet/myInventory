@@ -10,6 +10,7 @@ exports.list = function (req, res, model) {
     res.render('sitegroupList',
         {
             title: 'MyInventory',
+            displayLevel: 0,
             breadcrumbs: breadcrumbs
         }
     );

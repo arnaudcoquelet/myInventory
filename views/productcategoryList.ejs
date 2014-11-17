@@ -18,7 +18,7 @@
                     <tr>
                         <th class="col-sm-1">#</th>
                         <th>Name</th>
-                        <th class="col-sm-1"><a href="#modalAdd" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign" title="Add a Product Category"></a></th>
+                        <th class="col-sm-1"><a href="#modalAdd" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success" title="Add a Product Category"></a></th>
                     </tr>
                     <% if(productcategories && productcategories instanceof Array && productcategories.length > 0 ) { %>
                     <% for(var i = 0; i < productcategories.length; i++) { %>
@@ -32,7 +32,7 @@
                         <td><a href="/admin/ProductCategory/<%= productcategories[i].id %>"><%= productcategories[i].name %></a></td>
                         <td>
                             <a href="#modalEdit" data-toggle="modal" data-id="<%= productcategories[i].id %>" data-name="<%= productcategories[i].name %>" class="open-EditProductCategory glyphicon glyphicon-pencil" title="edit"></a>
-                            <a href="#modalDelete" data-toggle="modal" data-id="<%= productcategories[i].id %>" data-name="<%= productcategories[i].name %>" class="open-DeleteProductCategory glyphicon glyphicon-remove" title="delete"></a>
+                            <a href="#modalDelete" data-toggle="modal" data-id="<%= productcategories[i].id %>" data-name="<%= productcategories[i].name %>" class="open-DeleteProductCategory glyphicon glyphicon-remove text-danger" title="delete"></a>
                         </td>
                     </tr>
                     <% } %>
@@ -70,8 +70,7 @@
                     </div>
                     <div class="form-group">
                         <div class="">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary pull-right">Add</button>
+                            <button type="submit" class="btn btn-success btn-block">Add</button>
                         </div>
                     </div>
                 </form>
@@ -105,8 +104,7 @@
                     </div>
                     <div class="form-group">
                         <div class="">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary pull-right">Update</button>
+                            <button type="submit" class="btn btn-primary btn-block">Update</button>
                         </div>
                     </div>
                 </form>
@@ -140,8 +138,7 @@
                     </div>
                     <div class="form-group">
                         <div class="">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger pull-right">Delete</button>
+                            <button type="submit" class="btn btn-danger btn-block">Delete</button>
                         </div>
                     </div>
                 </form>

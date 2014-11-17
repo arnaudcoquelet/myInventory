@@ -1,0 +1,204 @@
+<script src="/js/angular_siteDetails.js"></script>
+
+<div ng-controller="ctrlSiteDetails" class="panel panel-warning">
+    <div ng-init="fecthItems()"></div>
+
+    <div class="panel-heading">
+        <i class="fa fa-hospital-o"></i>
+        Site Information
+        <i class="fa fa-wifi fa-2x pull-right"></i>
+        <i class="fa fa-phone fa-2x pull-right"></i>
+    </div>
+
+    <div class="panel-body">
+        <i class="fa fa-map-marker"></i> <b>Address : </b> <a href="#modalAddSiteAddress" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success pull-right" title="Edit site address"></a>
+        <div class="list-group list-address">
+            <div ng-repeat="address in item.addresses">
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-lg-10">
+                        <a href="http://maps.google.com/?q={{address.address1}}, {{address.city}}, {{address.state}} {{address.zipcode}}" target="_blank" >
+                            {{address.address1}}<br>{{address.city}}, {{address.state}} {{address.zipcode}} </a>
+                        </div>
+                        <div class="col-lg-2">
+                            <a href="#modalEditSiteAddress" data-toggle="modal" data-id="{{address.id}}" data-address1="{{address.address1}}" data-city="{{address.city}}" data-state="{{address.state}}" data-zipcode="{{address.zipcode}}" class="open-editSiteAddress glyphicon glyphicon-pencil text-primary" title="edit"></a>
+                            <a href="#modalDeleteSiteAddress" data-toggle="modal" data-id="{{address.id}}" data-address1="{{address.address1}}" data-city="{{address.city}}" data-state="{{address.state}}" data-zipcode="{{address.zipcode}}" class="open-DeleteSiteAddress glyphicon glyphicon-remove text-danger" title="delete"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </br>
+        <i class="fa fa-users"></i> <b>Contact(s) : </b><a href="#modalAddSiteContact" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success pull-right" title="Assign a contact"></a>
+        <div class="list-group list-contact">
+            <div ng-repeat="contact in item.contacts">
+                <div class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-11">
+                        <a href="/admin/user/{{contact.id}}"><b>{{contact.name}}</b></a>
+                    </div>
+                    <div class="col-lg-1">
+                        <a href="#modalDeleteSiteContact" data-toggle="modal" data-contactid="{{contact.id}}" data-name="{{contact.name}}" class="open-DeleteSiteContact glyphicon glyphicon-remove text-danger" title="delete"></a>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        </br>
+        <i class="fa fa-file-o"></i> <b>Note(s) : </b><a href="#modalAddSiteNote" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign pull-right" title="Add a new note"></a>
+        <div class="list-group list-note">
+            <div ng-repeat="note in item.notes">
+                <a href="/notes/{{note.id}}" class="list-group-item"><b>{{note.title}}</b></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modals-->
+<div class="modal" tabindex="-1" role="dialog" id="modalAddSiteContact" aria-labelledby="modalAddLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Add a User</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/contacts/add" method="post">
+                    <input type="hidden" name="sitegroupid" value="<%= sitegroup.id%>" class="hidden">
+                    <input type="hidden" name="siteid" value="<%= site.id%>" class="hidden">
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <% include userSelectLayout %>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                        <button type="submit" class="btn btn-success btn-block">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" role="dialog" id="modalDeleteSiteContact" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>You are about to remove a Contact from the Site</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="deleteForm" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/contacts/remove" method="post">
+                    <div class="form-group">
+                        <div class="deleteUserFields">
+                            <input type="hidden" class="form-control" id="contactid" name="contactid"/>
+                            <input type="hidden" class="form-control" name="sitegroupid" value="<%= sitegroup.id%>">
+                            <input type="hidden" class="form-control" name="siteid" value="<%= site.id%>">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="submit" class="btn btn-danger btn-block">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+        $(document).on("click", ".open-DeleteSiteContact", function () {
+                var contactid = $(this).data('contactid');
+                var name = $(this).data('name');
+                $(".deleteUserFields #contactid").val( contactid );
+                $(".deleteUserFields #name").val( name );
+            })
+</script>
+
+
+<div class="modal" tabindex="-1" role="dialog" id="modalAddSiteAddress" aria-labelledby="modalAddLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Add a New Address</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/addresses/add" method="post">
+                    <input type="hidden" name="sitegroupid" value="<%= sitegroup.id%>" class="hidden">
+                    <input type="hidden" name="siteid" value="<%= site.id%>" class="hidden">
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <input type="text" class="form-control" id="address1" name="address1" placeholder="Street" autofocus/>
+                            <input type="text" class="form-control" id="city" name="city" placeholder="City"/>
+                            <input type="text" class="form-control" id="state" name="state" placeholder="State"/>
+                            <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Zip Code"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                        <button type="submit" class="btn btn-success btn-block">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" role="dialog" id="modalDeleteSiteAddress" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>You are about to remove a Address from the Site</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="deleteForm" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/addresses/remove" method="post">
+                    <div class="form-group">
+                        <div class="deleteSiteAddressFields">
+                            <input type="hidden" class="form-control" id="addressid" name="addressid"/>
+                            <input type="hidden" class="form-control" name="sitegroupid" value="<%= sitegroup.id%>">
+                            <input type="hidden" class="form-control" name="siteid" value="<%= site.id%>">
+                            <input type="text" class="form-control" id="address1" name="address1" placeholder="Street" autofocus/>
+                            <input type="text" class="form-control" id="city" name="city" placeholder="City"/>
+                            <input type="text" class="form-control" id="state" name="state" placeholder="State"/>
+                            <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Zip Code"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="submit" class="btn btn-danger btn-block">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+        $(document).on("click", ".open-DeleteSiteAddress", function () {
+                var id = $(this).data('id');
+                var address1 = $(this).data('address1');
+                var city = $(this).data('city');
+                var state = $(this).data('state');
+                var zipcode = $(this).data('zipcode');
+                $(".deleteSiteAddressFields #addressid").val( id );
+                $(".deleteSiteAddressFields #address1").val( address1 );
+                $(".deleteSiteAddressFields #city").val( city );
+                $(".deleteSiteAddressFields #state").val( state );
+                $(".deleteSiteAddressFields #zipcode").val( zipcode );
+            })
+</script>

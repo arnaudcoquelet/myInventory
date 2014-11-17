@@ -3,26 +3,24 @@
     var sortingOrder = 'id';
 </script>
 
+
 <div class="row">
-    <div ng-controller="ctrlDeviceListAll">
+    <div ng-controller="ctrlDeviceListAll" class="col-sm-12">
         <div class="panel panel-primary">
                 <div ng-init="fecthItems()"></div>
 
                 <div class="panel-heading">
                     <i class="glyphicon glyphicon-tasks"></i>
                     Devices ({{countItems()}})
+                    <a class="fa fa-download pull-right white" style="color: white" href="/csv/devices" title="Export to CSV" ></a>
                 </div>
 
                 <div class="panel-body">
                     <!-- <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search"/> -->
-                    <br/><br/>
+
                     <table class="table table-striped table-hover">
                         <thead>
                         <tr>
-                            <th class="device_id col-sm-1">
-                                <small># &nbsp;<a ng-click="sort_by('device_id')"><i
-                                                class="glyphicon glyphicon-sort"></i></a></small>
-                            </th>
                             <th class="device_serial col-sm-1">
                                 <small>Serial # &nbsp;<a ng-click="sort_by('device_serial')"><i
                                                 class="glyphicon glyphicon-sort"></i></a></small>
@@ -43,18 +41,18 @@
                                 <small>Location</small>
                             </th>
                             <th class="col-sm-1"><a href="#modalAddDevice" role="button" data-toggle="modal"
-                                                    class="glyphicon glyphicon-plus-sign"></a></th>
+                                                    class="glyphicon glyphicon-plus-sign text-success" title="Add a new device"></a></th>
                         </tr>
                         <tr>
-                            <th class="device_id">
-                            </th>
-                            <th class="device_serial col-sm-1">
+                            <!-- <th class="device_id">
+                            </th> -->
+                            <th class="device_serial">
                                 <input type="text" ng-model="filterItem.device_serial" ng-change="search()" placeholder="Serial"/>
                             </th>
-                            <th class="device_name col-sm-1">
+                            <th class="device_name">
                                 <input type="text" ng-model="filterItem.device_name" ng-change="search()" placeholder="Name"/>
                             </th>
-                            <th class="ProductCategory_name col-sm-1">
+                            <th class="ProductCategory_name">
                                 <input type="text" ng-model="filterItem.ProductCategory_name" ng-change="search()" placeholder="Category"/>
                             </th>
                             <th class="product_name">
@@ -88,24 +86,38 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
-                            <td><a href="#" class="custom-tooltip"><span class="label label-info">i</span><span class="custom-tooltip">{{item.device_name}}</span></a>  <small>{{item.device_id}}</small></td>
+                            <!-- <td><a href="#" class="custom-tooltip"><span class="label label-info">i</span><span class="custom-tooltip">{{item.device_name}}</span></a>  <small>{{item.device_id}}</small></td> -->
+                            <!-- <td><a href="#" class="custom-tooltip"><span class="custom-tooltip">{{item.device_name}}</span> <small>{{item.device_serial}}</small> </a> </td> -->
                             <td><small>{{item.device_serial}}</small></td>
                             <td><small>{{item.device_name}}</small></td>
-                            <td><small>{{item.ProductCategory_name}}</small></td>
+                            <td><small>{{item.productcategories_name}}</small></td>
                             <td><small>{{item.product_name}}</small></td>
                             <td>
                                 <small>
+                                    <% if (displayLevel<=0) {%>
                                     <a href="/sitegroup/{{item.sitegroup_id}}">{{item.sitegroup_name}}</a> /
+                                    <% } %>
+                                    <% if (displayLevel<=1) {%>
                                     <a href="/sitegroup/{{item.sitegroup_id}}/site/{{item.site_id}}">{{item.site_name}}</a> /
+                                    <% } %>
+                                    <% if (displayLevel<=2) {%>
                                     <a href="/sitegroup/{{item.sitegroup_id}}/site/{{item.site_id}}/building/{{item.building_id}}">{{item.building_name}}</a> /
+                                    <% } %>
+                                    <% if (displayLevel<=3) {%>
                                     <a href="/sitegroup/{{item.sitegroup_id}}/site/{{item.site_id}}/building/{{item.building_id}}/floor/{{item.floor_id}}">{{item.floor_name}}</a> /
+                                    <% } %>
+                                    <% if (displayLevel<=4) {%>
                                     <a href="/sitegroup/{{item.sitegroup_id}}/site/{{item.site_id}}/building/{{item.building_id}}/floor/{{item.floor_id}}/closet/{{item.closet_id}}">{{item.closet_name}}</a>
+                                    <% } %>
+                                    <% if (displayLevel>4) {%>
+                                    {{item.closet_name}}
+                                    <% } %>
                                 </small>
                             </td>
-                            <td>
-                                <a href="#modalEditDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" class="open-EditDevice glyphicon glyphicon-pencil" title="edit"></a>
-                                <a href="#modalDeleteDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" class="open-DeleteDevice glyphicon glyphicon-remove" title="delete"></a>
-                                <a href="#modalCommentDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" class="open-CommentDevice glyphicon glyphicon-comment" title="comments ()"></a>
+                            <td class="col-sm-1">
+                                <a href="#modalEditDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" data-serial="{{item.device_serial}}" class="open-EditDevice glyphicon glyphicon-pencil text-info" title="edit"></a>
+                                <a href="#modalDeleteDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" data-serial="{{item.device_serial}}" class="open-DeleteDevice glyphicon glyphicon-remove text-danger" title="delete"></a>
+                                <a href="#modalCommentDevice" data-toggle="modal" data-id="{{item.device_id}}" data-name="{{item.device_name}}" data-serial="{{item.device_serial}}" class="open-CommentDevice glyphicon glyphicon-comment text-info"  title="comments"></a>
                             </td>
                         </tr>
                         </tbody>
@@ -115,3 +127,121 @@
     </div>
 </div>
 <br/>
+
+
+<!--Modals-->
+<div class="modal" tabindex="-1" role="dialog" id="modalAddDevice" aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Add a new Device</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal" action="/devices" method="post">
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                            <input type="text" class="form-control" id="serial" name="serial" placeholder="Serial #"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Type</label>
+                            <% include productSelectLayout %>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Location</label>
+                            <% include closetSelectLayout %>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <button type="submit" class="btn btn-success btn-block">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on("click", ".open-EditDevice", function () {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var serial = $(this).data('serial');
+        $(".editDevicesFields #id").val( id );
+        $(".editDevicesFields #name").val( name );
+        $(".editDevicesFields #serial").val( serial );
+    })
+</script>
+<div class="modal" role="dialog" id="modalEditDevice" aria-labelledby="modalEditLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Edit Device</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="editDeviceForm" class="form" action="/devices/update" method="post">
+                    <div class="form-group">
+                        <div class="editDevicesFields">
+                            <input type="hidden" class="form-control" id="id" name="id"/>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                            <input type="text" class="form-control" id="serial" name="serial" placeholder="Serial #"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="submit" class="btn btn-primary btn-block">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on("click", ".open-DeleteDevice", function () {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var serial = $(this).data('serial');
+        $(".deleteDeviceFields #id").val( id );
+        $(".deleteDeviceFields #name").val( name );
+        $(".deleteDeviceFields #serial").val( serial );
+    })
+</script>
+<div class="modal" role="dialog" id="modalDeleteDevice" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>You are about to delete a Device</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="deleteDeviceForm" class="form-horizontal" action="/devices/delete" method="post">
+                    <div class="form-group">
+                        <div class="deleteDeviceFields">
+                            <input type="hidden" class="form-control" id="id" name="id"/>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                            <input type="text" class="form-control" id="serial" name="serial" placeholder="Serial #"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="submit" class="btn btn-danger btn-block">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

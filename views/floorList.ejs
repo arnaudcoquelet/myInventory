@@ -6,11 +6,12 @@
     var siteId = <%= site.id %>;
     var buildingId = <%= building.id %>;
     var devicePath = '/json/devices/building/<%=building.id%>';
+    var closetPath = '/json/closet/building/<%=building.id%>';
     var sortingOrder = 'id';
 </script>
 
 <div class="row">
-    <div ng-controller="ctrlFloor">
+    <div ng-controller="ctrlFloor" class="col-sm-12">
         <div class="panel panel-primary">
                 <div ng-init="fecthItems()"></div>
 
@@ -25,12 +26,10 @@
                     <table class="table table-striped table-hover">
                         <thead>
                         <tr>
-                            <th class="id col-sm-1"># &nbsp;<a ng-click="sort_by('id')"><i
-                                            class="glyphicon glyphicon-sort"></i></a></th>
                             <th class="name">Name &nbsp;<a ng-click="sort_by('name')"><i
                                             class="glyphicon glyphicon-sort"></i></a></th>
-                            <th class="col-sm-1"><a href="#modalAdd" role="button" data-toggle="modal"
-                                                    class="glyphicon glyphicon-plus-sign"></a></th>
+                            <th class="col-sm-1"><a href="#modalAddFloor" role="button" data-toggle="modal"
+                                                    class="glyphicon glyphicon-plus-sign text-success"></a></th>
                         </tr>
                         </thead>
                         <tfoot>
@@ -54,11 +53,11 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
-                            <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/<%=building.id%>/floor/{{item.id}}">{{item.id}}</a></td>
-                            <td>{{item.name}}</td>
+                            <!-- <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/<%=building.id%>/floor/{{item.id}}">{{item.id}}</a></td> -->
+                            <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/<%=building.id%>/floor/{{item.id}}">{{item.name}}</a></td>
                             <td>
-                                <a href="#modalEdit" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-Edit glyphicon glyphicon-pencil" title="edit"></a>
-                                <a href="#modalDelete" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-Delete glyphicon glyphicon-remove" title="delete"></a>
+                                <a href="#modalEditFloor" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-EditFloor glyphicon glyphicon-pencil" title="edit"></a>
+                                <a href="#modalDeleteFloor" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-DeleteFloor glyphicon glyphicon-remove text-danger" title="delete"></a>
                             </td>
                         </tr>
                         </tbody>
@@ -72,7 +71,7 @@
 <% include deviceListAll_partial %>
 
 <!--Modals-->
-<div class="modal" tabindex="-1" role="dialog" id="modalAdd" aria-labelledby="modalAddLabel"
+<div class="modal" tabindex="-1" role="dialog" id="modalAddFloor" aria-labelledby="modalAddLabel"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -83,14 +82,15 @@
             <div class="modal-body">
                 <form role="form" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/<%=building.id%>/floor/create" method="post">
                     <div class="form-group">
-                        <div class="col-lg-10">
+                        <div class="col-lg-12">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add</button>
+                        <div class="col-lg-12">
+                        <button type="submit" class="btn btn-primary btn-success btn-block">Add</button>
+                            </div>
                     </div>
                 </form>
             </div>
@@ -100,14 +100,14 @@
 </div>
 
 <script>
-    $(document).on("click", ".open-Edit", function () {
+    $(document).on("click", ".open-EditFloor", function () {
         var id = $(this).data('id');
         var name = $(this).data('name');
-        $(".editFields #id").val( id );
-        $(".editFields #name").val( name );
+        $(".editFloorFields #id").val( id );
+        $(".editFloorFields #name").val( name );
     })
 </script>
-<div class="modal" role="dialog" id="modalEdit" aria-labelledby="modalEditLabel" aria-hidden="true">
+<div class="modal" role="dialog" id="modalEditFloor" aria-labelledby="modalEditLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content col-md-8">
             <div class="modal-header">
@@ -117,15 +117,14 @@
             <div class="modal-body">
                 <form role="form" id="editForm" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/<%=building.id%>/floor/update" method="post">
                     <div class="form-group">
-                        <div class="editFields">
+                        <div class="editFloorFields">
                             <input type="hidden" class="form-control" id="id" name="id"/>
                             <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary pull-right">Update</button>
+                            <button type="submit" class="btn btn-primary btn-block">Update</button>
                         </div>
                     </div>
                 </form>
@@ -135,14 +134,14 @@
 </div>
 
 <script>
-    $(document).on("click", ".open-Delete", function () {
+    $(document).on("click", ".open-DeleteFloor", function () {
         var id = $(this).data('id');
         var name = $(this).data('name');
-        $(".deleteFields #id").val( id );
-        $(".deleteFields #name").val( name );
+        $(".deleteFloorFields #id").val( id );
+        $(".deleteFloorFields #name").val( name );
     })
 </script>
-<div class="modal" role="dialog" id="modalDelete" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+<div class="modal" role="dialog" id="modalDeleteFloor" aria-labelledby="modalDeleteLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content col-md-8">
             <div class="modal-header">
@@ -152,15 +151,14 @@
             <div class="modal-body">
                 <form role="form" id="deleteForm" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/<%=building.id%>/floor/delete" method="post">
                     <div class="form-group">
-                        <div class="deleteFields">
+                        <div class="deleteFloorFields">
                             <input type="hidden" class="form-control" id="id" name="id"/>
                             <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger pull-right">Delete</button>
+                            <button type="submit" class="btn btn-danger btn-block">Delete</button>
                         </div>
                     </div>
                 </form>

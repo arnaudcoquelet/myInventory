@@ -25,6 +25,7 @@ exports.list = function (req, res, model) {
                         title: 'MyInventory',
                         sitegroup: sitegroup,
                         site: site,
+                        displayLevel: 2,
                         breadcrumbs: breadcrumbs
                     });
 

@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
-    //host: "10.118.204.106",
+    //host: "localhost",
+    host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -11,66 +11,68 @@ var User = sequelize.define('user',{
         username: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
         password: { type: Sequelize.STRING, defaultValue: "password", allowNull: false},
         role: { type: Sequelize.STRING, defaultValue: "read"},
-        email: { type: Sequelize.STRING, defaultValue: "",allowNull: false},
-        telephone: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-        address1: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-        address2: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-        city: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-        state: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
-        zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
         position: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
         deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
+
+var UserGroup = sequelize.define('usergroup',{
+    name: { type: Sequelize.STRING, allowNull: false},
+    role: { type: Sequelize.STRING, defaultValue: "read"}
+},{paranoid: true});
 
 var Log = sequelize.define('log', {
     action: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false},
     model: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     text: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
 
-var Comment = sequelize.define('device', {
+var Comment = sequelize.define('comment', {
     text: { type: Sequelize.STRING,defaultValue: "", allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
+
+var Note = sequelize.define('note', {
+    title: { type: Sequelize.STRING,defaultValue: "", allowNull: false},
+    text: { type: Sequelize.STRING,defaultValue: "", allowNull: false},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
+},{paranoid: true});
 
 var Device = sequelize.define('device', {
     name: { type: Sequelize.STRING, allowNull: false},
     serial: { type: Sequelize.STRING, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
 
 var ProductCategory = sequelize.define('ProductCategory', {
     name: { type: Sequelize.STRING, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-    
-});
+},{paranoid: true});
 
 var Product = sequelize.define('product', {
     name: { type: Sequelize.STRING, allowNull: false},
     part: { type: Sequelize.STRING, defaultValue: "unknown", allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-    
-});
+},{paranoid: true});
 
 var Closet = sequelize.define('closet', {
     name: { type: Sequelize.STRING, allowNull: false},
     spare: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
 
 var Floor = sequelize.define('floor', {
     name: { type: Sequelize.STRING, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
 
 var Building = sequelize.define('building', {
     name: { type: Sequelize.STRING, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
 
 var Address = sequelize.define('address', {
     address1: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
@@ -79,7 +81,19 @@ var Address = sequelize.define('address', {
     state: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     zipcode: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
+
+var Telephone = sequelize.define('telephone', {
+    title: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    telephone: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
+},{paranoid: true});
+
+var Email = sequelize.define('email', {
+    title: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    email: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
+},{paranoid: true});
 
 var Site = sequelize.define('site', {
     name: { type: Sequelize.STRING, allowNull: false},
@@ -87,64 +101,85 @@ var Site = sequelize.define('site', {
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     category: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
 
 var SiteGroup = sequelize.define('sitegroup', {
     name: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     code: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
-});
+},{paranoid: true});
 
 //Association
-User.hasMany(Address, {as: 'Addresses'});
 SiteGroup.hasMany(Site, {as: 'Sites'});
-Site.hasMany(User, {as: 'Contacts'});
+SiteGroup.hasMany(Comment, {as:'Comments'});
+
+Site.hasMany(User, {as: 'Contacts', through: 'SitesUsers'});
+Site.hasMany(UserGroup, {as: 'UserGroups', through: 'SitesUserGroups'});
 Site.hasMany(Address, {as: 'Addresses'});
 Site.hasMany(Building, {as: 'Buildings'});
-Building.hasMany(Floor, {as: 'Floors'});
-Floor.hasMany(Closet, {as: 'Closets'});
-Closet.hasMany(Device, {as: 'Devices'});
-Device.hasMany(Device, {as:'SubDevices'});
-Device.hasMany(Product, {as:'Products'});
-ProductCategory.hasMany(Product, {as:'Products'});
-
-Device.hasMany(Closet);
-Closet.hasMany(Floor);
-Floor.hasMany(Building);
-Building.hasMany(Site);
-Site.hasMany(SiteGroup);
-Product.hasMany(Device);
-Address.hasMany(Site, {as: 'Sites'});
-Address.hasMany(User, {as: 'Users'});
-User.hasMany(Comment, {as:'Comments'});
-
-Comment.hasOne(User, {as:'Author'});
-ProductCategory.hasMany(Comment, {as:'Comments'});
-Product.hasMany(Comment, {as:'Comments'});
-Device.hasMany(Comment, {as:'Comments'});
-Closet.hasMany(Comment, {as:'Comments'});
-Floor.hasMany(Comment, {as:'Comments'});
-Building.hasMany(Comment, {as:'Comments'});
 Site.hasMany(Comment, {as:'Comments'});
-SiteGroup.hasMany(Comment, {as:'Comments'});
-User.hasMany(Log, {as:'Logs'});
-Log.hasMany(Comment, {as:'Comments'});
-Log.hasOne(User, {as:'Author'});
+Site.hasMany(Note, {as:'Notes'});
 
+Building.hasMany(Floor, {as: 'Floors'});
+Building.hasMany(Comment, {as:'Comments'});
+
+Floor.hasMany(Closet, {as: 'Closets'});
+Floor.hasMany(Comment, {as:'Comments'});
+
+Closet.hasMany(Device, {as: 'Devices'});
+Closet.hasMany(Comment, {as:'Comments'});
+
+Device.hasMany(Device, {as:'SubDevices'});
+Device.hasMany(Comment, {as:'Comments'});
+Device.belongsTo(Product);
+
+ProductCategory.hasMany(Product, {as:'Products'});
+ProductCategory.hasMany(Comment, {as:'Comments'});
+
+Product.hasMany(Comment, {as:'Comments'});
+
+UserGroup.hasMany(User, {as: 'Users'});
+UserGroup.hasMany(Site, {as: 'Sites', through: 'SitesUserGroups'});
+
+User.hasMany(Address, {as: 'Addresses'});
+User.hasMany(Email, {as: 'Emails'});
+User.hasMany(Telephone, {as: 'Telephones'});
+User.hasMany(Comment, {as: 'Comments'});
+User.hasMany(Note, {as: 'Notes'});
+User.hasMany(Site, {as: 'Sites', through: 'SitesUsers'});
+
+Comment.belongsTo(User, {as:'Author'});
+Note.belongsTo(User, {as:'Author'});
+
+Log.hasMany(Comment, {as:'Comments'});
+Log.belongsTo(User, {as:'Author'});
+
+/*
 sequelize
     .sync({force:true})
     .on('success', function() {
         console.log("Model Create in DB");
         _createUnassignedSiteGroup();
         _createDefaultProductCategory();
+        _createAdminUserGroup();
         _createAdminUser();
         _createDefaultProducts();
         //_createViews();
     })
     .on('failure', function(err) {console.log(err); });
+*/
+
+
+sequelize
+    .sync({force:false})
+    .on('success', function() {
+    })
+    .on('failure', function(err) {console.log(err); });
+
 
 exports.sequelize = sequelize;
 exports.User = User;
+exports.UserGroup = UserGroup;
 exports.SiteGroup = SiteGroup;
 exports.Site = Site;
 exports.Building = Building;
@@ -154,18 +189,164 @@ exports.Device = Device;
 exports.ProductCategory = ProductCategory;
 exports.Product = Product;
 exports.Address = Address;
+exports.Emails = Email;
+exports.Telephones = Telephone;
+exports.Comments = Comment;
+exports.Notes = Note;
 
 
 
+
+//****************************************//
+// USERGROUP
+//****************************************//
+var _createUserGroup = function (usergroup, next) {
+    var newUserGroup = UserGroup.build(usergroup);
+    newUserGroup
+        .save()
+        .on('success', function() {if(next) next(newUserGroup);})
+        .on('failure', function(err) {console.log(err); if(next) next(null);});
+};
+exports.createUserGroup = _createUserGroup;
+
+var _findUserGroupByUserGroupName = function (name, next) {
+    console.log("_findUserGroupByUserGroupName(): name=" + name);
+    UserGroup
+        .find({ where: {name: name} })
+        .success(function(usergroup) {
+            console.log("usergroup found");
+            if(next){
+                if(!user){ next("UserGroup " + name + " not found", false);}
+                else { next(null,usergroup); }
+            }
+        })
+        .error(function(error){ console.error(error); if(next) next(error,false);});
+};
+exports.findUserByUserGroupName = _findUserGroupByUserGroupName;
+
+var _findUserGroupById = function(usergroupid, next) {
+    UserGroup
+        .find(usergroupid)
+        .success(function(usergroup) {
+            if(next) {
+                if(!usergroup){ return next ("UserGroupId " + usergroupid + " not found", false);}
+                return next(null,usergroup);
+            };
+        })
+        .error(function(error){
+            console.error(error);
+            if(next) next(error,false);}
+    );
+};
+exports.findUserGroupById = _findUserGroupById;
+
+var _findUserGroupAll = function(next){
+    UserGroup.findAll({}).success(function(usergroups) {
+        var tmpUserGroups = [];
+        if (! usergroups instanceof Array){ tmpUserGroups.push(usergroups); }
+        else{ tmpUserGroups = usergroups; }
+
+        if(next) next(null, tmpUserGroups);
+    })
+};
+exports.findUserGroupAll = _findUserGroupAll;
+
+var _createAdminUserGroup = function(){
+    var chainer = new Sequelize.Utils.QueryChainer;
+    var usergroup = UserGroup.build( { name: 'Administrators', role: 'admin' } );
+
+    chainer
+        .add(usergroup.save())
+        .run()
+        .on('success', function() {
+
+        })
+        .on('failure', function(err) {
+        });
+};
+exports.createAdminUserGroup=_createAdminUserGroup;
+
+var _updateUserGroupById = function(id,usergroup, next){
+    _findUserGroupById(id, function(err, newUserGroup){
+        if(err){ if(next) next(err, false);}
+        if(!newUserGroup){ if(next) next("UserGroup not found", false);}
+
+        newUserGroup.updateAttributes(usergroup).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'USERGROUP','Update usergroup(' + id + '): name=' + newUserGroup.name + " role=" + newUserGroup.role, null, function(err, log){
+                if(next) return next(null, newUserGroup);
+            });
+        });
+    });
+};
+exports.updateUserGroupById = _updateUserGroupById;
+
+var _deleteUserGroupById = function (id, next) {
+    UserGroup.find(id).success(function(usergroup) {
+        if (!usergroup){ if(next) next("UserGroup  not found", false);}
+        var name = usergroup.name;
+        var role = usergroup.role;
+        usergroup.deleted = true;
+        usergroup.destroy().success(function() {
+            //*** Add log
+            _createLog("DELETE",'USERGROUP','Delete usergroup(' + id + ') ' + name, null, function(err, log){
+                if(next) return next(null, null);
+            });
+        });
+    });
+};
+exports.deleteUserGroupById = _deleteUserGroupById;
+
+var _addUserToUserGroupById = function (info, next){
+    console.log('Assign User(', info.userid, ') to UserGroup:', info.usergroupid)
+    var usergroupid = info.usergroupid;
+    var userid = info.userid;
+
+    _findUserGroupById(usergroupid, function(err, usergroup){
+        console.log('Seaching UserGroup:', usergroup);
+        if (!usergroup){ next("usergroup not found", false); }
+
+        _findUserById(userid, function(err, user){
+            console.log('Seaching User:', user);
+            if (!user){ next("user not found", false); }
+
+            usergroup.addUser(user).success(function() {
+                if(next) next(null, usergroup);
+            });
+        });
+    });
+};
+exports.addUserToUserGroupById = _addUserToUserGroupById;
+
+var _removeUserFromUserGroupById = function (info, next){
+    console.log('Assign User(', info.userid, ') to UserGroup:', info.usergroupid)
+    var usergroupid = info.usergroupid;
+    var userid = info.userid;
+
+    _findUserGroupById(usergroupid, function(err, usergroup){
+        console.log('Seaching UserGroup:', usergroup);
+        if (!usergroup){ next("usergroup not found", false); }
+
+        _findUserById(userid, function(err, user){
+            console.log('Seaching User:', user);
+            if (!user){ next("user not found", false); }
+
+            usergroup.removeUser(user).success(function() {
+                if(next) next(null, usergroup);
+            });
+        });
+    });
+};
+exports.removeUserFromUserGroupById = _removeUserFromUserGroupById;
 
 //****************************************//
 // USER
 //****************************************//
-var _createUser = function (name,username,email,password, next) {
-    var user = User.build({name: name, username: username, email: email, password: password});
-    user
+var _createUser = function (user, next) {
+    var newUser = User.build(user);
+    newUser
         .save()
-        .on('success', function() {if(next) next(user);})
+        .on('success', function() {if(next) next(newUser);})
         .on('failure', function(err) {console.log(err); if(next) next(null);});
 };
 exports.createUser = _createUser;
@@ -200,6 +381,41 @@ var _findUserById = function(userid, next) {
 };
 exports.findUserById = _findUserById;
 
+var _findUserByUserGroupId = function(usergroupid, next) {
+    UserGroup.find(usergroupid).success(function(usergroup) {
+
+        var tmpUsers = [];
+        usergroup.getUsers().success(function(users) {
+            if (! users instanceof Array){
+                tmpUsers.push(users);
+            }
+            else{
+                tmpUsers = users;
+            }
+            if(next) next(null, tmpUsers);
+        }).error(function(error){ console.error(error); if(next) next(error,false);});
+
+    }).error(function(error){ console.error(error); if(next) next(error,false);});
+
+    /*
+    User
+        .find({usergroupId: usergroupid})
+        .success(function(users) {
+            var tmpUsers = [];
+            if (! users instanceof Array){
+                tmpUsers.push(users);
+            }
+            else{
+                tmpUsers = users;
+            }
+
+            if(next) next(null, tmpUsers);
+        })
+      */
+};
+exports.findUserByUserGroupId = _findUserByUserGroupId;
+
+
 var _createAdminUser = function(){
     var chainer = new Sequelize.Utils.QueryChainer;
     var user = User.build( { name: 'admin', username: 'admin', password: 'admin', role: 'admin' } );
@@ -214,6 +430,47 @@ var _createAdminUser = function(){
                     });
 };
 exports.createAdminUser=_createAdminUser;
+
+var _findUserAll = function(next){
+    User.findAll({}).success(function(users) {
+        var tmpUsers = [];
+        if (! users instanceof Array){ tmpUsers.push(users); }
+        else{ tmpUsers = users; }
+
+        if(next) next(null, tmpUsers);
+    })
+};
+exports.findUserAll = _findUserAll;
+
+var _updateUserById = function(id,user, next){
+    _findUserById(id, function(err, newUser){
+        if(err){ if(next) next(err, false);}
+        if(!newUser){ if(next) next("User not found", false);}
+
+        newUser.updateAttributes(user).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'USER','Update user(' + id + '): name=' + newUser.name + " role=" + newUser.role, null, function(err, log){
+                if(next) return next(null, newUser);
+            });
+        });
+    });
+};
+exports.updateUserById = _updateUserById;
+
+var _deleteUserById = function (id, next) {
+    User.find(id).success(function(user) {
+        if (!user){ if(next) next("User not found", false);}
+        var name = user.name;
+        var role = user.role;
+        user.destroy().success(function() {
+            //*** Add log
+            _createLog("DELETE",'USER','Delete user(' + id + ') ' + name, null, function(err, log){
+                if(next) return next(null, null);
+            });
+        });
+    });
+};
+exports.deleteUserById = _deleteUserById;
 
 //****************************************//
 // SITEGROUP
@@ -311,6 +568,7 @@ var _createUnassignedSiteGroup = function(){
 exports.createUnassignedSiteGroup=_createUnassignedSiteGroup;
 
 
+
 //****************************************//
 // SITE
 //****************************************//
@@ -384,19 +642,26 @@ exports.findSiteByCode = _findSiteByCode;
 
 var _createSite = function (site, next) {
     var newSite = Site.build(site);
+    var newAddress = Address.build();
 
-    newSite.save()
-        .on('success', function() {
-            _createBuildingWithSiteId(newSite.id, {name:'Main'}, function(err,building){
-                if(next){
-                    if(err) { next(err,false); }
-                    else { next(null, newSite);}
-                }
-            });
-        })
-        .on('failure', function(err) {
-            if(next) next(err,false);
-        });
+    newAddress.save()
+        .on('success', function(address) {
+        newSite.save()
+                .on('success', function() {
+                    newSite.addAddress(newAddress);
+
+                    _createBuildingWithSiteId(newSite.id, {name:'Main'}, function(err,building){
+                        if(next){
+                            if(err) { next(err,false); }
+                            else { next(null, newSite);}
+                        }
+                    });
+                })
+                .on('failure', function(err) {
+                    if(next) next(err,false);
+                });
+    })
+    .on('failure', function(err) { if(next) next(err,false); });
 };
 exports.createSite = _createSite;
 
@@ -452,6 +717,193 @@ var _deleteSiteById = function (id, next) {
     });
 };
 exports.deleteSiteById = _deleteSiteById;
+
+var _findAddressBySiteId = function(id, next){
+    Site.find(id, {include: [{ model: Address, as: 'Addresses' }] }).success(function(site) {
+        var tmpAddresses = [];
+        site.getAddresses().success(function(addresses){
+            if (! addresses instanceof Array){
+                        tmpAddresses.push(addresses);
+                    }
+                    else{
+                        tmpAddresses = addresses;
+                    }
+            if(next) return next(null, tmpAddresses);
+        });
+    })
+};
+exports.findAddressBySiteId = _findAddressBySiteId;
+
+var _addAddressToSiteById = function(id, address, next){
+    _findSiteById(id, function(err, site){
+        if(err){ if(next) next(err, false);}
+        if(!site){ if(next) next("Site not found", false);}
+
+        Address.build(address).save()
+            .on('success', function(newAddress) {
+                _createLog("CREATE",'ADDRESS','Create address(' + newAddress.id + '): adress=' + newAddress.address1, null, function(err, log){});
+
+                site.addAddress(newAddress)
+                    .on('success', function(site) {
+                        _createLog("UPDATE",'SITE','Update site(' + id + ') with new address=' + newAddress.id, null, function(err, log){
+                            if(next) return next(null, site);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.addAddressToSiteById = _addAddressToSiteById;
+
+var _removeAddressToSiteById = function(id, addressid, next){
+    _findSiteById(id, function(err, site){
+        if(err){ if(next) next(err, false);}
+        if(!site){ if(next) next("Site not found", false);}
+
+        Address.find(addressid)
+            .on('success', function(newAddress) {
+                site.removeAddress(newAddress)
+                    .on('success', function(site) {
+                        _createLog("UPDATE",'SITE','Update site(' + id + ') remove address=' + addressid, null, function(err, log){
+                            if(next) return next(null, site);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.removeAddressToSiteById = _removeAddressToSiteById;
+
+
+
+var _findContactBySiteId = function(id, next){
+    var sql = "SELECT `users`.* FROM `users`, `SitesUsers` WHERE `SitesUsers`.deletedAt IS NULL AND `SitesUsers`.`userId`=`users`.`id` AND `SitesUsers`.`siteId`=" + id ;
+    //var sql = "SELECT *  from view_closetalldetails where sitegroup_id=" + sitegroupid;
+    sequelize.query(sql, null, {raw: true})
+            .success(function(users) {
+                if (!users){ if(next) next("Users not found", false);}
+                if(next) next(null, users);
+            });
+};
+exports.findContactBySiteId = _findContactBySiteId;
+
+var _addContactToSiteById = function (id, userid, next) {
+    _findSiteById(id, function (err, site) {
+        if (err) {
+            if (next) next(err, false);
+        }
+        if (!site) {
+            if (next) next("Site not found", false);
+        }
+
+        _findUserById(userid, function (err, user) {
+            if (err) {
+                if (next) next(err, false);
+            }
+            if (!user) {
+                if (next) next("User not found", false);
+            }
+
+
+            var sql = "UPDATE `SitesUsers` SET deletedAt = NULL WHERE `userId`=" + userid + " AND `siteId`=" + id;
+            sequelize.query(sql, null, {raw: true}).success(function() {});
+
+            site.addContact(user)
+                .on('success', function (site) {
+                    _createLog("UPDATE", 'SITE', 'Update site(' + id + ') with new user=' + user.id, null, function (err, log) {
+                        if (next) return next(null, site);
+                    });
+                })
+                .on('failure', function (err) {
+                    if (next) next(err, false);
+                });
+        });
+    });
+};
+exports.addContactToSiteById = _addContactToSiteById;
+
+var _removeContactToSiteById = function(id, userid, next){
+    _findSiteById(id, function(err, site){
+
+        if(err){ if(next) next(err, false);}
+        if(!site){ if(next) next("Site not found", false);}
+
+        User.find(userid)
+            .on('success', function(newUser) {
+                site.removeContact(newUser)
+                    .on('success', function(site) {
+                        _createLog("UPDATE",'SITE','Update site(' + id + ') remove user=' + userid, null, function(err, log){
+                            if(next) return next(null, site);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.removeContactToSiteById = _removeContactToSiteById;
+
+
+var _findNoteBySiteId = function(id, next){
+    Site.find(id, {include: [{ model: Comment, as: 'Notes' }] }).success(function(site) {
+        var tmpNotes = [];
+        site.getNotes().success(function(notes){
+            if (! notes instanceof Array){
+                tmpNotes.push(notes);
+                    }
+                    else{
+                tmpNotes = notes;
+                    }
+            if(next) return next(null, tmpNotes);
+        });
+    });
+};
+exports.findNoteBySiteId = _findNoteBySiteId;
+
+var _addNoteToSiteById = function(id, note, next){
+    _findSiteById(id, function(err, site){
+        if(err){ if(next) next(err, false);}
+        if(!site){ if(next) next("Site not found", false);}
+
+        Note.build(note).save()
+            .on('success', function(newNote) {
+                _createLog("CREATE",'NOTE','Create note(' + newNote.id + '): title=' + newNote.title, null, function(err, log){});
+
+                site.addNote(newNote)
+                    .on('success', function(site) {
+                        _createLog("UPDATE",'SITE','Update site(' + id + ') with new note=' + newNote.id, null, function(err, log){
+                            if(next) return next(null, site);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.addNoteToSiteById = _addNoteToSiteById;
+
+var _removeNoteToSiteById = function(id, noteid, next){
+    _findSiteById(id, function(err, site){
+        if(err){ if(next) next(err, false);}
+        if(!site){ if(next) next("Site not found", false);}
+
+        Note.find(noteid)
+            .on('success', function(newNote) {
+                site.removeAddress(newNote)
+                    .on('success', function(site) {
+                        _createLog("UPDATE",'SITE','Update site(' + id + ') remove note=' + noteid, null, function(err, log){
+                            if(next) return next(null, site);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.removeNoteToSiteById = _removeNoteToSiteById;
+
 
 
 
@@ -731,7 +1183,7 @@ var _findClosetById = function(id, next){
 };
 exports.findClosetById = _findClosetById;
 
-var _findClosetAllByFloorId = function(floorid, next){
+var _findClosetAllByFloorId_2 = function(floorid, next){
     _findFloorById(floorid, function(err, floor){
         if(err) {if(next) return next(err, []);}
         if(!floor) {if(next) return next("Floor not found", []);}
@@ -745,7 +1197,58 @@ var _findClosetAllByFloorId = function(floorid, next){
             });
     });
 };
+exports.findClosetAllByFloorId_2 = _findClosetAllByFloorId_2;
+
+var _findClosetAllBySiteGroupId = function(sitegroupid, next){
+    var sql = "SELECT *  from view_closetalldetails where sitegroup_id=" + sitegroupid;
+    sequelize.query(sql, null, {raw: true})
+            .success(function(closets) {
+                if (!closets){ if(next) next("Closets not found", false);}
+                if(next) next(null, closets);
+            });
+};
+exports.findClosetAllBySiteGroupId = _findClosetAllBySiteGroupId;
+
+var _findClosetAllBySiteId = function(siteid, next){
+    var sql = "SELECT *  from view_closetalldetails where site_id=" + siteid;
+    sequelize.query(sql, null, {raw: true})
+            .success(function(closets) {
+                if (!closets){ if(next) next("Closets not found", false);}
+                if(next) next(null, closets);
+            });
+};
+exports.findClosetAllBySiteId = _findClosetAllBySiteId;
+
+var _findClosetAllByBuildingId = function(buildingid, next){
+    var sql = "SELECT *  from view_closetalldetails where building_id=" + buildingid;
+    sequelize.query(sql, null, {raw: true})
+            .success(function(closets) {
+                if (!closets){ if(next) next("Closets not found", false);}
+                if(next) next(null, closets);
+            });
+};
+exports.findClosetAllByBuildingId = _findClosetAllByBuildingId;
+
+var _findClosetAllByFloorId = function(floorid, next){
+    var sql = "SELECT *  from view_closetalldetails where floor_id=" + floorid;
+    sequelize.query(sql, null, {raw: true})
+            .success(function(closets) {
+                if (!closets){ if(next) next("Closets not found", false);}
+                if(next) next(null, closets);
+            });
+};
 exports.findClosetAllByFloorId = _findClosetAllByFloorId;
+
+var _findClosetAllByClosetId = function(closetid, next){
+    var sql = "SELECT *  from view_closetalldetails where closet_id=" + closetid;
+    sequelize.query(sql, null, {raw: true})
+            .success(function(closets) {
+                if (!closets){ if(next) next("Closets not found", false);}
+                if(next) next(null, closets);
+            });
+};
+exports.findClosetAllByClosetId = _findClosetAllByClosetId;
+
 
 var _createCloset = function (closet, next) {
     var newCloset  = Closet.build(closet);
@@ -890,7 +1393,9 @@ var _createDeviceWithProductId = function (productid, device, next) {
             //Get Site from SiteCode
             _findProductById(productid, function(err, product){
                 //Link Building to Site
-                newDevice.addProduct(product)
+
+                console.log('newDevice:', newDevice);
+                newDevice.setProduct(product)
                     .on('success', function(){
                         if(next) next(null, newDevice);
                     })
@@ -909,8 +1414,11 @@ var _createDeviceWithClosetId = function (closetid,productid, device, next) {
             //Get Site from SiteCode
             _findClosetById(closetid, function(err, closet){
                 //Link Building to Site
+                console.log('Add Device to Closet:', closet);
                 closet.addDevice(newDevice)
-                    .on('success', function(){
+                    .on('success', function(ndevice){
+                        console.log('New Device:', ndevice);
+                        device.id = ndevice.id;
                         if(next) next(null, device);
                     })
                     .on('failure', function(err){
@@ -972,18 +1480,60 @@ var _findDeviceAllFloorDetails = function(floorid, next){
 };
 exports.findDeviceAllFloorDetails = _findDeviceAllFloorDetails;
 
+var _findDeviceAllClosetDetails = function(closetid, next){
+    var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND closet_id=" + closetid;
+    sequelize.query(sql, null, {raw: true})
+        .success(function(devices) {
+            if (!devices){ if(next) next("Devices not found", false);}
+            if(next) next(null, devices);
+        });
+};
+exports.findDeviceAllClosetDetails = _findDeviceAllClosetDetails;
+
+
+
+var _findDeviceById = function(deviceid, next){
+    var sql = "SELECT * from view_devicesalldetails where device_id=" + deviceid;
+    sequelize.query(sql, null, {raw: true})
+        .success(function(device) {
+            if (!device){ if(next) next("Device not found", false);}
+            if(next) next(null, device);
+        });
+};
+exports.findDeviceById = _findDeviceById;
+
 var _updateDeviceById = function(id, device, next){
+    console.log('Seacrhed device:', device);
+
+    Device.find(id).success( function(deviceFound){
+
+        console.log('Device Found:', deviceFound);
+        deviceFound.updateAttributes(device).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'DEVICE','Update device(' + id + '): name=' + device.name, null, function(err, log){
+                if(next) return next(null, deviceFound);
+            });
+        });
+    });
+
+    /*
     _findDeviceById(id, function(err, newDevice){
         if(err){ if(next) next(err, false);}
         if(!newDevice){ if(next) next("Device not found", false);}
 
-        newDevice.updateAttributes(device).success(function() {
-            //*** Add log
-            _createLog("UPDATE",'DEVICE','Update device(' + id + '): name=' + device.name, null, function(err, log){
-                if(next) return next(null, newDevice);
-            });
+        console.log('newDevice Found:', newDevice);
+        Device.find(newDevice[0].device_id).success( function(deviceFound){
+
+            console.log('Device Found:', deviceFound);
+            deviceFound.updateAttributes(device).success(function() {
+                        //*** Add log
+                        _createLog("UPDATE",'DEVICE','Update device(' + id + '): name=' + device.name, null, function(err, log){
+                            if(next) return next(null, deviceFound);
+                        });
+                    });
         });
     });
+    */
 };
 exports.updateDeviceById = _updateDeviceById;
 

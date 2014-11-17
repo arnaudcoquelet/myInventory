@@ -2,9 +2,11 @@
 /**
  * Module dependencies.
  */
+var json2csv = require('nice-json2csv');
 var passport = require('passport');
 var flash = require('connect-flash');
 var LocalStrategy = require('passport-local').Strategy;
+
 passport.use(new LocalStrategy(
     function(username, password, done) {
         if(model){
@@ -57,7 +59,7 @@ var device = require('./routes/device');
 var ProductCategory = require('./routes/ProductCategory');
 var product = require('./routes/product');
 var log = require('./routes/log');
-
+var usergroup = require('./routes/usergroup');
 var app = express();
 
 // all environments
@@ -66,6 +68,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine('ejs', require('ejs-locals'));
 app.use(express.favicon());
+app.use(json2csv.expressDecorator);
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
 app.use(express.bodyParser());
@@ -97,6 +100,27 @@ app.get('/register', user.register);
 app.post('/register', function(req, res){user.registration(req, res, model)} );
 app.get('/logout',ensureAuthenticated, function(req, res){req.logout();res.redirect('/');});
 
+//UserGroups
+app.get('/admin/usergroup',ensureAuthenticated, function(req, res){usergroup.list(req, res, model)});
+app.post('/admin/usergroup/create',ensureAuthenticated, function(req, res){usergroup.create(req, res, model)});
+app.post('/admin/usergroup/update',ensureAuthenticated, function(req, res){usergroup.update(req, res, model)});
+app.post('/admin/usergroup/delete',ensureAuthenticated, function(req, res){usergroup.delete(req, res, model)});
+app.get('/admin/usergroup/:usergroupid',ensureAuthenticated, function(req, res){user.list(req, res, model)} );
+app.post('/admin/usergroup/:usergroupid/addUser', function(req, res){usergroup.addUser(req, res, model)});
+app.post('/admin/usergroup/:usergroupid/removeUser', function(req, res){usergroup.removeUser(req, res, model)});
+app.get('/json/usergroup', function(req, res){usergroup.list_json(req, res, model)});
+app.get('/json/usergroup/:usergroupid/details', function(req, res){usergroup.listdetails_json(req, res, model)});
+
+
+//Users
+app.get('/admin/user',ensureAuthenticated, function(req, res){user.list(req, res, model)});
+app.post('/admin/user/create',ensureAuthenticated, function(req, res){user.create(req, res, model)});
+app.post('/admin/user/update',ensureAuthenticated, function(req, res){user.update(req, res, model)});
+app.post('/admin/user/delete',ensureAuthenticated, function(req, res){user.delete(req, res, model)});
+app.get('/admin/user/:userid',ensureAuthenticated, function(req, res){user.details(req, res, model)} );
+app.get('/json/user', function(req, res){user.list_json(req, res, model)});
+app.get('/json/user/:userid', function(req, res){user.listdetails_json(req, res, model)});
+
 
 //SiteGroups
 app.get('/sitegroup',ensureAuthenticated, function(req, res){sitegroup.list(req, res, model)});
@@ -113,7 +137,16 @@ app.post('/sitegroup/:sitegroupid/site/create',ensureAuthenticated, function(req
 app.post('/sitegroup/:sitegroupid/site/update',ensureAuthenticated, function(req, res){site.update(req, res, model)});
 app.post('/sitegroup/:sitegroupid/site/delete',ensureAuthenticated, function(req, res){site.delete(req, res, model)});
 app.get ('/sitegroup/:sitegroupid/site/:siteid',ensureAuthenticated, function(req, res){building.list(req, res, model)} );
+app.post ('/sitegroup/:sitegroupid/site/:siteid/contacts/add', function(req, res){site.addContact(req, res, model)});
+app.post ('/sitegroup/:sitegroupid/site/:siteid/contacts/remove', function(req, res){site.removeContact(req, res, model)});
+app.post ('/sitegroup/:sitegroupid/site/:siteid/addresses/add', function(req, res){site.addAddress(req, res, model)});
+app.post ('/sitegroup/:sitegroupid/site/:siteid/addresses/remove', function(req, res){site.removeAddress(req, res, model)});
+app.post ('/sitegroup/:sitegroupid/site/:siteid/notes/add', function(req, res){site.addNote(req, res, model)});
+app.post ('/sitegroup/:sitegroupid/site/:siteid/notes/remove', function(req, res){site.removeNote(req, res, model)});
 app.get ('/json/sitegroup/:sitegroupid/site', function(req, res){site.list_json(req, res, model)});
+app.get ('/json/site/:siteid/addresses', function(req, res){site.listAddresses_json(req, res, model)});
+app.get ('/json/site/:siteid/contacts', function(req, res){site.listContacts_json(req, res, model)});
+app.get ('/json/site/:siteid/notes', function(req, res){site.listNotes_json(req, res, model)});
 app.get ('/json/sitegroup/:sitegroupid/site/details', function(req, res){site.listdetails_json(req, res, model)});
 
 //Buildings
@@ -144,6 +177,11 @@ app.get ('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floor
 app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet', function(req, res){closet.list_json(req, res, model)});
 app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/details', function(req, res){closet.listdetails_json(req, res, model)});
 app.get ('/json/closet/details', function(req, res){closet.listAllDetails_json(req, res, model)} );
+app.get ('/json/closet/sitegroup/:sitegroupid', function(req, res){closet.listBySiteGroup_json(req, res, model)});
+app.get ('/json/closet/site/:siteid', function(req, res){closet.listBySite_json(req, res, model)});
+app.get ('/json/closet/building/:buildingid', function(req, res){closet.listByBuilding_json(req, res, model)});
+app.get ('/json/closet/floor/:floorid', function(req, res){closet.listByFloor_json(req, res, model)});
+app.get ('/json/closet/:closetid', function(req, res){closet.listByCloset_json(req, res, model)});
 
 //Devices
 app.get ('/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:floorid/closet/:closetid/device',ensureAuthenticated, function(req, res){device.list(req, res, model)});
@@ -154,13 +192,21 @@ app.get ('/json/sitegroup/:sitegroupid/site/:siteid/building/:buildingid/floor/:
 
 app.get ('/devices',ensureAuthenticated, function(req, res){device.listAll(req, res, model)});
 app.post('/devices',ensureAuthenticated, function(req, res){device.create(req, res, model)});
-//app.delete('/devices/:deviceid',ensureAuthenticated, function(req, res){device.delete(req, res, model)} );
+app.post('/devices/update',ensureAuthenticated, function(req, res){device.update(req, res, model)});
+app.post('/devices/delete',ensureAuthenticated, function(req, res){device.delete(req, res, model)} );
 app.get ('/devices/:deviceid',ensureAuthenticated, function(req, res){device.details(req, res, model)} );
 app.get ('/json/devices', function(req, res){device.listAll_json(req, res, model)});
 app.get ('/json/devices/sitegroup/:sitegroupid', function(req, res){device.listAllSiteGroup_json(req, res, model)});
 app.get ('/json/devices/site/:siteid', function(req, res){device.listAllSite_json(req, res, model)});
 app.get ('/json/devices/building/:buildingid', function(req, res){device.listAllBuilding_json(req, res, model)});
 app.get ('/json/devices/floor/:floorid', function(req, res){device.listAllFloor_json(req, res, model)});
+app.get ('/json/devices/closet/:closetid', function(req, res){device.listAllCloset_json(req, res, model)});
+app.get ('/csv/devices', function(req, res){device.listAll_csv(req, res, model)});
+app.get ('/csv/devices/sitegroup/:sitegroupid', function(req, res){device.listAllSiteGroup_csv(req, res, model)});
+app.get ('/csv/devices/site/:siteid', function(req, res){device.listAllSite_csv(req, res, model)});
+app.get ('/csv/devices/building/:buildingid', function(req, res){device.listAllBuilding_csv(req, res, model)});
+app.get ('/csv/devices/floor/:floorid', function(req, res){device.listAllFloor_csv(req, res, model)});
+app.get ('/csv/devices/closet/:closetid', function(req, res){device.listAllCloset_csv(req, res, model)});
 
 //Products Category
 app.get ('/admin/ProductCategory',ensureAuthenticated, function(req, res){ProductCategory.list(req, res, model)});
