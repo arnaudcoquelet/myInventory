@@ -103,6 +103,73 @@ exports.list_json = function (req, res, model) {
     }
 };
 
+exports.details_json = function (req, res, model) {
+    var id = req.params.userid;
+    if (model) {
+        model.findUserById(id, function (err, user) {
+            if (err) {res.json({});}
+            if (user) { res.json(user); }
+        })
+    }
+    else {
+        res.json({});
+    }
+};
+
+exports.listAddresses_json = function (req, res, model) {
+    var id = req.params.userid;
+    if (model) {
+        model.findUserById(id, function (err, user) {
+            if (err) {res.json([]);}
+            if (user) {
+                user.getAddresses().on('success', (function(addresses){
+                    if (err) {res.json([]);}
+                    if (addresses) {res.json(addresses);}
+                }));
+            }
+        })
+    }
+    else {
+        res.json({});
+    }
+};
+
+exports.listEmails_json = function (req, res, model) {
+    var id = req.params.userid;
+    if (model) {
+        model.findUserById(id, function (err, user) {
+            if (err) {res.json([]);}
+            if (user) {
+                user.getEmails().on('success', (function(emails){
+                    if (err) {res.json([]);}
+                    if (emails) {res.json(emails);}
+                }));
+            }
+        })
+    }
+    else {
+        res.json({});
+    }
+};
+
+exports.listTelephones_json = function (req, res, model) {
+    var id = req.params.userid;
+    if (model) {
+        model.findUserById(id, function (err, user) {
+            if (err) {res.json([]);}
+            if (user) {
+                user.getTelephones().on('success', (function(telephones){
+                    if (err) {res.json([]);}
+                    if (telephones) {res.json(telephones);}
+                }));
+            }
+        })
+    }
+    else {
+        res.json({});
+    }
+};
+
 exports.create = function (req, res, model) {
     var name = req.body.name;
     var role = req.body.role;
@@ -152,4 +219,113 @@ exports.delete = function (req, res, model) {
     else {
         res.redirect('/admin/usergroup');
     }
+};
+
+
+exports.addAddress = function (req, res, model) {
+    var userid   = req.body.userid;
+    var address = {};
+    address.address1 = req.body.address1;
+    address.city = req.body.city;
+    address.state = req.body.state;
+    address.zipcode = req.body.zipcode;
+
+    var error = '';
+    res.method = 'get';
+
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+
+    if(model){
+        model.addAddressToUserById(userid, address, function (err, site) {
+            res.redirect('/admin/user' + userid);
+        });
+    }
+    else { res.redirect('/admin/user'+ userid);}
+};
+
+exports.removeAddress = function (req, res, model) {
+    var userid = req.params.userid;
+    var addressid   = req.body.addressid;
+    var error = '';
+    res.method = 'get';
+
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+    if (!addressid   ||   addressid === '') { error = 'Missing the Addressid Id'; }
+    if(model){
+        model.removeAddressToUserById(userid,addressid, function (err, site) {
+            res.redirect('/admin/user' + userid);
+        });
+    }
+    else { res.redirect('/admin/user' + userid);}
+};
+
+exports.addEmail = function (req, res, model) {
+    var userid   = req.body.userid;
+    var email = {};
+    email.title = req.body.title;
+    email.email = req.body.email;
+
+
+    var error = '';
+    res.method = 'get';
+
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+
+    if(model){
+        model.addEmailToUserById(userid, email, function (err, site) {
+            res.redirect('/admin/user' + userid);
+        });
+    }
+    else { res.redirect('/admin/user'+ userid);}
+};
+
+exports.removeEmail = function (req, res, model) {
+    var userid = req.params.userid;
+    var emailid   = req.body.emailid;
+    var error = '';
+    res.method = 'get';
+
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+    if (!emailid   ||   emailid === '') { error = 'Missing the Email Id'; }
+    if(model){
+        model.removeEmailToUserById(userid,emailid, function (err, site) {
+            res.redirect('/admin/user' + userid);
+        });
+    }
+    else { res.redirect('/admin/user' + userid);}
+};
+
+exports.addTelephone = function (req, res, model) {
+    var userid   = req.body.userid;
+    var email = {};
+    telephone.title = req.body.title;
+    telephone.telephone = req.body.telephone;
+
+    var error = '';
+    res.method = 'get';
+
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+
+    if(model){
+        model.addTelephoneToUserById(userid, telephone, function (err, site) {
+            res.redirect('/admin/user' + userid);
+        });
+    }
+    else { res.redirect('/admin/user'+ userid);}
+};
+
+exports.removeTelephone = function (req, res, model) {
+    var userid = req.params.userid;
+    var telephoneid   = req.body.telephoneid;
+    var error = '';
+    res.method = 'get';
+
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+    if (!telephoneid   ||   telephoneid === '') { error = 'Missing the Telephone Id'; }
+    if(model){
+        model.removeTelephoneToUserById(userid,telephoneid, function (err, site) {
+            res.redirect('/admin/user' + userid);
+        });
+    }
+    else { res.redirect('/admin/user' + userid);}
 };

@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    //host: "localhost",
-    host: "10.118.204.235",
+    host: "localhost",
+    //host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -471,6 +471,134 @@ var _deleteUserById = function (id, next) {
     });
 };
 exports.deleteUserById = _deleteUserById;
+
+
+
+var _addAddressToUserById = function(id, address, next){
+    _findUserById(id, function(err, user){
+        if(err){ if(next) next(err, false);}
+        if(!user){ if(next) next("User not found", false);}
+
+        Address.build(address).save()
+            .on('success', function(newAddress) {
+                _createLog("CREATE",'ADDRESS','Create address(' + newAddress.id + '): adress=' + newAddress.address1, null, function(err, log){});
+
+                user.addAddress(newAddress)
+                    .on('success', function(user) {
+                        _createLog("UPDATE",'USER','Update user(' + id + ') with new address=' + newAddress.id, null, function(err, log){
+                            if(next) return next(null, user);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.addAddressToUserById = _addAddressToUserById;
+
+var _removeAddressToUserById = function(id, addressid, next){
+    _findSiteById(id, function(err, user){
+        if(err){ if(next) next(err, false);}
+        if(!user){ if(next) next("User not found", false);}
+
+        Address.find(addressid)
+            .on('success', function(newAddress) {
+                user.removeAddress(newAddress)
+                    .on('success', function(user) {
+                        _createLog("UPDATE",'USER','Update user(' + id + ') remove address=' + addressid, null, function(err, log){
+                            if(next) return next(null, user);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.removeAddressToUserById = _removeAddressToUserById;
+
+var _addTelephoneToUserById = function(id, telephone, next){
+    _findUserById(id, function(err, user){
+        if(err){ if(next) next(err, false);}
+        if(!user){ if(next) next("User not found", false);}
+
+        Telephone.build(telephone).save()
+            .on('success', function(newTelephone) {
+                _createLog("CREATE",'TELEPHONE','Create telephone(' + newTelephone.id + '): telephone=' + newTelephone.telephone, null, function(err, log){});
+
+                user.addTelephone(newTelephone)
+                    .on('success', function(user) {
+                        _createLog("UPDATE",'USER','Update user(' + id + ') with new telephone=' + newTelephone.id, null, function(err, log){
+                            if(next) return next(null, user);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.addTelephoneToUserById = _addTelephoneToUserById;
+
+var _removeTelephoneToUserById = function(id, telephoneid, next){
+    _findSiteById(id, function(err, user){
+        if(err){ if(next) next(err, false);}
+        if(!user){ if(next) next("User not found", false);}
+
+        Telephone.find(telephoneid)
+            .on('success', function(newTelephone) {
+                user.removeTelephone(newTelephone)
+                    .on('success', function(user) {
+                        _createLog("UPDATE",'USER','Update user(' + id + ') remove telephone=' + telephoneid, null, function(err, log){
+                            if(next) return next(null, user);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.removeTelephoneToUserById = _removeTelephoneToUserById;
+
+var _addEmailToSiteUserById = function(id, email, next){
+    _findUserById(id, function(err, user){
+        if(err){ if(next) next(err, false);}
+        if(!user){ if(next) next("User not found", false);}
+
+        Email.build(email).save()
+            .on('success', function(newEmail) {
+                _createLog("CREATE",'EMAIL','Create email(' + newEmail.id + '): email=' + newEmail.email, null, function(err, log){});
+
+                user.addTelephoneEmail(newEmail)
+                    .on('success', function(user) {
+                        _createLog("UPDATE",'USER','Update user(' + id + ') with new email=' + newEmail.id, null, function(err, log){
+                            if(next) return next(null, user);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.addEmailToSiteUserById = _addEmailToSiteUserById;
+
+var _removeEmailToUserById = function(id, emailid, next){
+    _findSiteById(id, function(err, user){
+        if(err){ if(next) next(err, false);}
+        if(!user){ if(next) next("User not found", false);}
+
+        Email.find(emailid)
+            .on('success', function(newEmail) {
+                user.removeEmail(newEmail)
+                    .on('success', function(user) {
+                        _createLog("UPDATE",'USER','Update user(' + id + ') remove email=' + emailid, null, function(err, log){
+                            if(next) return next(null, user);
+                        });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+    });
+};
+exports.removeEmailToUserById = _removeEmailToUserById;
 
 //****************************************//
 // SITEGROUP

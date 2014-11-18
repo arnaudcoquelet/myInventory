@@ -1,5 +1,5 @@
 <% layout('adminLayout') -%>
-</br></br>
+
 <script src="/js/angular_floor.js"></script>
 <script type="text/javascript">
     var sitegroupId = <%= sitegroup.id %>;
@@ -10,16 +10,22 @@
     var sortingOrder = 'id';
 </script>
 
-<div class="row">
-    <div ng-controller="ctrlFloor" class="col-sm-12">
-        <div class="panel panel-primary">
-                <div ng-init="fecthItems()"></div>
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="#Floors" data-toggle="tab"><div ng-controller="ctrlFloor"><div ng-init="fecthItems()"></div><i class="fa fa fa-list"></i> Floors ({{countItems()}})</div></a></li>
+    <li role="presentation"><a href="#Devices" data-toggle="tab"><div ng-controller="ctrlDeviceListAll"><div ng-init="fecthItems()"></div><i class="fa fa-puzzle-piece"></i> Devices ({{countItems()}})</div></a></li>
+</ul>
 
+<div id='content' class="tab-content">
+    <div class="tab-pane active" id="Floors">
+        <div ng-controller="ctrlFloor">
+            <div class="panel panel-default" style="border-top: medium none; border-top-left-radius: 0px; border-top-right-radius: 0px;">
+                <div ng-init="fecthItems()"></div>
+<!--
                 <div class="panel-heading">
                     <i class="glyphicon glyphicon-tasks"></i>
                     Floors ({{countItems()}})
                 </div>
-
+-->
                 <div class="panel-body">
                     <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search" autofocus/>
                     <br/><br/>
@@ -35,21 +41,21 @@
                         <tfoot>
                         <tr>
                             <td colspan="6">
-                                    <ul class="pager">
-                                        <li ng-class="{disabled: currentPage == 0}">
-                                            <a href ng-click="prevPage()">« Prev</a>
-                                        </li>
-                                        <li ng-repeat="n in range(pagedItems.length)"
-                                            ng-class="{active: n == currentPage}"
-                                            ng-click="setPage()">
-                                            <a href ng-bind="n + 1">1</a>
-                                        </li>
-                                        <li ng-class="{disabled: currentPage == pagedItems.length - 1}">
-                                            <a href ng-click="nextPage()">Next »</a>
-                                        </li>
-                                    </ul>
+                                <ul class="pager">
+                                    <li ng-class="{disabled: currentPage == 0}">
+                                        <a href ng-click="prevPage()">« Prev</a>
+                                    </li>
+                                    <li ng-repeat="n in range(pagedItems.length)"
+                                        ng-class="{active: n == currentPage}"
+                                        ng-click="setPage()">
+                                        <a href ng-bind="n + 1">1</a>
+                                    </li>
+                                    <li ng-class="{disabled: currentPage == pagedItems.length - 1}">
+                                        <a href ng-click="nextPage()">Next »</a>
+                                    </li>
+                                </ul>
                             </td>
-                            </tr>
+                        </tr>
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
@@ -64,11 +70,13 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="tab-pane" id="Devices">
+        <% include deviceListAll_partial %>
     </div>
 </div>
-<br/>
 
-<% include deviceListAll_partial %>
 
 <!--Modals-->
 <div class="modal" tabindex="-1" role="dialog" id="modalAddFloor" aria-labelledby="modalAddLabel"

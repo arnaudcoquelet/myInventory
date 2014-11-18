@@ -118,8 +118,18 @@ app.post('/admin/user/create',ensureAuthenticated, function(req, res){user.creat
 app.post('/admin/user/update',ensureAuthenticated, function(req, res){user.update(req, res, model)});
 app.post('/admin/user/delete',ensureAuthenticated, function(req, res){user.delete(req, res, model)});
 app.get('/admin/user/:userid',ensureAuthenticated, function(req, res){user.details(req, res, model)} );
+app.post('/admin/user/:userid/addresses/add',ensureAuthenticated, function(req, res){user.addAddress(req, res, model)});
+app.post('/admin/user/:userid/addresses/remove',ensureAuthenticated, function(req, res){user.removeAddress(req, res, model)});
+app.post('/admin/user/:userid/emails/add',ensureAuthenticated, function(req, res){user.addEmail(req, res, model)});
+app.post('/admin/user/:userid/emails/remove',ensureAuthenticated, function(req, res){user.removeEmail(req, res, model)});
+app.post('/admin/user/:userid/telephones/add',ensureAuthenticated, function(req, res){user.addTelephone(req, res, model)});
+app.post('/admin/user/:userid/telephones/remove',ensureAuthenticated, function(req, res){user.removeTelephone(req, res, model)});
 app.get('/json/user', function(req, res){user.list_json(req, res, model)});
 app.get('/json/user/:userid', function(req, res){user.listdetails_json(req, res, model)});
+app.get('/json/user/:userid/details', function(req, res){user.details_json(req, res, model)});
+app.get('/json/user/:userid/addresses', function(req, res){user.listAddresses_json(req, res, model)});
+app.get('/json/user/:userid/emails', function(req, res){user.listEmails_json(req, res, model)});
+app.get('/json/user/:userid/telephones', function(req, res){user.listTelephones_json(req, res, model)});
 
 
 //SiteGroups

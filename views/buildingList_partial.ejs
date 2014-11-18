@@ -1,14 +1,14 @@
 <script src="/js/angular_building.js"></script>
 
 <div ng-controller="ctrlBuidling">
-        <div class="panel panel-primary">
+        <div class="panel panel-default" style="border-top: medium none; border-top-left-radius: 0px; border-top-right-radius: 0px;">
                 <div ng-init="fecthItems()"></div>
 
-                <div class="panel-heading">
+               <!--  <div class="panel-heading">
                     <i class="fa fa-building-o"></i>
                     Buidlings ({{countItems()}})
                 </div>
-
+                -->
                 <div class="panel-body">
                     <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search" autofocus/>
                     <br/><br/>

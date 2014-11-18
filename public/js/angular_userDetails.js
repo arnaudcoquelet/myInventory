@@ -1,9 +1,9 @@
 /**
  * Created by Arnaud on 10/11/13.
  */
-function ctrlDeviceDetails($scope, $filter, $http, $templateCache) {
+function ctrlUserDetails($scope, $filter, $http, $templateCache) {
     // init
-    $scope.sortingOrder = sortingOrder;
+    $scope.sortingOrder = 'id';
     $scope.reverse = false;
     $scope.filteredItems = [];
     $scope.groupedItems = [];
@@ -11,6 +11,11 @@ function ctrlDeviceDetails($scope, $filter, $http, $templateCache) {
     $scope.pagedItems = [];
     $scope.currentPage = 0;
     $scope.items = [];
+    $scope.item = {};
+    $scope.item.information = {};
+    $scope.item.addresses = [];
+    $scope.item.emails = [];
+    $scope.item.telephones = [];
 
     var searchMatch = function (haystack, needle) {
         if (!needle) return true;
@@ -101,15 +106,15 @@ function ctrlDeviceDetails($scope, $filter, $http, $templateCache) {
 
     $scope.fecthItems = function(){
         var method = 'GET';
-        var url = '/json/users';
+        var urlInformation = '/json/user/' + userid + '/details';
+        var urlAddress = '/json/user/' + userid +'/addresses';
+        var urlEmail = '/json/user/' + userid +'/emails';
+        var urlTelephone = '/json/user/' + userid +'/telephones';
 
-        if(userPath){url=userPath;}
-
-        $http({method: method, url: url, cache: $templateCache})
-            .success(function(data, status) {
-                $scope.items = data;
-                $scope.search();
-            });
+        $http({method: method, url: urlInformation, cache: $templateCache}).success(function(data, status) {$scope.item.information = data;});
+        $http({method: method, url: urlAddress, cache: $templateCache}).success(function(data, status) {$scope.item.addresses = data;});
+        $http({method: method, url: urlEmail, cache: $templateCache}).success(function(data, status) {$scope.item.emails = data;});
+        $http({method: method, url: urlTelephone, cache: $templateCache}).success(function(data, status) {$scope.item.telephones = data;});
     };
 
     $scope.countItems = function(){

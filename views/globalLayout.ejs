@@ -27,8 +27,13 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/sitegroup">SiteGroups</a></li>
-                <li><a href="/devices">Devices</a></li>
+                <li><a class="dropdown-toggle" data-toggle="dropdown" href="#">Inventory <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/sitegroup"><span class="fa fa-hospital-o"></span> Site Groups</a></li>
+                        <li><a href="/devices"><span class="fa fa-puzzle-piece"></span> Devices</a></li>
+                    </ul>
+                </li>
+
                 <li><a class="dropdown-toggle" data-toggle="dropdown" href="#">Administration <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="/admin/usergroup"><span class="fa fa-users"></span> Groups and Users</a> </li>

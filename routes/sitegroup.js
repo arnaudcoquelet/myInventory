@@ -4,7 +4,7 @@
 exports.list = function (req, res, model) {
     var sitegroupid = req.params.sitegroupid;
     var breadcrumbs = [
-        {name: 'SiteGroup', url: '', class: ''}
+        {name: 'Site Groups', url: '', class: ''}
     ];
 
     res.render('sitegroupList',

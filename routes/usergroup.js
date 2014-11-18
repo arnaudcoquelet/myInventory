@@ -4,7 +4,8 @@
 exports.list = function (req, res, model) {
     var usergroupid = req.params.usergroupid;
     var breadcrumbs = [
-        {name: 'UserGroup', url: '', class: ''}
+        {name: 'Administration', url: '/admin', class: ''},
+        {name: 'Groups and Users', url: '', class: ''}
     ];
 
     res.render('usergroupList',
@@ -61,7 +62,8 @@ exports.details = function (req, res, model) {
             if (sitegroup) {
                 sitegroup.getSites().on('success', function(sites){
                     breadcrumbs = [
-                        {name: 'Site Group', url: '/sitegroup', class: ''},
+                        {name: 'Administration', url: '/admin', class: ''},
+                        {name: 'Site Group', url: '/admin/usergroup', class: ''},
                         {name: sitegroup.name, url: '', class: 'active'}
                     ];
 

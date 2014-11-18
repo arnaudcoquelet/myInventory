@@ -1,5 +1,4 @@
 <% layout('adminLayout') -%>
-</br></br>
 <script src="/js/angular_building.js"></script>
 
 <script type="text/javascript">
@@ -10,14 +9,32 @@
     var sortingOrder = 'id';
 </script>
 
-<div class="row">
-    <div class="col-sm-6">
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="#SiteInformation" data-toggle="tab"><i class="fa fa-hospital-o"></i> Site Information</a></li>
+    <li role="presentation"><a href="#Buildings" data-toggle="tab"><div ng-controller="ctrlBuidling"><div ng-init="fecthItems()"></div><i class="fa fa fa-building-o"></i> Buildings ({{countItems()}})</div></a></li>
+    <li role="presentation"><a href="#Devices" data-toggle="tab"><div ng-controller="ctrlDeviceListAll"><div ng-init="fecthItems()"></div><i class="fa fa-puzzle-piece"></i> Devices ({{countItems()}})</div></a></li>
+</ul>
+
+<div id='content' class="tab-content">
+    <div class="tab-pane active" id="SiteInformation">
+        <% include siteInformation_partial %>
+    </div>
+    <div class="tab-pane" id="Buildings">
         <% include buildingList_partial %>
     </div>
-
-    <div class="col-sm-6">
-        <% include siteInformation_partial %>
+    <div class="tab-pane" id="Devices">
+        <% include deviceListAll_partial %>
     </div>
 </div>
 
-<% include deviceListAll_partial %>
+<div class="row">
+    <div class="col-sm-6">
+
+    </div>
+
+    <div class="col-sm-6">
+
+    </div>
+</div>
+
+
