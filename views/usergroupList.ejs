@@ -17,12 +17,6 @@
             <div class="panel panel-default" style="border-top: medium none; border-top-left-radius: 0px; border-top-right-radius: 0px;">
                     <div ng-init="fecthItems()"></div>
 
-                <!--
-                    <div class="panel-heading">
-                        <i class="fa fa-users"></i>
-                        User Groups ({{countItems()}})
-                    </div>
--->
                     <div class="panel-body">
                         <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search" autofocus/>
                         <br/><br/>
@@ -81,7 +75,7 @@
 <div class="modal" tabindex="-1" role="dialog" id="modalAddUserGroup" aria-labelledby="modalAddLabel"
      aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content col-lg-6">
+        <div class="modal-content col-lg-8">
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">&times;</a>
                 <h3>Add a new UserGroup</h3>
@@ -89,15 +83,25 @@
             <div class="modal-body">
                 <form role="form" class="form-horizontal" action="/admin/usergroup/create" method="post">
                     <div class="form-group">
-                        <div class="col-lg-12">
+                        <label class="col-md-2 control-label" for="name">Name</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
-                            <input type="text" class="form-control" id="role" name="role" placeholder="Role"/>
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <div class="col-lg-12">
-                        <button type="submit" class="btn btn-block btn-success">Add</button>
+                        <label class="col-md-2 control-label" for="role">Role</label>
+                        <div class="col-md-8">
+                            <select id="role" name="role" class="roleGroupSelectPicker" data-width="100%">
+                                <option>Read</option>
+                                <option>Write</option>
+                                <option>Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+                        <div class="col-md-8">
+                            <button type="submit" id="submitbutton" class="btn btn-success btn-block">Add</button>
                         </div>
                     </div>
                 </form>
@@ -113,7 +117,7 @@
         var role = $(this).data('role');
         $(".editUserGroupFields #id").val( id );
         $(".editUserGroupFields #name").val( name );
-        $(".editUserGroupFields #role").val( role );
+        $(".editUserGroupFields #role").val( role ).change();
     })
 </script>
 <div class="modal" role="dialog" id="modalEditUserGroup" aria-labelledby="modalEditLabel" aria-hidden="true">
@@ -124,17 +128,28 @@
                 <h3>Edit UserGroup</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="editForm" class="form-horizontal" action="/admin/usergroup/update" method="post">
+                <form role="form" id="editForm" class="form-horizontal editUserGroupFields" action="/admin/usergroup/update" method="post">
+                    <input type="hidden" class="form-control" id="id" name="id"/>
                     <div class="form-group">
-                        <div class="editUserGroupFields">
-                            <input type="hidden" class="form-control" id="id" name="id"/>
+                        <label class="col-md-2 control-label" for="name">Name</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
-                            <input type="text" class="form-control" id="role" name="role" placeholder="Role"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="">
-                            <button type="submit" class="btn btn-primary btn-block">Update</button>
+                        <label class="col-md-2 control-label" for="role">Role</label>
+                        <div class="col-md-8">
+                            <select id="role" name="role" class="roleGroupSelectPicker" data-width="100%">
+                                <option>Read</option>
+                                <option>Write</option>
+                                <option>Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+                        <div class="col-md-8">
+                            <button type="submit" id="submitbutton" class="btn btn-primary btn-block">Update</button>
                         </div>
                     </div>
                 </form>
@@ -142,6 +157,8 @@
         </div>
     </div>
 </div>
+
+
 
 <script>
     $(document).ready(function(){
@@ -151,10 +168,9 @@
             var role = $(this).data('role');
             $(".deleteUserGroupFields #id").val( id );
             $(".deleteUserGroupFields #name").val( name );
-            $(".deleteUserGroupFields #role").val( role );
+            $(".deleteUserGroupFields #role").val( role ).change();
         })
     })
-
 </script>
 <div class="modal" role="dialog" id="modalDeleteUserGroup" aria-labelledby="modalDeleteLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -183,4 +199,7 @@
     </div>
 </div>
 
+<script>
+    $('.roleGroupSelectPicker').selectpicker();
+</script>
 

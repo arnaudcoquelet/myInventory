@@ -200,6 +200,30 @@ exports.removeAddress = function (req, res, model) {
     else { res.redirect('/sitegroup/'+ sitegroupid + '/site/'+ siteid);}
 };
 
+exports.updateAddress = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+    var siteid   = req.body.siteid;
+    var addressid   = req.body.addressid;
+    var address = {};
+    address.address1 = req.body.address1;
+    address.city = req.body.city;
+    address.state = req.body.state;
+    address.zipcode = req.body.zipcode;
+
+    var error = '';
+    res.method = 'get';
+
+    if (!sitegroupid   ||   sitegroupid === '') { error = 'Missing the SiteGroup Id'; }
+    if (!siteid   ||   siteid === '') { error = 'Missing the Site Id'; }
+    if (!addressid   ||   addressid === '') { error = 'Missing the Addressid Id'; }
+    if(model){
+        model.updateAddressById(addressid,address, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/'+ siteid);
+        });
+    }
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/'+ siteid);}
+};
+
 exports.addContact = function (req, res, model) {
     var sitegroupid = req.params.sitegroupid;
     var siteid   = req.body.siteid;
@@ -239,21 +263,23 @@ exports.removeContact = function (req, res, model) {
 
 exports.addNote = function (req, res, model) {
     var sitegroupid = req.params.sitegroupid;
-    var id   = req.body.id;
-    var name = req.body.name;
-    var code = req.body.code;
+    var siteid   = req.body.siteid;
+    var note = {};
+    note.title = req.body.title;
+    note.text = req.body.addSiteNoteFormNotetext;
+
     var error = '';
     res.method = 'get';
 
-    if (!id   ||   id === '') { error = 'Missing the SiteGroup Id'; }
-    if (!name || name === '') { error = 'Missing the SiteGroup'; }
-    if (!code || code === '') { error = 'Missing the Code'; }
+    if (!sitegroupid   ||   sitegroupid === '') { error = 'Missing the SiteGroup Id'; }
+    if (!siteid   ||   siteid === '') { error = 'Missing the Site Id'; }
+
     if(model){
-        model.updateSiteById(id, {name:name, code:code}, function (err, site) {
-            res.redirect('/sitegroup/' + sitegroupid + '/site');
+        model.addNoteToSiteById(siteid, note, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid);
         });
     }
-    else { res.redirect('/sitegroup/'+ sitegroupid + '/site');}
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid);}
 };
 
 exports.removeNote = function (req, res, model) {

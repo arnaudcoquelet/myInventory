@@ -237,10 +237,10 @@ exports.addAddress = function (req, res, model) {
 
     if(model){
         model.addAddressToUserById(userid, address, function (err, site) {
-            res.redirect('/admin/user' + userid);
+            res.redirect('/admin/user/' + userid);
         });
     }
-    else { res.redirect('/admin/user'+ userid);}
+    else { res.redirect('/admin/user/'+ userid);}
 };
 
 exports.removeAddress = function (req, res, model) {
@@ -253,10 +253,10 @@ exports.removeAddress = function (req, res, model) {
     if (!addressid   ||   addressid === '') { error = 'Missing the Addressid Id'; }
     if(model){
         model.removeAddressToUserById(userid,addressid, function (err, site) {
-            res.redirect('/admin/user' + userid);
+            res.redirect('/admin/user/' + userid);
         });
     }
-    else { res.redirect('/admin/user' + userid);}
+    else { res.redirect('/admin/user/' + userid);}
 };
 
 exports.addEmail = function (req, res, model) {
@@ -273,10 +273,10 @@ exports.addEmail = function (req, res, model) {
 
     if(model){
         model.addEmailToUserById(userid, email, function (err, site) {
-            res.redirect('/admin/user' + userid);
+            res.redirect('/admin/user/' + userid);
         });
     }
-    else { res.redirect('/admin/user'+ userid);}
+    else { res.redirect('/admin/user/'+ userid);}
 };
 
 exports.removeEmail = function (req, res, model) {
@@ -289,15 +289,15 @@ exports.removeEmail = function (req, res, model) {
     if (!emailid   ||   emailid === '') { error = 'Missing the Email Id'; }
     if(model){
         model.removeEmailToUserById(userid,emailid, function (err, site) {
-            res.redirect('/admin/user' + userid);
+            res.redirect('/admin/user/' + userid);
         });
     }
-    else { res.redirect('/admin/user' + userid);}
+    else { res.redirect('/admin/user/' + userid);}
 };
 
 exports.addTelephone = function (req, res, model) {
     var userid   = req.body.userid;
-    var email = {};
+    var telephone = {};
     telephone.title = req.body.title;
     telephone.telephone = req.body.telephone;
 
@@ -308,10 +308,10 @@ exports.addTelephone = function (req, res, model) {
 
     if(model){
         model.addTelephoneToUserById(userid, telephone, function (err, site) {
-            res.redirect('/admin/user' + userid);
+            res.redirect('/admin/user/' + userid);
         });
     }
-    else { res.redirect('/admin/user'+ userid);}
+    else { res.redirect('/admin/user/'+ userid);}
 };
 
 exports.removeTelephone = function (req, res, model) {
@@ -324,8 +324,43 @@ exports.removeTelephone = function (req, res, model) {
     if (!telephoneid   ||   telephoneid === '') { error = 'Missing the Telephone Id'; }
     if(model){
         model.removeTelephoneToUserById(userid,telephoneid, function (err, site) {
-            res.redirect('/admin/user' + userid);
+            res.redirect('/admin/user/' + userid);
         });
     }
-    else { res.redirect('/admin/user' + userid);}
+    else { res.redirect('/admin/user/' + userid);}
+};
+
+
+exports.updateUsername = function (req, res, model) {
+    var userid   = req.body.userid;
+    var username = req.body.username;
+
+    var error = '';
+    res.method = 'get';
+
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+
+    if(model){
+        model.updateUserById(userid, {username: username}, function (err, site) {
+            res.redirect('/admin/user/' + userid);
+        });
+    }
+    else { res.redirect('/admin/user/'+ userid);}
+};
+
+exports.updatePassword = function (req, res, model) {
+    var userid   = req.body.userid;
+    var password = req.body.password;
+
+    var error = '';
+    res.method = 'get';
+
+    if (!userid   ||   userid === '') { error = 'Missing the User Id'; }
+
+    if(model){
+        model.updateUserById(userid, {password: password}, function (err, site) {
+            res.redirect('/admin/user/' + userid);
+        });
+    }
+    else { res.redirect('/admin/user/'+ userid);}
 };

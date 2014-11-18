@@ -23,10 +23,6 @@
             <div class="panel panel-default" style="border-top: medium none; border-top-left-radius: 0px; border-top-right-radius: 0px;">
                 <div ng-init="fecthItems()"></div>
 
-                <!-- <div class="panel-heading">
-                    <i class="glyphicon glyphicon-tasks"></i>
-                    Closets ({{countItems()}})
-                </div> -->
 
                 <div class="panel-body">
                     <input type="text" ng-model="query" ng-change="search()" class="input-large search-query form-control pull-right" placeholder="Search" autofocus/>
@@ -92,19 +88,19 @@
             <div class="modal-body">
                 <form role="form" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/<%=building.id%>/floor/<%=floor.id%>/closet/create" method="post">
                     <div class="form-group">
-                        <div class="col-lg-12">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                        <label class="col-md-2 control-label" for="name">Name</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" />
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <div class="col-lg-12">
-                        <button type="submit" class="btn btn-success btn-block">Add</button>
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+                        <div class="col-md-8">
+                            <button type="submit" id="submitbutton" class="btn btn-success btn-block">Add</button>
                         </div>
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </div>
@@ -125,16 +121,19 @@
                 <h3>Edit a Closet</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="editForm" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/<%=building.id%>/floor/<%=floor.id%>/closet/update" method="post">
+                <form role="form" id="editForm" class="form-horizontal editClosetFields" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/building/<%=building.id%>/floor/<%=floor.id%>/closet/update" method="post">
+                    <input type="hidden" class="form-control" id="id" name="id"/>
                     <div class="form-group">
-                        <div class="editClosetFields">
-                            <input type="hidden" class="form-control" id="id" name="id"/>
+                        <label class="col-md-2 control-label" for="name">Name</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <div class="">
-                            <button type="submit" class="btn btn-primary btn-block">Update</button>
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+                        <div class="col-md-8">
+                            <button type="submit" id="submitbutton" class="btn btn-primary btn-block">Update</button>
                         </div>
                     </div>
                 </form>

@@ -79,15 +79,21 @@
             <div class="modal-body">
                 <form role="form" class="form-horizontal" action="/sitegroup/create" method="post">
                     <div class="form-group">
-                        <div class="col-lg-12">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                        <label class="col-md-2 control-label" for="code">Code</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" id="code" name="code" placeholder="Code"/>
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <div class="col-lg-12">
-                            <button type="submit" class="btn btn-success btn-block">Add</button>
+                        <label class="col-md-2 control-label" for="name">Name</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+                        <div class="col-md-8">
+                            <button type="submit" id="submitbutton" class="btn btn-success btn-block">Add</button>
                         </div>
                     </div>
                 </form>
@@ -115,17 +121,25 @@
                 <h3>Edit</h3>
             </div>
             <div class="modal-body">
-                <form role="form" id="editForm" class="form-horizontal" action="/sitegroup/update" method="post">
+                <form role="form" id="editForm" class="form-horizontal editFields" action="/sitegroup/update" method="post">
+                    <input type="hidden" class="form-control" id="id" name="id"/>
                     <div class="form-group">
-                        <div class="editFields">
-                            <input type="hidden" class="form-control" id="id" name="id"/>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name"/>
-                            <input type="text" class="form-control" id="code" name="code" placeholder="Code" autofocus/>
+                        <label class="col-md-2 control-label" for="code">Code</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="code" name="code" placeholder="Code"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="">
-                            <button type="submit" class="btn btn-primary btn-block">Update</button>
+                        <label class="col-md-2 control-label" for="name">Name</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" autofocus/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+                        <div class="col-md-8">
+                            <button type="submit" id="submitbutton" class="btn btn-primary btn-block">Update</button>
                         </div>
                     </div>
                 </form>

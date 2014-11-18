@@ -124,6 +124,8 @@ app.post('/admin/user/:userid/emails/add',ensureAuthenticated, function(req, res
 app.post('/admin/user/:userid/emails/remove',ensureAuthenticated, function(req, res){user.removeEmail(req, res, model)});
 app.post('/admin/user/:userid/telephones/add',ensureAuthenticated, function(req, res){user.addTelephone(req, res, model)});
 app.post('/admin/user/:userid/telephones/remove',ensureAuthenticated, function(req, res){user.removeTelephone(req, res, model)});
+app.post('/admin/user/:userid/username/update',ensureAuthenticated, function(req, res){user.updateUsername(req, res, model)});
+app.post('/admin/user/:userid/password/update',ensureAuthenticated, function(req, res){user.updatePassword(req, res, model)});
 app.get('/json/user', function(req, res){user.list_json(req, res, model)});
 app.get('/json/user/:userid', function(req, res){user.listdetails_json(req, res, model)});
 app.get('/json/user/:userid/details', function(req, res){user.details_json(req, res, model)});
@@ -151,6 +153,7 @@ app.post ('/sitegroup/:sitegroupid/site/:siteid/contacts/add', function(req, res
 app.post ('/sitegroup/:sitegroupid/site/:siteid/contacts/remove', function(req, res){site.removeContact(req, res, model)});
 app.post ('/sitegroup/:sitegroupid/site/:siteid/addresses/add', function(req, res){site.addAddress(req, res, model)});
 app.post ('/sitegroup/:sitegroupid/site/:siteid/addresses/remove', function(req, res){site.removeAddress(req, res, model)});
+app.post ('/sitegroup/:sitegroupid/site/:siteid/addresses/update', function(req, res){site.updateAddress(req, res, model)});
 app.post ('/sitegroup/:sitegroupid/site/:siteid/notes/add', function(req, res){site.addNote(req, res, model)});
 app.post ('/sitegroup/:sitegroupid/site/:siteid/notes/remove', function(req, res){site.removeNote(req, res, model)});
 app.get ('/json/sitegroup/:sitegroupid/site', function(req, res){site.list_json(req, res, model)});

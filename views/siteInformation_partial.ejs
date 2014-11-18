@@ -1,16 +1,12 @@
+<!--<link rel='stylesheet' href='/stylesheets/summernote-bs3.css' /> -->
+<link rel='stylesheet' href='/stylesheets/summernote.css' />
+<script src="/js/summernote.js"></script>
+
+
 <script src="/js/angular_siteDetails.js"></script>
 
 <div ng-controller="ctrlSiteDetails" class="panel panel-default" style="border-top: medium none; border-top-left-radius: 0px; border-top-right-radius: 0px;">
     <div ng-init="fecthItems()"></div>
-    <!--
-    <div class="panel-heading">
-        <i class="fa fa-hospital-o"></i>
-        Site Information
-        <i class="fa fa-wifi fa-2x pull-right"></i>
-        <i class="fa fa-phone fa-2x pull-right"></i>
-    </div>
-    -->
-
     <div class="panel-body">
         <i class="fa fa-map-marker"></i> <b>Address : </b> <a href="#modalAddSiteAddress" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success pull-right" title="Edit site address"></a>
         <div class="list-group list-address">
@@ -19,7 +15,7 @@
                     <div class="row">
                         <div class="col-lg-10">
                         <a href="http://maps.google.com/?q={{address.address1}}, {{address.city}}, {{address.state}} {{address.zipcode}}" target="_blank" >
-                            {{address.address1}}<br>{{address.city}}, {{address.state}} {{address.zipcode}} </a>
+                            {{address.address1}}, {{address.city}}, {{address.state}} {{address.zipcode}} </a>
                         </div>
                         <div class="col-lg-2">
                             <a href="#modalEditSiteAddress" data-toggle="modal" data-id="{{address.id}}" data-address1="{{address.address1}}" data-city="{{address.city}}" data-state="{{address.state}}" data-zipcode="{{address.zipcode}}" class="open-editSiteAddress glyphicon glyphicon-pencil text-primary" title="edit"></a>
@@ -125,40 +121,6 @@
             })
 </script>
 
-
-<div class="modal" tabindex="-1" role="dialog" id="modalAddSiteAddress" aria-labelledby="modalAddLabel"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <a class="close" data-dismiss="modal">&times;</a>
-                <h3>Add a New Address</h3>
-            </div>
-            <div class="modal-body">
-                <form role="form" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/addresses/add" method="post">
-                    <input type="hidden" name="sitegroupid" value="<%= sitegroup.id%>" class="hidden">
-                    <input type="hidden" name="siteid" value="<%= site.id%>" class="hidden">
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <input type="text" class="form-control" id="address1" name="address1" placeholder="Street" autofocus/>
-                            <input type="text" class="form-control" id="city" name="city" placeholder="City"/>
-                            <input type="text" class="form-control" id="state" name="state" placeholder="State"/>
-                            <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Zip Code"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                        <button type="submit" class="btn btn-success btn-block">Add</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
-
 <div class="modal" role="dialog" id="modalDeleteSiteAddress" aria-labelledby="modalDeleteLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content col-md-8">
@@ -202,4 +164,310 @@
                 $(".deleteSiteAddressFields #state").val( state );
                 $(".deleteSiteAddressFields #zipcode").val( zipcode );
             })
+</script>
+
+<div class="modal" tabindex="-1" role="dialog" id="modalAddSiteAddress" aria-labelledby="modalAddLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+
+                <h3>Add a New Address</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/addresses/add" method="post">
+                    <input type="hidden" name="sitegroupid" value="<%= sitegroup.id%>" class="hidden">
+                    <input type="hidden" name="siteid" value="<%= site.id%>" class="hidden">
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="address1">Street</label>
+
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="address1" name="address1" placeholder="Street"
+                                   autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="city">City</label>
+
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="city" name="city" placeholder="City"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="state">State</label>
+
+                        <div class="col-md-8">
+                            <select id="state" name="state" class="addressStateSelectPicker" data-width="100%">
+                                <option value="AL">Alabama</option>
+                                <option value="AK">Alaska</option>
+                                <option value="AZ">Arizona</option>
+                                <option value="AR">Arkansas</option>
+                                <option value="CA">California</option>
+                                <option value="CO">Colorado</option>
+                                <option value="CT">Connecticut</option>
+                                <option value="DE">Delaware</option>
+                                <option value="DC">District Of Columbia</option>
+                                <option value="FL">Florida</option>
+                                <option value="GA">Georgia</option>
+                                <option value="HI">Hawaii</option>
+                                <option value="ID">Idaho</option>
+                                <option value="IL">Illinois</option>
+                                <option value="IN">Indiana</option>
+                                <option value="IA">Iowa</option>
+                                <option value="KS">Kansas</option>
+                                <option value="KY">Kentucky</option>
+                                <option value="LA">Louisiana</option>
+                                <option value="ME">Maine</option>
+                                <option value="MD">Maryland</option>
+                                <option value="MA">Massachusetts</option>
+                                <option value="MI">Michigan</option>
+                                <option value="MN">Minnesota</option>
+                                <option value="MS">Mississippi</option>
+                                <option value="MO">Missouri</option>
+                                <option value="MT">Montana</option>
+                                <option value="NE">Nebraska</option>
+                                <option value="NV">Nevada</option>
+                                <option value="NH">New Hampshire</option>
+                                <option value="NJ">New Jersey</option>
+                                <option value="NM">New Mexico</option>
+                                <option value="NY">New York</option>
+                                <option value="NC">North Carolina</option>
+                                <option value="ND">North Dakota</option>
+                                <option value="OH">Ohio</option>
+                                <option value="OK">Oklahoma</option>
+                                <option value="OR">Oregon</option>
+                                <option value="PA" selected="selected">Pennsylvania</option>
+                                <option value="RI">Rhode Island</option>
+                                <option value="SC">South Carolina</option>
+                                <option value="SD">South Dakota</option>
+                                <option value="TN">Tennessee</option>
+                                <option value="TX">Texas</option>
+                                <option value="UT">Utah</option>
+                                <option value="VT">Vermont</option>
+                                <option value="VA">Virginia</option>
+                                <option value="WA">Washington</option>
+                                <option value="WV">West Virginia</option>
+                                <option value="WI">Wisconsin</option>
+                                <option value="WY">Wyoming</option>
+                                <option value="">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="zipcode">Zip Code</label>
+
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Zip Code"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+
+                        <div class="col-md-8">
+                            <button type="submit" id="submitbutton" class="btn btn-success btn-block">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="modalEditSiteAddress" aria-labelledby="modalAddLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+
+                <h3>Update Address</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal editSiteAddress" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/addresses/update" method="post">
+                    <input type="hidden" name="sitegroupid" value="<%= sitegroup.id%>" class="hidden">
+                    <input type="hidden" name="siteid" value="<%= site.id%>" class="hidden">
+                    <input type="hidden" name="addressid" id="addressid" value="" class="hidden">
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="address1">Street</label>
+
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="address1" name="address1" placeholder="Street"
+                                   autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="city">City</label>
+
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="city" name="city" placeholder="City"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="state">State</label>
+
+                        <div class="col-md-8">
+                            <select id="state" name="state" class="addressStateSelectPicker" data-width="100%">
+                                <option value="AL">Alabama</option>
+                                <option value="AK">Alaska</option>
+                                <option value="AZ">Arizona</option>
+                                <option value="AR">Arkansas</option>
+                                <option value="CA">California</option>
+                                <option value="CO">Colorado</option>
+                                <option value="CT">Connecticut</option>
+                                <option value="DE">Delaware</option>
+                                <option value="DC">District Of Columbia</option>
+                                <option value="FL">Florida</option>
+                                <option value="GA">Georgia</option>
+                                <option value="HI">Hawaii</option>
+                                <option value="ID">Idaho</option>
+                                <option value="IL">Illinois</option>
+                                <option value="IN">Indiana</option>
+                                <option value="IA">Iowa</option>
+                                <option value="KS">Kansas</option>
+                                <option value="KY">Kentucky</option>
+                                <option value="LA">Louisiana</option>
+                                <option value="ME">Maine</option>
+                                <option value="MD">Maryland</option>
+                                <option value="MA">Massachusetts</option>
+                                <option value="MI">Michigan</option>
+                                <option value="MN">Minnesota</option>
+                                <option value="MS">Mississippi</option>
+                                <option value="MO">Missouri</option>
+                                <option value="MT">Montana</option>
+                                <option value="NE">Nebraska</option>
+                                <option value="NV">Nevada</option>
+                                <option value="NH">New Hampshire</option>
+                                <option value="NJ">New Jersey</option>
+                                <option value="NM">New Mexico</option>
+                                <option value="NY">New York</option>
+                                <option value="NC">North Carolina</option>
+                                <option value="ND">North Dakota</option>
+                                <option value="OH">Ohio</option>
+                                <option value="OK">Oklahoma</option>
+                                <option value="OR">Oregon</option>
+                                <option value="PA">Pennsylvania</option>
+                                <option value="RI">Rhode Island</option>
+                                <option value="SC">South Carolina</option>
+                                <option value="SD">South Dakota</option>
+                                <option value="TN">Tennessee</option>
+                                <option value="TX">Texas</option>
+                                <option value="UT">Utah</option>
+                                <option value="VT">Vermont</option>
+                                <option value="VA">Virginia</option>
+                                <option value="WA">Washington</option>
+                                <option value="WV">West Virginia</option>
+                                <option value="WI">Wisconsin</option>
+                                <option value="WY">Wyoming</option>
+                                <option value="">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="zipcode">Zip Code</label>
+
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Zip Code"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+
+                        <div class="col-md-8">
+                            <button type="submit" id="submitbutton" class="btn btn-primary btn-block">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+        $(document).on("click", ".open-editSiteAddress", function () {
+                var addressid = $(this).data('id');
+                var address1 = $(this).data('address1');
+                var city = $(this).data('city');
+                var state = $(this).data('state');
+                var zipcode = $(this).data('zipcode');
+
+                $(".editSiteAddress #addressid").val( addressid );
+                $(".editSiteAddress #address1").val( address1 );
+                $(".editSiteAddress #city").val( city );
+                $(".editSiteAddress #state").val(state).change();
+                $(".editSiteAddress #addressid").val( addressid );
+                $(".editSiteAddress #zipcode").val( zipcode );
+            })
+</script>
+<script>
+    $('.addressStateSelectPicker').selectpicker();
+</script>
+
+
+
+<div class="modal" tabindex="-1" role="dialog" id="modalAddSiteNote" aria-labelledby="modalAddLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>Add a New Note</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="addSiteNoteForm"class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/notes/add" method="post">
+                    <input type="hidden" name="sitegroupid" value="<%= sitegroup.id%>" class="hidden">
+                    <input type="hidden" name="siteid" value="<%= site.id%>" class="hidden">
+                    <input type="hidden" name="addSiteNoteFormNotetext" id="addSiteNoteFormNotetext" value="" class="hidden">
+                    <!-- <input type="text" class="form-control" id="addSiteNoteFormNotetext" name="addSiteNoteFormNotetext" placeholder="Title" autofocus/> -->
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="title">Title</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Title" autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="title">Note</label>
+                        <div class="col-md-8">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="summernote" id="addSiteNoteSummernote"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+
+                        <div class="col-md-8">
+                            <button type="submit" id="addSiteNoteFormButton" class="btn btn-success btn-block">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+      $('.summernote').summernote({
+        height: 300,                 // set editor height
+        minHeight: 100,             // set minimum height of editor
+        maxHeight: 500,             // set maximum height of editor
+      });
+    });
+
+    $(document).on("click", "#addSiteNoteFormButton", function () {
+        var note =$('#addSiteNoteSummernote').code();
+            $("#addSiteNoteFormNotetext").val(note);
+    });
 </script>

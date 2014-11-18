@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
-    //host: "10.118.204.235",
+    //host: "localhost",
+    host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -253,7 +253,7 @@ exports.findUserGroupAll = _findUserGroupAll;
 
 var _createAdminUserGroup = function(){
     var chainer = new Sequelize.Utils.QueryChainer;
-    var usergroup = UserGroup.build( { name: 'Administrators', role: 'admin' } );
+    var usergroup = UserGroup.build( { name: 'Administrators', role: 'Admin' } );
 
     chainer
         .add(usergroup.save())
@@ -418,7 +418,7 @@ exports.findUserByUserGroupId = _findUserByUserGroupId;
 
 var _createAdminUser = function(){
     var chainer = new Sequelize.Utils.QueryChainer;
-    var user = User.build( { name: 'admin', username: 'admin', password: 'admin', role: 'admin' } );
+    var user = User.build( { name: 'admin', username: 'admin', password: 'admin', role: 'Admin' } );
 
     chainer
         .add(user.save())
@@ -558,7 +558,7 @@ var _removeTelephoneToUserById = function(id, telephoneid, next){
 };
 exports.removeTelephoneToUserById = _removeTelephoneToUserById;
 
-var _addEmailToSiteUserById = function(id, email, next){
+var _addEmailToUserById = function(id, email, next){
     _findUserById(id, function(err, user){
         if(err){ if(next) next(err, false);}
         if(!user){ if(next) next("User not found", false);}
@@ -567,7 +567,7 @@ var _addEmailToSiteUserById = function(id, email, next){
             .on('success', function(newEmail) {
                 _createLog("CREATE",'EMAIL','Create email(' + newEmail.id + '): email=' + newEmail.email, null, function(err, log){});
 
-                user.addTelephoneEmail(newEmail)
+                user.addEmail(newEmail)
                     .on('success', function(user) {
                         _createLog("UPDATE",'USER','Update user(' + id + ') with new email=' + newEmail.id, null, function(err, log){
                             if(next) return next(null, user);
@@ -578,7 +578,7 @@ var _addEmailToSiteUserById = function(id, email, next){
             .on('failure', function(err) { if(next) next(err,false); });
     });
 };
-exports.addEmailToSiteUserById = _addEmailToSiteUserById;
+exports.addEmailToUserById = _addEmailToUserById;
 
 var _removeEmailToUserById = function(id, emailid, next){
     _findSiteById(id, function(err, user){
@@ -599,6 +599,28 @@ var _removeEmailToUserById = function(id, emailid, next){
     });
 };
 exports.removeEmailToUserById = _removeEmailToUserById;
+
+
+
+//****************************************//
+// ADDRESS
+//****************************************//
+var _updateAddressById = function(id, address, next){
+        Address.find(id)
+            .on('success', function(newAddress) {
+                newAddress.updateAttributes(address)
+                    .on('success', function(naddress) {
+                        _createLog("UPDATE",'ADDRESS','Update address(' + id + ')', null, function(err, log){
+                                                    if(next) return next(null, naddress);
+                                                });
+                    })
+                    .on('failure', function(err) { if(next) next(err,false); });
+            })
+            .on('failure', function(err) { if(next) next(err,false); });
+};
+exports.updateAddressById = _updateAddressById;
+
+
 
 //****************************************//
 // SITEGROUP
@@ -903,6 +925,7 @@ var _removeAddressToSiteById = function(id, addressid, next){
     });
 };
 exports.removeAddressToSiteById = _removeAddressToSiteById;
+
 
 
 

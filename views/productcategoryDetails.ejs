@@ -82,16 +82,23 @@
                 <form role="form" class="form-horizontal" action="/admin/ProductCategory/<%= ProductCategory.id %>/product"
                       method="post">
                     <div class="form-group">
-                        <div class="col-lg-12">
+                        <label class="col-md-2 control-label" for="productPart">Part #</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" id="productPart" name="productPart" placeholder="Part #" autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="productName">Name</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" id="productName" name="productName" placeholder="Name"/>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <div class="col-lg-12">
-                                             <button type="submit" class="btn btn-success btn-block">Add</button>
-                            </div>
+                        <label class="col-md-2 control-label" for="submitbutton"></label>
+                        <div class="col-md-8">
+                        <button type="submit" id="submitbutton"  class="btn btn-success btn-block">Add</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -112,25 +119,32 @@
 </script>
 <div class="modal" role="dialog" id="modalEdit" aria-labelledby="modalEditProductLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content col-md-8">
+        <div class="modal-content">
             <div class="modal-header">
                 <a class="close" data-dismiss="modal">&times;</a>
                 <h3>Edit product</h3>
             </div>
             <div class="modal-body">
                 <form role="form" id="editProductForm" class="form-horizontal" action="/admin/ProductCategory/<%= ProductCategory.id %>/product/update" method="post">
-                    <div class="form-group">
-                        <div class="editProductFields">
-                            <input type="hidden" class="form-control" id="productId" name="productId"/>
+                    <input type="hidden" class="form-control" id="productId" name="productId"/>
+                    <div class="form-group editProductFields">
+                        <label class="col-md-2 control-label" for="productPart">Part #</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" id="productPart" name="productPart" placeholder="Part #" autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group editProductFields">
+                        <label class="col-md-2 control-label" for="productName">Name</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" id="productName" name="productName" placeholder="Name"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="">
-                            <button type="submit" class="btn btn-primary btn-block">Update</button>
-                        </div>
-                    </div>
+                                           <label class="col-md-2 control-label" for="submitbutton"></label>
+                                           <div class="col-md-8">
+                                           <button type="submit" id="submitbutton"  class="btn btn-primary btn-block">Update</button>
+                                           </div>
+                                       </div>
                 </form>
             </div>
         </div>
