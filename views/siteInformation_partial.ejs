@@ -47,7 +47,7 @@
         <i class="fa fa-file-o"></i> <b>Note(s) : </b><a href="#modalAddSiteNote" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign pull-right" title="Add a new note"></a>
         <div class="list-group list-note">
             <div ng-repeat="note in item.notes">
-                <a href="/notes/{{note.id}}" class="list-group-item"><b>{{note.title}}</b></a>
+                <a href="/note/{{note.id}}" target="_blank" class="list-group-item"><b>{{note.title}}</b></a>
             </div>
         </div>
     </div>

@@ -1,0 +1,68 @@
+<% layout('adminLayout') -%>
+<link rel='stylesheet' href='/stylesheets/summernote.css' />
+<script src="/js/summernote.js"></script>
+
+<script src="/js/angular_noteDetails.js"></script>
+<script type="text/javascript">
+    var noteid = <%= note.id %>
+    var editMode = false;
+</script>
+
+<div ng-controller="ctrlNoteDetails">
+    <div ng-init="fecthItems()"></div>
+
+    <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#Note" data-toggle="tab"><i class="fa fa-user"></i> {{item.note.title}}</a></li>
+    </ul>
+
+    <div id='content' class="tab-content">
+        <div class="tab-pane active" id="Note">
+            <div class="panel panel-default" style="border-top: medium none; border-top-left-radius: 0px; border-top-right-radius: 0px;">
+            <div class="row">
+
+                <div class="col-sm-11" ng-show="! getEditMode()">
+                    <h1>{{item.note.title}}<br><small>{{item.author.name}}</small></h1>
+                </div>
+
+                <div class="col-sm-11" ng-show=" getEditMode()">
+                    <br>
+                    <label class="control-label" for="title">Title</label>
+                    <input type="text" class="form-control" id="title" value="{{item.note.title}}" name="title" placeholder="Title" autofocus/>
+                    <br>
+                </div>
+                <div class="col-sm-1">
+                    <div ng-show="! getEditMode()">
+                        <button ng-click="setEditMode(true)" class="btn btn-xs btn-block btn-primary">Edit <span class="fa fa-pencil"></span></button>
+                    </div>
+                    <div ng-show="getEditMode()">
+                        <button ng-click="setEditMode(false)" class="btn btn-xs btn-block btn-primary">Done <span class="fa fa-check"></span></button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <input type="hidden" name="noteText" value="{{item.note.text}}" class="hidden">
+                    <div class="summernote"></div>
+                </div>
+            </div>
+            <div class="row" ng-show="getEditMode()">
+                <br>
+                <div class="col-sm-12">
+                    <button ng-click="setEditMode(false)" class="btn btn-block btn-success">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modals-->
+<script>
+    $(document).ready(function() {
+        $('.summernote').summernote({
+            height: 300,                 // set editor height
+            minHeight: 100,             // set minimum height of editor
+            maxHeight: 500,             // set maximum height of editor
+        }).code();
+    });
+</script>

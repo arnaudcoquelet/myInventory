@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    //host: "localhost",
-    host: "10.118.204.235",
+    host: "localhost",
+    //host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -926,9 +926,6 @@ var _removeAddressToSiteById = function(id, addressid, next){
 };
 exports.removeAddressToSiteById = _removeAddressToSiteById;
 
-
-
-
 var _findContactBySiteId = function(id, next){
     var sql = "SELECT `users`.* FROM `users`, `SitesUsers` WHERE `SitesUsers`.deletedAt IS NULL AND `SitesUsers`.`userId`=`users`.`id` AND `SitesUsers`.`siteId`=" + id ;
     //var sql = "SELECT *  from view_closetalldetails where sitegroup_id=" + sitegroupid;
@@ -996,7 +993,6 @@ var _removeContactToSiteById = function(id, userid, next){
 };
 exports.removeContactToSiteById = _removeContactToSiteById;
 
-
 var _findNoteBySiteId = function(id, next){
     Site.find(id, {include: [{ model: Comment, as: 'Notes' }] }).success(function(site) {
         var tmpNotes = [];
@@ -1054,8 +1050,6 @@ var _removeNoteToSiteById = function(id, noteid, next){
     });
 };
 exports.removeNoteToSiteById = _removeNoteToSiteById;
-
-
 
 
 //Create one Site for Unassigned devices
@@ -1400,7 +1394,6 @@ var _findClosetAllByClosetId = function(closetid, next){
 };
 exports.findClosetAllByClosetId = _findClosetAllByClosetId;
 
-
 var _createCloset = function (closet, next) {
     var newCloset  = Closet.build(closet);
 
@@ -1640,8 +1633,6 @@ var _findDeviceAllClosetDetails = function(closetid, next){
         });
 };
 exports.findDeviceAllClosetDetails = _findDeviceAllClosetDetails;
-
-
 
 var _findDeviceById = function(deviceid, next){
     var sql = "SELECT * from view_devicesalldetails where device_id=" + deviceid;
@@ -2193,6 +2184,60 @@ var _createDefaultProducts = function(){
     _createProductWithProductCategoryName('OND', { name: 'Air Filters FRU', part:'8DG39309AA'} );
 };
 exports.createDefaultProducts = _createDefaultProducts;
+
+//****************************************//
+// Notes
+//****************************************//
+var _findNotes = function(next){
+    Note.findAll({}).success(function(notes) {
+        var tmpNotes = [];
+        if (! notes instanceof Array){ tmpNotes.push(notes); }
+        else{ tmpNotes = notes; }
+
+        if(next) next(null, tmpNotes);
+    })
+
+};
+exports.findNotes = _findNotes;
+
+var _findNoteById = function(noteid, next){
+    Note
+        .find(noteid)
+        .success(function(note) {
+            if(next) {
+                if(!note){ return next ("NoteId " + noteid + " not found", false);}
+                return next(null,note);
+            };
+        })
+        .error(function(error){
+            console.error(error);
+            if(next) next(error,false);}
+    );
+};
+exports.findNoteById=_findNoteById;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
