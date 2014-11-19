@@ -164,4 +164,11 @@ function ctrlNoteDetails($scope, $filter, $http, $templateCache) {
 
         $scope.search();
     };
+
+    $scope.customDateFormat = function(input)
+    {
+      if(input == null){ return ""; }
+      var _date = $filter('date')(new Date(input), 'M/d/yy h:mm a');
+      return _date();
+     };
 };

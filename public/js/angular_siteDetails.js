@@ -16,6 +16,8 @@ function ctrlSiteDetails($scope, $filter, $http, $templateCache) {
     $scope.item.contacts = [];
     $scope.item.notes = [];
 
+    $scope.showContactDelete = false;
+
     var searchMatch = function (haystack, needle) {
         if (!needle) return true;
         if (!haystack) return false;
@@ -126,4 +128,20 @@ function ctrlSiteDetails($scope, $filter, $http, $templateCache) {
         else
             $('th.'+newSortingOrder+' i').removeClass().addClass('glyphicon glyphicon-chevron-down');
     };
+
+    $scope.setShowContactDelete = function(value){
+        $scope.showContactDelete = value;
+    }
+
+    $scope.getShowContactDelete = function(){
+        return $scope.showContactDelete;
+    }
+
+
+    $scope.customDateFormat = function(input)
+        {
+          if(input == null){ return ""; }
+          var _date = $filter('date')(new Date(input), 'M/d/yy h:mm a');
+          return _date;
+         };
 };

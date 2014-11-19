@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
-    //host: "10.118.204.235",
+    //host: "localhost",
+    host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -34,7 +34,7 @@ var Comment = sequelize.define('comment', {
 
 var Note = sequelize.define('note', {
     title: { type: Sequelize.STRING,defaultValue: "", allowNull: false},
-    text: { type: Sequelize.STRING,defaultValue: "", allowNull: false},
+    text: { type: Sequelize.TEXT,defaultValue: "", allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 },{paranoid: true});
 
