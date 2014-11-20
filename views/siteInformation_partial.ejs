@@ -43,7 +43,7 @@
                             <div class="contactName" style="display: table-cell; height:30px; vertical-align: middle;">
                                 <p class="" style="margin:0;">
                                     <a href="/admin/user/{{contact.id}}" class="text-muted"><b>{{contact.name}}</b></a>
-                                    <a href="#modalDeleteSiteAddress" ng-show="contact.edit" data-toggle="modal" data-id="{{contact.id}}" class="open-DeleteSiteContact glyphicon glyphicon-remove text-danger" style="padding-left: 5px" title="delete"></a>
+                                    <a href="#modalDeleteSiteContact" ng-show="contact.edit" data-toggle="modal" data-contactid="{{contact.id}}" data-name="{{contact.name}}" class="open-DeleteSiteContact glyphicon glyphicon-remove text-danger" style="padding-left: 5px" title="delete"></a>
                                 </p>
                             </div>
                         </li>
@@ -62,7 +62,7 @@
             <div class="list-note">
                 <ul class="noteList" style="padding:0; list-style:none; min-height:50px;   overflow:auto;">
                     <div ng-repeat="note in item.notes">
-                    <li style="margin:0; margin-top:10px;">
+                    <li style="margin:0; margin-top:10px;" ng-mouseover="note.edit=true" ng-mouseleave="note.edit=false">
                         <div class="noteImage" style="display: table-cell width:30px; margin-right:5px; height:40px; float:left;">
                             <img src="/img/note.png" style="width:30px; margin-top: 5px">
                         </div>
@@ -70,6 +70,7 @@
                             <p class="" style="margin:0;">
                                 <a href="/note/{{note.id}}" target="_blank" class="text-muted"><b>{{note.title}}</b></a></p>
                             <span class="date sub-text" style="color:#aaa; font-family:verdana; font-size:11px;">on {{customDateFormat(note.updatedAt)}} by _____ </span>
+                            <a href="#modalDeleteSiteNote" ng-show="note.edit" data-toggle="modal" data-noteid="{{note.id}}" data-text="{{note.title}}" class="open-DeleteSiteNote glyphicon glyphicon-remove text-danger" style="padding-left: 5px" title="delete"></a>
                         </div>
                     </li>
                     </div>
@@ -493,4 +494,40 @@
         var note =$('#addSiteNoteSummernote').code();
             $("#addSiteNoteFormNotetext").val(note);
     });
+</script>
+
+<div class="modal" role="dialog" id="modalDeleteSiteNote" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content col-md-8">
+            <div class="modal-header">
+                <a class="close" data-dismiss="modal">&times;</a>
+                <h3>You are about to remove a Note from the Site</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="deleteForm" class="form-horizontal" action="/sitegroup/<%= sitegroup.id%>/site/<%= site.id%>/notes/remove" method="post">
+                    <div class="form-group">
+                        <div class="deleteNoteFields">
+                            <input type="hidden" class="form-control" id="noteid" name="noteid"/>
+                            <input type="hidden" class="form-control" name="sitegroupid" value="<%= sitegroup.id%>">
+                            <input type="hidden" class="form-control" name="siteid" value="<%= site.id%>">
+                            <input type="text" class="form-control" id="title" name="title" placeholder="title" autofocus/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <button type="submit" class="btn btn-danger btn-block">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+        $(document).on("click", ".open-DeleteSiteNote", function () {
+                var noteid = $(this).data('noteid');
+                var title = $(this).data('text');
+                $(".deleteNoteFields #noteid").val( noteid );
+                $(".deleteNoteFields #title").val( title );
+            })
 </script>

@@ -284,19 +284,20 @@ exports.addNote = function (req, res, model) {
 
 exports.removeNote = function (req, res, model) {
     var sitegroupid = req.params.sitegroupid;
-    var id   = req.body.id;
-    var name = req.body.name;
-    var code = req.body.code;
+    var siteid = req.params.siteid;
+    var noteid   = req.body.noteid;
+
     var error = '';
     res.method = 'get';
 
-    if (!id   ||   id === '') { error = 'Missing the SiteGroup Id'; }
-    if (!name || name === '') { error = 'Missing the SiteGroup'; }
-    if (!code || code === '') { error = 'Missing the Code'; }
+    if (!sitegroupid   ||   sitegroupid === '') { error = 'Missing the SiteGroup Id'; }
+    if (!siteid   ||   siteid === '') { error = 'Missing the Site Id'; }
+    if (!noteid   ||   noteid === '') { error = 'Missing the Note Id'; }
+
     if(model){
-        model.updateSiteById(id, {name:name, code:code}, function (err, site) {
-            res.redirect('/sitegroup/' + sitegroupid + '/site');
+        model.removeNoteToSiteById(siteid, noteid, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid);
         });
     }
-    else { res.redirect('/sitegroup/'+ sitegroupid + '/site');}
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid);}
 };

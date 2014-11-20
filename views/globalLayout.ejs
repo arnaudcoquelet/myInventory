@@ -2,7 +2,10 @@
 <html ng-app>
 <head>
     <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/normalize.css' />
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
     <link rel='stylesheet' href='/stylesheets/bootstrap-theme.css' />
     <link rel='stylesheet' href='/stylesheets/bootstrap-select.css' />
@@ -56,8 +59,9 @@
 
 <br/>
 <br/>
-
+<div class="container-fluid">
 <%- body %>
+</div>
 
 </body>
 </html>

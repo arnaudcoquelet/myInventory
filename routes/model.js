@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
-    //host: "10.118.204.235",
+    //host: "localhost",
+    host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -1051,7 +1051,7 @@ var _removeNoteToSiteById = function(id, noteid, next){
 
         Note.find(noteid)
             .on('success', function(newNote) {
-                site.removeAddress(newNote)
+                site.removeNote(newNote)
                     .on('success', function(site) {
                         _createLog("UPDATE",'SITE','Update site(' + id + ') remove note=' + noteid, null, function(err, log){
                             if(next) return next(null, site);
