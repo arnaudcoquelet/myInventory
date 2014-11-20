@@ -88,6 +88,28 @@ exports.author_json = function (req, res, model) {
     }
 };
 
+exports.update = function (req, res, model) {
+    var noteid   = req.body.noteid;
+    var title = req.body.updateNoteFormNoteTitle;
+    var text = req.body.updateNoteFormNoteText;
+
+    var note={};
+    note.title = title;
+    note.text = text;
+
+    var error = '';
+    res.method = 'get';
+
+    if (!noteid   ||   noteid === '') { error = 'Missing the Note Id'; }
+
+    if(model){
+        model.updateNoteById(noteid, note , function (err, note) {
+            res.redirect('/note/' + noteid);
+        });
+    }
+    else { res.redirect('/');}
+};
+
 /*
 exports.create = function (req, res, model) {
     var name = req.body.name;
@@ -106,24 +128,7 @@ exports.create = function (req, res, model) {
     else { res.redirect('/admin/usergroup');}
 };
 
-exports.update = function (req, res, model) {
-    var id   = req.body.id;
-    var name = req.body.name;
-    var role = req.body.role;
-    var username = req.body.username;
-    var error = '';
-    res.method = 'get';
 
-    if (!id   ||   id === '') { error = 'Missing the User Id'; }
-    if (!name || name === '') { error = 'Missing the User'; }
-    if (!role || role === '') { error = 'Missing the Role'; }
-    if(model){
-        model.updateUserById(id, {name:name, role:role, username: username} , function (err, user) {
-            res.redirect('/admin/usergroup');
-        });
-    }
-    else { res.redirect('/admin/usergroup');}
-};
 
 exports.delete = function (req, res, model) {
     var id = req.body.id;

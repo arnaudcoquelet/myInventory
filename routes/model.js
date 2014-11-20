@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    //host: "localhost",
-    host: "10.118.204.235",
+    host: "localhost",
+    //host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -58,18 +58,21 @@ var Product = sequelize.define('product', {
 var Closet = sequelize.define('closet', {
     name: { type: Sequelize.STRING, allowNull: false},
     spare: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    default: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 },{paranoid: true});
 
 var Floor = sequelize.define('floor', {
     name: { type: Sequelize.STRING, allowNull: false},
+    default: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 },{paranoid: true});
 
 var Building = sequelize.define('building', {
     name: { type: Sequelize.STRING, allowNull: false},
+    default: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 },{paranoid: true});
@@ -100,12 +103,15 @@ var Site = sequelize.define('site', {
     code: { type: Sequelize.STRING, allowNull: false},
     canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     category: { type: Sequelize.STRING, defaultValue: "", allowNull: true},
+    default: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 },{paranoid: true});
 
 var SiteGroup = sequelize.define('sitegroup', {
     name: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
     code: { type: Sequelize.STRING, defaultValue: "", allowNull: false},
+    default: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false},
+    canbedeleted: { type: Sequelize.BOOLEAN, defaultValue: true, allowNull: false},
     deleted: { type: Sequelize.BOOLEAN, defaultValue: false, allowNull: false}
 },{paranoid: true});
 
@@ -169,6 +175,16 @@ sequelize
     .on('failure', function(err) {console.log(err); });
 */
 
+var Migration = require('./migration.js')(sequelize); // Load this library using your Sequelize instance
+
+Migration.bootstrap(function() { // Make sure the Migration library schema is loaded
+    Migration.runOnce("Add_default_SiteGroup", "ALTER TABLE `sitegroups`ADD COLUMN `default` TINYINT(1) NOT NULL DEFAULT 0");
+    Migration.runOnce("Add_canbedeleted_SiteGroup", "ALTER TABLE `sitegroups`ADD COLUMN `canbedeleted` TINYINT(1) NOT NULL DEFAULT 1");
+    Migration.runOnce("Add_default_Site", "ALTER TABLE `sites`ADD COLUMN `default` TINYINT(1) NOT NULL DEFAULT 0");
+    Migration.runOnce("Add_default_Building", "ALTER TABLE `buildings`ADD COLUMN `default` TINYINT(1) NOT NULL DEFAULT 0");
+    Migration.runOnce("Add_default_Floor", "ALTER TABLE `floors`ADD COLUMN `default` TINYINT(1) NOT NULL DEFAULT 0");
+    Migration.runOnce("Add_default_Closet", "ALTER TABLE `closets`ADD COLUMN `default` TINYINT(1) NOT NULL DEFAULT 0");
+});
 
 sequelize
     .sync({force:false})
@@ -415,7 +431,6 @@ var _findUserByUserGroupId = function(usergroupid, next) {
 };
 exports.findUserByUserGroupId = _findUserByUserGroupId;
 
-
 var _createAdminUser = function(){
     var chainer = new Sequelize.Utils.QueryChainer;
     var user = User.build( { name: 'admin', username: 'admin', password: 'admin', role: 'Admin' } );
@@ -471,8 +486,6 @@ var _deleteUserById = function (id, next) {
     });
 };
 exports.deleteUserById = _deleteUserById;
-
-
 
 var _addAddressToUserById = function(id, address, next){
     _findUserById(id, function(err, user){
@@ -665,7 +678,7 @@ var _createSiteGroup = function (sitegroup, next) {
     newSiteGroup.save()
         .on('success', function() {
             console.log('New SiteGroup created');
-            _createSiteWithSiteGroupId(newSiteGroup.id, {name:'New Site', code:'000'}, function(err, site){
+            _createSiteWithSiteGroupId(newSiteGroup.id, {name:'New Site', code:'000', default: true}, function(err, site){
                 if(next){
                     if(err){ next(err,false);}
                     else {next(null, newSiteGroup); }
@@ -713,7 +726,7 @@ exports.deleteSiteGroupById = _deleteSiteGroupById;
 
 //Create one Site for Unassigned devices
 var _createUnassignedSiteGroup = function(){
-    _createSiteGroup({name:"_Unassigned", code: "_Unassigned"}, null);
+    _createSiteGroup({name:"_Unassigned", code: "_Unassigned", default: true}, null);
 };
 exports.createUnassignedSiteGroup=_createUnassignedSiteGroup;
 
@@ -800,7 +813,7 @@ var _createSite = function (site, next) {
                 .on('success', function() {
                     newSite.addAddress(newAddress);
 
-                    _createBuildingWithSiteId(newSite.id, {name:'Main'}, function(err,building){
+                    _createBuildingWithSiteId(newSite.id, {name:'Main', default: true}, function(err,building){
                         if(next){
                             if(err) { next(err,false); }
                             else { next(null, newSite);}
@@ -1107,7 +1120,7 @@ var _createBuilding = function (building, next) {
 
     newBuilding.save()
         .on('success', function() {
-            _createFloorWithBuildingId(newBuilding.id,{name: 'Main'}, function(err, floor){
+            _createFloorWithBuildingId(newBuilding.id,{name: 'Main', default: true}, function(err, floor){
                 if(next){
                     if(err){ next(err,false); }
                     else{ next(null,newBuilding);}
@@ -1238,7 +1251,7 @@ var _createFloor = function (floor, next) {
     newFloor.save()
             .on('success', function() {
                 _createLog("CREATE",'FLOOR','Create floor: name=' + floor.name,  null, function(err, log){
-                    _createClosetWithFloorId(newFloor.id, { name: 'Main' }, function(err, closet){
+                    _createClosetWithFloorId(newFloor.id, { name: 'Main', default: true }, function(err, closet){
                         if(next){
                             if(err){  next(err,false); }
                             else {  next(null, newFloor) };
@@ -2216,7 +2229,18 @@ var _findNoteById = function(noteid, next){
 };
 exports.findNoteById=_findNoteById;
 
-
+var _updateNoteById = function (id,note, next) {
+    Note.find(id).success(function(newNote) {
+        if (!newNote){ if(next) next("Note not found", false);}
+        newNote.updateAttributes(note).success(function() {
+            //*** Add log
+            _createLog("UPDATE",'NOTE','Update note(' + id + '): title=' + note.title, null, function(err, log){
+                if(next) return next(null, newNote);
+            });
+        });
+    });
+};
+exports.updateNoteById = _updateNoteById;
 
 
 

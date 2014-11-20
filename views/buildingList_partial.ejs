@@ -37,7 +37,7 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
-                            <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/{{item.id}}">{{item.name}}</a></td>
+                            <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/{{item.id}}">{{item.name}}</a>   <span ng-show="item.default" class="label label-primary" style="border-radius: 1em;margin-left: 10px;">default </span></td>
                             <td class="col-sm-2">
                                 <a href="#modalEditBuilding" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-EditBuilding glyphicon glyphicon-pencil" title="edit"></a>
                                 <a href="#modalDeleteBuilding" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-DeleteBuilding glyphicon glyphicon-remove text-danger" title="delete"></a>

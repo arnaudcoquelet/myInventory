@@ -11,6 +11,7 @@
 <ul class="nav nav-tabs">
     <li role="presentation" class="active"><a href="#Sites" data-toggle="tab"><div ng-controller="ctrlSite"><div ng-init="fecthItems()"></div><i class="fa fa-hospital-o"></i> Sites({{countItems()}})</div></a></li>
     <li role="presentation"><a href="#Devices" data-toggle="tab"><div ng-controller="ctrlDeviceListAll"><div ng-init="fecthItems()"></div><i class="fa fa-puzzle-piece"></i> Devices ({{countItems()}})</div></a></li>
+    <li role="presentation" class="pull-right" style="border-color: rgb(219, 219, 219) rgb(219, 219, 219) -moz-use-text-color; background-color: rgb(240, 240, 240); border-top-left-radius: 4px; border-top-right-radius: 4px;"><a href="#Security" data-toggle="tab">Security</a></li>
 </ul>
 
 <div id='content' class="tab-content">
@@ -55,9 +56,8 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
-                            <!-- <td><a href="/sitegroup/<%= sitegroup.id%>/site/{{item.id}}">{{item.id}}</a></td> -->
                             <td><a href="/sitegroup/<%= sitegroup.id%>/site/{{item.id}}">{{item.code}}</a></td>
-                            <td>{{item.name}}</td>
+                            <td>{{item.name}}  <span ng-show="item.default" class="label label-primary" style="border-radius: 1em;margin-left: 10px;">default </span></td>
                             <td>
                                 <a href="#modalEditSite" data-toggle="modal" data-id="{{item.id}}" data-code="{{item.code}}" data-name="{{item.name}}" class="open-EditSite glyphicon glyphicon-pencil" title="edit"></a>
                                 <a href="#modalDeleteSite" data-toggle="modal" data-id="{{item.id}}" data-code="{{item.code}}" data-name="{{item.name}}" class="open-DeleteSite glyphicon glyphicon-remove text-danger" title="delete"></a>
@@ -71,6 +71,9 @@
     </div>
     <div class="tab-pane" id="Devices">
         <% include deviceListAll_partial %>
+    </div>
+    <div class="tab-pane" id="Security">
+        TBD
     </div>
 </div>
 

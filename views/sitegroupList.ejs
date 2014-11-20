@@ -49,7 +49,7 @@
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
                             <td><a href="/sitegroup/{{item.id}}">{{item.code}}</a></td>
-                            <td>{{item.name}}</td>
+                            <td>{{item.name}}    <span ng-show="item.default" class="label label-primary" style="border-radius: 1em;margin-left: 10px;">default </span></td>
                             <td>
                                 <a href="#modalEdit" data-toggle="modal" data-id="{{item.id}}" data-code="{{item.code}}" data-name="{{item.name}}" class="open-Edit glyphicon glyphicon-pencil" title="edit"></a>
                                 <a href="#modalDelete" data-toggle="modal" data-id="{{item.id}}" data-code="{{item.code}}" data-name="{{item.name}}" class="open-Delete glyphicon glyphicon-remove text-danger" title="delete"></a>

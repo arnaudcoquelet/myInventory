@@ -57,8 +57,7 @@
                         </tfoot>
                         <tbody>
                         <tr ng-repeat="item in pagedItems[currentPage] | orderBy:sortingOrder:reverse">
-                            <!-- <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/<%=building.id%>/floor/<%=floor.id%>/closet/{{item.id}}">{{item.id}}</a></td> -->
-                            <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/<%=building.id%>/floor/<%=floor.id%>/closet/{{item.id}}">{{item.name}}</a></td>
+                            <td><a href="/sitegroup/<%= sitegroup.id%>/site/<%=site.id%>/building/<%=building.id%>/floor/<%=floor.id%>/closet/{{item.id}}">{{item.name}}</a> <span ng-show="item.default" class="label label-primary" style="border-radius: 1em;margin-left: 10px;">default </span> <span ng-show="item.spare" class="label label-warning" style="border-radius: 1em;margin-left: 10px;">spare</span></td>
                             <td>
                                 <a href="#modalEditCloset" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-EditCloset glyphicon glyphicon-pencil" title="edit"></a>
                                 <a href="#modalDeleteCloset" data-toggle="modal" data-id="{{item.id}}" data-name="{{item.name}}" class="open-DeleteCloset glyphicon glyphicon-remove text-danger" title="delete"></a>

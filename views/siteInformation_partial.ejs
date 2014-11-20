@@ -8,64 +8,75 @@
 <div ng-controller="ctrlSiteDetails" class="panel panel-default" style="border-top: medium none; border-top-left-radius: 0px; border-top-right-radius: 0px;">
     <div ng-init="fecthItems()"></div>
     <div class="panel-body">
-        <i class="fa fa-map-marker"></i> <b>Address : </b> <a href="#modalAddSiteAddress" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success" style="padding-left: 5px" title="Edit site address"></a>
-        <div class="list-group list-address">
-            <ul class="addressList" style="padding:0; list-style:none; min-height:50px;   overflow:auto;">
-                <div ng-repeat="address in item.addresses">
-                    <li style="margin:0; margin-top:10px;" ng-mouseover="address.edit=true" ng-mouseleave="address.edit=false">
-                        <div class="addressImage" style="display: table-cell width:30px; margin-right:5px; height:30px; float:left;">
-                            <img src="/img/map.png" style="width:100%; border-radius:50%;">
+        <div class="col-lg-6">
+            <i class="fa fa-map-marker"></i> <b>Address : </b> <a href="#modalAddSiteAddress" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success" style="padding-left: 5px" title="Edit site address"></a>
+            <div class="list-address">
+                <ul class="addressList" style="padding:0; list-style:none; min-height:50px;   overflow:auto;">
+                    <div ng-repeat="address in item.addresses">
+                        <li style="margin:0; margin-top:10px;" ng-mouseover="address.edit=true" ng-mouseleave="address.edit=false">
+                            <div class="addressImage" style="display: table-cell width:30px; margin-right:5px; height:30px; float:left;">
+                                <img src="/img/map.png" style="width:100%; border-radius:50%;">
+                            </div>
+                            <div class="addressName" style="display: table-cell; height:30px; vertical-align: middle;">
+                                <p class="" style="margin:0;">
+                                    <a href="http://maps.google.com/?q={{address.address1}}, {{address.city}}, {{address.state}} {{address.zipcode}}" target="_blank" class="text-muted" >{{address.address1}}, {{address.city}}, {{address.state}} {{address.zipcode}} </a>
+                                    <a href="#modalEditSiteAddress" ng-show="address.edit" data-toggle="modal" data-id="{{address.id}}" data-address1="{{address.address1}}" data-city="{{address.city}}" data-state="{{address.state}}" data-zipcode="{{address.zipcode}}" class="open-editSiteAddress glyphicon glyphicon-pencil text-primary" style="padding-left: 10px" title="edit"></a>
+                                    <a href="#modalDeleteSiteAddress" ng-show="address.edit" data-toggle="modal" data-id="{{address.id}}" data-address1="{{address.address1}}" data-city="{{address.city}}" data-state="{{address.state}}" data-zipcode="{{address.zipcode}}" class="open-DeleteSiteAddress glyphicon glyphicon-remove text-danger" title="delete"></a>
+                                </p>
+                            </div>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+            </br>
+        </div>
+        <div class="col-lg-6">
+            <i class="fa fa-users"></i> <b>Contact(s) : </b><a href="#modalAddSiteContact" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success" style="padding-left: 5px" title="Assign a contact"></a>
+            <div class="list-contact">
+                <ul class="contactList" style="padding:0; list-style:none; min-height:50px;   overflow:auto;">
+                    <div ng-repeat="contact in item.contacts">
+                        <li style="margin:0; margin-top:10px;" ng-mouseover="contact.edit=true" ng-mouseleave="contact.edit=false">
+                            <div class="contactImage"
+                                 style="display: table-cell width:30px; margin-right:5px; height:30px; float:left;">
+                                <img src="/img/avatars/avatar-30px.png" style="width:100%; border-radius:50%;">
+                            </div>
+                            <div class="contactName" style="display: table-cell; height:30px; vertical-align: middle;">
+                                <p class="" style="margin:0;">
+                                    <a href="/admin/user/{{contact.id}}" class="text-muted"><b>{{contact.name}}</b></a>
+                                    <a href="#modalDeleteSiteAddress" ng-show="contact.edit" data-toggle="modal" data-id="{{contact.id}}" class="open-DeleteSiteContact glyphicon glyphicon-remove text-danger" style="padding-left: 5px" title="delete"></a>
+                                </p>
+                            </div>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+            </br>
+        </div>
+        <div class="col-lg-6">
+            <i class="fa fa-clock-o"></i> <b>Hour(s) : </b>  <b class="text-muted"> <%= site.category%> </b> <!-- <a href="#modalAddSiteContact" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success" style="padding-left: 5px" title="Assign a contact"></a> -->
+
+            </br>
+        </div>
+        <div class="col-lg-6">
+            <i class="fa fa-file-o"></i> <b>Note(s) : </b><a href="#modalAddSiteNote" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success" style="padding-left: 5px" title="Add a new note"></a>
+            <div class="list-note">
+                <ul class="noteList" style="padding:0; list-style:none; min-height:50px;   overflow:auto;">
+                    <div ng-repeat="note in item.notes">
+                    <li style="margin:0; margin-top:10px;">
+                        <div class="noteImage" style="display: table-cell width:30px; margin-right:5px; height:40px; float:left;">
+                            <img src="/img/note.png" style="width:30px; margin-top: 5px">
                         </div>
-                        <div class="addressName" style="display: table-cell; height:30px; vertical-align: middle;">
+                        <div class="noteText" style="display: table-cell">
                             <p class="" style="margin:0;">
-                                <a href="http://maps.google.com/?q={{address.address1}}, {{address.city}}, {{address.state}} {{address.zipcode}}" target="_blank" class="text-muted" >{{address.address1}}, {{address.city}}, {{address.state}} {{address.zipcode}} </a>
-                                <a href="#modalEditSiteAddress" ng-show="address.edit" data-toggle="modal" data-id="{{address.id}}" data-address1="{{address.address1}}" data-city="{{address.city}}" data-state="{{address.state}}" data-zipcode="{{address.zipcode}}" class="open-editSiteAddress glyphicon glyphicon-pencil text-primary" style="padding-left: 10px" title="edit"></a>
-                                <a href="#modalDeleteSiteAddress" ng-show="address.edit" data-toggle="modal" data-id="{{address.id}}" data-address1="{{address.address1}}" data-city="{{address.city}}" data-state="{{address.state}}" data-zipcode="{{address.zipcode}}" class="open-DeleteSiteAddress glyphicon glyphicon-remove text-danger" title="delete"></a>
-                            </p>
+                                <a href="/note/{{note.id}}" target="_blank" class="text-muted"><b>{{note.title}}</b></a></p>
+                            <span class="date sub-text" style="color:#aaa; font-family:verdana; font-size:11px;">on {{customDateFormat(note.updatedAt)}} by _____ </span>
                         </div>
                     </li>
-                </div>
-            </ul>
+                    </div>
+                </ul>
+            </div>
         </div>
-
         </br>
-        <i class="fa fa-users"></i> <b>Contact(s) : </b><a href="#modalAddSiteContact" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success" style="padding-left: 5px" title="Assign a contact"></a>
-        <div class="list-group list-contact">
-            <ul class="contactList" style="padding:0; list-style:none; min-height:50px;   overflow:auto;">
-                <div ng-repeat="contact in item.contacts">
-                    <li style="margin:0; margin-top:10px;" ng-mouseover="contact.edit=true" ng-mouseleave="contact.edit=false">
-                        <div class="contactImage"
-                             style="display: table-cell width:30px; margin-right:5px; height:30px; float:left;">
-                            <img src="/img/avatars/avatar-30px.png" style="width:100%; border-radius:50%;">
-                        </div>
-                        <div class="contactName" style="display: table-cell; height:30px; vertical-align: middle;">
-                            <p class="" style="margin:0;">
-                                <a href="/admin/user/{{contact.id}}" class="text-muted"><b>{{contact.name}}</b></a>
-                                <a href="#modalDeleteSiteAddress" ng-show="contact.edit" data-toggle="modal" data-id="{{contact.id}}" class="open-DeleteSiteContact glyphicon glyphicon-remove text-danger" style="padding-left: 5px" title="delete"></a>
-                            </p>
-                        </div>
-                    </li>
-                </div>
-            </ul>
-        </div>
-
-        <i class="fa fa-file-o"></i> <b>Note(s) : </b><a href="#modalAddSiteNote" role="button" data-toggle="modal" class="glyphicon glyphicon-plus-sign text-success" style="padding-left: 5px" title="Add a new note"></a>
-        <div class="list-group list-note">
-            <ul class="noteList" style="padding:0; list-style:none; min-height:50px;   overflow:auto;">
-                <div ng-repeat="note in item.notes">
-                <li style="margin:0; margin-top:10px;">
-                    <div class="noteImage" style="display: table-cell width:30px; margin-right:5px; height:40px; float:left;">
-                        <img src="/img/note.png" style="width:30px; margin-top: 5px">
-                    </div>
-                    <div class="noteText" style="display: table-cell">
-                        <p class="" style="margin:0;">
-                            <a href="/note/{{note.id}}" target="_blank" class="text-muted"><b>{{note.title}}</b></a></p>
-                        <span class="date sub-text" style="color:#aaa; font-family:verdana; font-size:11px;">on {{customDateFormat(note.updatedAt)}} by _____ </span>
-                    </div>
-                </li>
-                </div>
-            </ul>
-        </div>
     </div>
 </div>
 
@@ -437,7 +448,6 @@
                     <input type="hidden" name="sitegroupid" value="<%= sitegroup.id%>" class="hidden">
                     <input type="hidden" name="siteid" value="<%= site.id%>" class="hidden">
                     <input type="hidden" name="addSiteNoteFormNotetext" id="addSiteNoteFormNotetext" value="" class="hidden">
-                    <!-- <input type="text" class="form-control" id="addSiteNoteFormNotetext" name="addSiteNoteFormNotetext" placeholder="Title" autofocus/> -->
 
                     <div class="form-group">
                         <label class="col-md-2 control-label" for="title">Title</label>

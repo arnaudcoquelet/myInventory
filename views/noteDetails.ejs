@@ -27,7 +27,7 @@
                 <div class="col-sm-11" ng-show=" getEditMode()">
                     <br>
                     <label class="control-label" for="title">Title</label>
-                    <input type="text" class="form-control" id="title" value="{{item.note.title}}" name="title" placeholder="Title" autofocus/>
+                    <input type="text" class="form-control" id="updateTitle" value="{{item.note.title}}" name="updateTitle" placeholder="Title" autofocus/>
                     <br>
                 </div>
                 <div class="col-sm-1">
@@ -43,13 +43,18 @@
             <div class="row">
                 <div class="col-sm-12">
                     <input type="hidden" name="noteText" value="{{item.note.text}}" class="hidden">
-                    <div class="summernote"></div>
+                    <div class="summernote" id="noteSummernote"></div>
                 </div>
             </div>
             <div class="row" ng-show="getEditMode()">
                 <br>
                 <div class="col-sm-12">
-                    <button ng-click="setEditMode(false)" class="btn btn-block btn-success">Save</button>
+                    <form role="form" id="updateNoteForm"class="form-horizontal" action="/note/update" method="post">
+                        <input type="hidden" name="noteid" value="<%= note.id%>" class="hidden">
+                        <input type="hidden" name="updateNoteFormNoteTitle" id="updateNoteFormNoteTitle" value="{{item.note.title}}" class="hidden">
+                        <input type="hidden" name="updateNoteFormNoteText" id="updateNoteFormNoteText" value="" class="hidden">
+                        <button type="submit" id="upateNoteFormButton" ng-click="setEditMode(false);" class="btn btn-block btn-success">Save</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -64,5 +69,13 @@
             minHeight: 100,             // set minimum height of editor
             maxHeight: 500,             // set maximum height of editor
         }).code();
+    });
+
+    $(document).on("click", "#upateNoteFormButton", function () {
+        var note =$('#noteSummernote').code();
+        var title=$('#updateTitle').val();
+
+        $('#updateNoteFormNoteText').val(note);
+        $('#updateNoteFormNoteTitle').val(title);
     });
 </script>

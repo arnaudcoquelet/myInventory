@@ -244,6 +244,7 @@ app.get ('/json/product/details', function(req, res){product.listAllDetails_json
 //Notes
 app.get ('/note',ensureAuthenticated, function(req, res){note.list(req, res, model)});
 app.get ('/note/:noteid',ensureAuthenticated, function(req, res){note.details(req, res, model)});
+app.post ('/note/:noteidupdate',ensureAuthenticated, function(req, res){note.update(req, res, model)});
 app.get ('/json/note/:noteid/details', function(req, res){note.details_json(req, res, model)} );
 app.get ('/json/note/:noteid/author', function(req, res){note.author_json(req, res, model)} );
 
