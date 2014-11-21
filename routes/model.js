@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    //host: "localhost",
-    host: "10.118.204.235",
+    host: "localhost",
+    //host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });

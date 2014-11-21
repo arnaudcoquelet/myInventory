@@ -1,8 +1,24 @@
 body {
-  padding: 5px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+@media (max-width: 767px) {
+  .nav-tabs > li {
+    float:none;
+    border:1px solid transparent;
+  }
+  .nav-tabs > li.active > a{
+    border:none;
+  }
+  .nav > li > a:hover, .nav > li > a:focus,
+  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus
+  {
+    background:none;
+    border:none;
+  }
+}
+
+.container-fluid.main {
+  padding-top: 20px;
+
 }
