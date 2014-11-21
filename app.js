@@ -61,6 +61,7 @@ var product = require('./routes/product');
 var log = require('./routes/log');
 var usergroup = require('./routes/usergroup');
 var note = require('./routes/note');
+var import_data = require('./routes/import_data');
 var app = express();
 
 // all environments
@@ -157,6 +158,7 @@ app.post ('/sitegroup/:sitegroupid/site/:siteid/addresses/remove', function(req,
 app.post ('/sitegroup/:sitegroupid/site/:siteid/addresses/update', function(req, res){site.updateAddress(req, res, model)});
 app.post ('/sitegroup/:sitegroupid/site/:siteid/notes/add', function(req, res){site.addNote(req, res, model)});
 app.post ('/sitegroup/:sitegroupid/site/:siteid/notes/remove', function(req, res){site.removeNote(req, res, model)});
+app.post ('/sitegroup/:sitegroupid/site/:siteid/category', function(req, res){site.updateCatgeory(req, res, model)});
 app.get ('/json/sitegroup/:sitegroupid/site', function(req, res){site.list_json(req, res, model)});
 app.get ('/json/site/:siteid/addresses', function(req, res){site.listAddresses_json(req, res, model)});
 app.get ('/json/site/:siteid/contacts', function(req, res){site.listContacts_json(req, res, model)});
@@ -248,10 +250,18 @@ app.post ('/note/:noteidupdate',ensureAuthenticated, function(req, res){note.upd
 app.get ('/json/note/:noteid/details', function(req, res){note.details_json(req, res, model)} );
 app.get ('/json/note/:noteid/author', function(req, res){note.author_json(req, res, model)} );
 
-
 //Logs
 app.get('/admin/audit', ensureAuthenticated, function(req, res){log.list(req, res, model)});
 app.get('/json/admin/log', function(req, res){log.list_json(req, res, model)});
+
+
+//Tools Import
+app.get ('/tools/import',ensureAuthenticated, function(req, res){import_data.list(req, res, model)});
+app.post ('/tools/import/sitegroup',ensureAuthenticated, function(req, res){import_data.importSiteGroup_CSV(req, res, model)});
+
+
+
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

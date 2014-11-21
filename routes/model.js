@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    host: "localhost",
-    //host: "10.118.204.235",
+    //host: "localhost",
+    host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -730,7 +730,54 @@ var _createUnassignedSiteGroup = function(){
 };
 exports.createUnassignedSiteGroup=_createUnassignedSiteGroup;
 
+var _importSiteGroup = function (sitegroup, forced, next) {
+    if (sitegroup) {
+        SiteGroup.findOrCreate({code: sitegroup.code}, {name: sitegroup.name})
+            .success(function (newSiteGroup, created) {
+                if (created) {
+                    _createSiteWithSiteGroupId(newSiteGroup.id, {
+                        name: 'New Site',
+                        code: '000',
+                        default: true
+                    }, function (err, site) {
+                        if (next) {
+                            if (err) {
+                                next(err, false);
+                            }
+                            else {
+                                next(null, newSiteGroup);
+                            }
 
+                        }
+                    })
+                }
+                else {
+                    if(forced)
+                    {
+                        _updateSiteGroupById(newSiteGroup.id, sitegroup, next);
+                    }
+                    if (next) return next(null, newSiteGroup);
+                }
+            })
+    }
+};
+exports.importSiteGroup=_importSiteGroup;
+
+var _bulkImportSiteGroup = function(sitegroups, forced, next)
+{
+    if(sitegroups && sitegroups instanceof Array)
+    {
+        if(sitegroups.length>0)
+        {
+            var sitegroup = sitegroups.pop();
+            _importSiteGroup(sitegroup, forced,_bulkImportSiteGroup(sitegroups, forced, next));
+        }
+        else {
+            if(next) return next(null, true);
+        }
+    }
+};
+exports.bulkImportSiteGroup=_bulkImportSiteGroup;
 
 //****************************************//
 // SITE
@@ -811,7 +858,7 @@ var _createSite = function (site, next) {
         .on('success', function(address) {
         newSite.save()
                 .on('success', function() {
-                    newSite.addAddress(newAddress);
+                    //newSite.addAddress(newAddress);
 
                     _createBuildingWithSiteId(newSite.id, {name:'Main', default: true}, function(err,building){
                         if(next){
@@ -1070,6 +1117,47 @@ var _createUnassignedSite = function(){
     _createSite({name: "_Unassigned", code: "_Unassigned", canbedeleted:false}, function(err, site){});
 };
 exports.createUnassignedSite=_createUnassignedSite;
+
+
+var _importSite = function (site, forced, next) {
+    if (site) {
+        Site.findOrCreate({code: site.code, sitegroupId: site.sitegroupId}, {name: site.name})
+            .success(function (newSite, created) {
+                if (created) {
+                    _createBuildingWithSiteId(newSite.id, {name:'Main', default: true}, function(err,building){
+                                            if(next){
+                                                if(err) { next(err,false); }
+                                                else { next(null, newSite);}
+                                            }
+                                        });
+                }
+                else {
+                    if(forced)
+                    {
+                        _updateSiteById(newSite.id, site, next);
+                    }
+                    if (next) return next(null, newSite);
+                }
+            })
+    }
+};
+exports.importSite=_importSite;
+
+var _bulkImportSite = function(sites, forced, next)
+{
+    if(sites && sites instanceof Array)
+    {
+        if(sites.length>0)
+        {
+            var site = sites.pop();
+            _importSiteGroup(site, forced,_bulkImportSite(sites, forced, next));
+        }
+        else {
+            if(next) return next(null, true);
+        }
+    }
+};
+exports.bulkImportSite=_bulkImportSite;
 
 
 

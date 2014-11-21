@@ -301,3 +301,21 @@ exports.removeNote = function (req, res, model) {
     }
     else { res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid);}
 };
+
+
+exports.updateCatgeory = function (req, res, model) {
+    var sitegroupid = req.params.sitegroupid;
+    var siteid   = req.body.siteid;
+    var category = req.body.category;
+    var error = '';
+    res.method = 'get';
+
+    if (!siteid   ||   siteid === '') { error = 'Missing the Site Id'; }
+
+    if(model){
+        model.updateSiteById(siteid, {category: category}, function (err, site) {
+            res.redirect('/sitegroup/' + sitegroupid + '/site/' + siteid);
+        });
+    }
+    else { res.redirect('/sitegroup/'+ sitegroupid + '/site/' + siteid);}
+};

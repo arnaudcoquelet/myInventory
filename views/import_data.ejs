@@ -1,0 +1,534 @@
+<% layout('adminLayout') -%>
+<!-- <script src="/js/angular_sitegroup.js"></script> -->
+<script type="text/javascript">
+</script>
+
+<div class="row-fluid">
+    <div class="col-xs-3" style="padding-right: 0px;">
+        <ul class="nav nav-tabs tabs-left" role="tablist" style="padding-top: 10px;">
+            <li role="presentation" class="active"><a href="#SiteGroup" aria-controls="SiteGroup" role="tab" data-toggle="tab">Site Group</a></li>
+            <li role="presentation"><a href="#Site" aria-controls="Site" role="tab" data-toggle="tab">Site</a></li>
+            <li role="presentation"><a href="#Building" aria-controls="Building" role="tab" data-toggle="tab">Building</a></li>
+            <li role="presentation"><a href="#Floor" aria-controls="Floor" role="tab" data-toggle="tab">Floor</a></li>
+            <li role="presentation"><a href="#Closet" aria-controls="Closet" role="tab" data-toggle="tab">Closet</a></li>
+            <li role="presentation"><a href="#Device" aria-controls="Device" role="tab" data-toggle="tab">Device</a></li>
+            <li role="presentation"><a href="#ProductCategory" aria-controls="ProductCategory" role="tab" data-toggle="tab">Product Category</a></li>
+            <li role="presentation"><a href="#Product" aria-controls="Product" role="tab" data-toggle="tab">Product</a></li>
+            <li role="presentation"><a href="#UserGroup" aria-controls="UserGroup" role="tab" data-toggle="tab">User Group</a></li>
+            <li role="presentation"><a href="#User" aria-controls="User" role="tab" data-toggle="tab">User</a></li>
+        </ul>
+    </div>
+
+    <div class="col-xs-9" style="padding-left: 0px;border-top-color: #ddd;border-top-style: solid;border-top-width: thin;">
+        <div class="tab-content" style="padding-left: 15px;padding-top: 15px;">
+            <div class="tab-pane active" role="tabpanel" aria-hidden="false" id="SiteGroup">
+                <form class="form-horizontal" action="/tools/import/sitegroup" method="post" enctype="multipart/form-data">
+                <fieldset>
+                <!-- Form Name -->
+                <legend>Import Site Group list</legend>
+
+                <!-- Multiple Checkboxes -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Force Update</label>
+                  <div class="col-md-4">
+                  <div class="checkbox">
+                    <label for="forced">
+                      <input type="checkbox" name="forced" id="forced">
+                      Forced
+                    </label>
+                	</div>
+                  </div>
+                </div>
+
+                <!-- File Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="filebutton">CSV File</label>
+                  <div class="col-md-4">
+                    <input id="filebutton" name="filegroup" class="input-file" type="file">
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="textarea"></label>
+                  <div class="col-md-4">
+                      CSV Format=<b> code, name</b>
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"></label>
+                  <div class="col-md-4">
+                    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Import</button>
+                  </div>
+                </div>
+
+                </fieldset>
+                </form>
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="Site">
+                <form class="form-horizontal" action="/tools/import/sitegroup/site" method="post" enctype="multipart/form-data">
+                    <input type="hidden" id="sitegroupid" name="sitegroupid" value=""/>
+                <fieldset>
+
+                <!-- Form Name -->
+                <legend>Import Site list</legend>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Select Site Group</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Multiple Checkboxes -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Force Update</label>
+                  <div class="col-md-4">
+                  <div class="checkbox">
+                    <label for="checkboxes-0">
+                      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="">
+                      Forced
+                    </label>
+                	</div>
+                  </div>
+                </div>
+
+                <!-- File Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="filebutton">CSV File</label>
+                  <div class="col-md-4">
+                    <input id="filebutton" name="filebutton" class="input-file" type="file">
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="textarea"></label>
+                  <div class="col-md-4">
+                    CSV Format=<b> code, name</b>
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"></label>
+                  <div class="col-md-4">
+                    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Import</button>
+                  </div>
+                </div>
+
+                </fieldset>
+                </form>
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="Building">
+                <form class="form-horizontal">
+                <fieldset>
+
+                <!-- Form Name -->
+                <legend>Import Building list</legend>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Site Group</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Site</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Multiple Checkboxes -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Force Update</label>
+                  <div class="col-md-4">
+                  <div class="checkbox">
+                    <label for="checkboxes-0">
+                      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="">
+                      Forced
+                    </label>
+                	</div>
+                  </div>
+                </div>
+
+                <!-- File Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="filebutton">CSV File</label>
+                  <div class="col-md-4">
+                    <input id="filebutton" name="filebutton" class="input-file" type="file">
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="textarea"></label>
+                  <div class="col-md-4">
+                    <textarea class="form-control" id="textarea" name="textarea">CSV Format:
+                code, name</textarea>
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"></label>
+                  <div class="col-md-4">
+                    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Import</button>
+                  </div>
+                </div>
+
+                </fieldset>
+                </form>
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="Floor">
+                <form class="form-horizontal">
+                <fieldset>
+
+                <!-- Form Name -->
+                <legend>Import Floor list</legend>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Site Group</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Site</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Building</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Multiple Checkboxes -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Force Update</label>
+                  <div class="col-md-4">
+                  <div class="checkbox">
+                    <label for="checkboxes-0">
+                      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="">
+                      Forced
+                    </label>
+                	</div>
+                  </div>
+                </div>
+
+                <!-- File Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="filebutton">CSV File</label>
+                  <div class="col-md-4">
+                    <input id="filebutton" name="filebutton" class="input-file" type="file">
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="textarea"></label>
+                  <div class="col-md-4">
+                    <textarea class="form-control" id="textarea" name="textarea">CSV Format:
+                code, name</textarea>
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"></label>
+                  <div class="col-md-4">
+                    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Import</button>
+                  </div>
+                </div>
+
+                </fieldset>
+                </form>
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="Closet">
+                <form class="form-horizontal">
+                <fieldset>
+
+                <!-- Form Name -->
+                <legend>Import Closet list</legend>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Site Group</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Site</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Building</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Closet</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Multiple Checkboxes -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Force Update</label>
+                  <div class="col-md-4">
+                  <div class="checkbox">
+                    <label for="checkboxes-0">
+                      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="">
+                      Forced
+                    </label>
+                	</div>
+                  </div>
+                </div>
+
+                <!-- File Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="filebutton">CSV File</label>
+                  <div class="col-md-4">
+                    <input id="filebutton" name="filebutton" class="input-file" type="file">
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="textarea"></label>
+                  <div class="col-md-4">
+                    <textarea class="form-control" id="textarea" name="textarea">CSV Format:
+                code, name</textarea>
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"></label>
+                  <div class="col-md-4">
+                    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Import</button>
+                  </div>
+                </div>
+
+                </fieldset>
+                </form>
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="Device">
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="ProductCategory">
+                <form class="form-horizontal">
+                <fieldset>
+
+                <!-- Form Name -->
+                <legend>Import Product Category list</legend>
+
+                <!-- Multiple Checkboxes -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Force Update</label>
+                  <div class="col-md-4">
+                  <div class="checkbox">
+                    <label for="checkboxes-0">
+                      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="">
+                      Forced
+                    </label>
+                	</div>
+                  </div>
+                </div>
+
+                <!-- File Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="filebutton">CSV File</label>
+                  <div class="col-md-4">
+                    <input id="filebutton" name="filebutton" class="input-file" type="file">
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="textarea"></label>
+                  <div class="col-md-4">
+                    <textarea class="form-control" id="textarea" name="textarea">CSV Format:
+                code, name</textarea>
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"></label>
+                  <div class="col-md-4">
+                    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Import</button>
+                  </div>
+                </div>
+
+                </fieldset>
+                </form>
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="Product">
+                <form class="form-horizontal">
+                <fieldset>
+
+                <!-- Form Name -->
+                <legend>Import Product list</legend>
+
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="selectbasic">Category</label>
+                  <div class="col-md-4">
+                    <select id="selectbasic" name="selectbasic" class="form-control">
+                      <option value="1">Option one</option>
+                      <option value="2">Option two</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Multiple Checkboxes -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Force Update</label>
+                  <div class="col-md-4">
+                  <div class="checkbox">
+                    <label for="checkboxes-0">
+                      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="">
+                      Forced
+                    </label>
+                	</div>
+                  </div>
+                </div>
+
+                <!-- File Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="filebutton">CSV File</label>
+                  <div class="col-md-4">
+                    <input id="filebutton" name="filebutton" class="input-file" type="file">
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="textarea"></label>
+                  <div class="col-md-4">
+                    <textarea class="form-control" id="textarea" name="textarea">CSV Format:
+                code, name</textarea>
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"></label>
+                  <div class="col-md-4">
+                    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Import</button>
+                  </div>
+                </div>
+
+                </fieldset>
+                </form>
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="UserGroup">
+            </div>
+            <div class="tab-pane" role="tabpanel" aria-hidden="true" id="User">
+                <form class="form-horizontal">
+                <fieldset>
+
+                <!-- Form Name -->
+                <legend>Import User list</legend>
+
+                <!-- Multiple Checkboxes -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="checkboxes">Force Update</label>
+                  <div class="col-md-4">
+                  <div class="checkbox">
+                    <label for="checkboxes-0">
+                      <input type="checkbox" name="checkboxes" id="checkboxes-0" value="">
+                      Forced
+                    </label>
+                	</div>
+                  </div>
+                </div>
+
+                <!-- File Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="filebutton">CSV File</label>
+                  <div class="col-md-4">
+                    <input id="filebutton" name="filebutton" class="input-file" type="file">
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="textarea"></label>
+                  <div class="col-md-4">
+                    <textarea class="form-control" id="textarea" name="textarea">CSV Format:
+                code, name</textarea>
+                  </div>
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"></label>
+                  <div class="col-md-4">
+                    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Import</button>
+                  </div>
+                </div>
+
+                </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
