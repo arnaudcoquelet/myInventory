@@ -89,9 +89,19 @@ exports.create = function (req, res, model) {
     if (!name || name === '') { error = 'Missing the UserGroup'; }
     if (!role || role === '') { error = 'Missing the Role'; }
     if(model){
+        /*
         model.createUserGroup({name: name, role: role}, function (err, usergroup) {
             res.redirect('/admin/usergroup');
-        });
+        });*/
+
+        model.createUserGroup({name: name, role: role}).then(
+            function(usergroup){
+                res.redirect('/admin/usergroup');
+            },
+            function(error){
+                res.redirect('/admin/usergroup');
+            }
+        );
     }
     else { res.redirect('/admin/usergroup');}
 };

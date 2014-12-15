@@ -1,7 +1,8 @@
+var QPromise = require('q');
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('inventory', 'inventory', 'inventory', {
-    //host: "localhost",
-    host: "10.118.204.235",
+    host: "localhost",
+    //host: "10.118.204.235",
     port: 3306,
     dialect: 'mysql'
 });
@@ -217,57 +218,91 @@ exports.Notes = Note;
 // USERGROUP
 //****************************************//
 var _createUserGroup = function (usergroup, next) {
+    var deferred = QPromise.defer();
+
     var newUserGroup = UserGroup.build(usergroup);
     newUserGroup
         .save()
-        .on('success', function() {if(next) next(newUserGroup);})
-        .on('failure', function(err) {console.log(err); if(next) next(null);});
+        .on('success', function() { deferred.resolve(newUserGroup);})
+        .on('failure', function(err) {console.log(err); deferred.reject(err);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.createUserGroup = _createUserGroup;
 
 var _findUserGroupByUserGroupName = function (name, next) {
+    var deferred = QPromise.defer();
+
     console.log("_findUserGroupByUserGroupName(): name=" + name);
     UserGroup
         .find({ where: {name: name} })
         .success(function(usergroup) {
             console.log("usergroup found");
+            if(!user){ deferred.reject("UserGroup " + name + " not found");}
+            else { deferred.resolve(usergroup); }
+
+            /*
             if(next){
                 if(!user){ next("UserGroup " + name + " not found", false);}
                 else { next(null,usergroup); }
             }
+            */
         })
-        .error(function(error){ console.error(error); if(next) next(error,false);});
+        .error(function(error){ console.error(error); deferred.reject(error);
+            // if(next) next(error,false);
+        });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findUserByUserGroupName = _findUserGroupByUserGroupName;
 
 var _findUserGroupById = function(usergroupid, next) {
+    var deferred = QPromise.defer();
+
     UserGroup
         .find(usergroupid)
         .success(function(usergroup) {
-            if(next) {
-                if(!usergroup){ return next ("UserGroupId " + usergroupid + " not found", false);}
-                return next(null,usergroup);
-            };
+            //if(next) {
+                if(!usergroup){
+                    deferred.reject("UserGroupId " + usergroupid + " not found");
+                    //return next ("UserGroupId " + usergroupid + " not found", false);
+                }
+
+                deferred.resolve(usergroup);
+                //return next(null,usergroup);
+            //};
         })
         .error(function(error){
             console.error(error);
-            if(next) next(error,false);}
-    );
+            deferred.reject(error);
+        //    if(next) next(error,false);
+        });
+    return deferred.promise.nodeify(next);
 };
 exports.findUserGroupById = _findUserGroupById;
 
 var _findUserGroupAll = function(next){
+    var deferred = QPromise.defer();
+
     UserGroup.findAll({}).success(function(usergroups) {
         var tmpUserGroups = [];
         if (! usergroups instanceof Array){ tmpUserGroups.push(usergroups); }
         else{ tmpUserGroups = usergroups; }
 
-        if(next) next(null, tmpUserGroups);
-    })
+        deferred.resolve(tmpUserGroups);
+        //if(next) next(null, tmpUserGroups);
+    }).error(function(error){
+        console.error(error);
+        deferred.reject(error);
+    });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findUserGroupAll = _findUserGroupAll;
 
 var _createAdminUserGroup = function(){
+    var deferred = QPromise.defer();
+
     var chainer = new Sequelize.Utils.QueryChainer;
     var usergroup = UserGroup.build( { name: 'Administrators', role: 'Admin' } );
 
@@ -275,14 +310,38 @@ var _createAdminUserGroup = function(){
         .add(usergroup.save())
         .run()
         .on('success', function() {
-
+            deferred.resolve(true);
         })
-        .on('failure', function(err) {
+        .on('failure', function(error) {
+            deferred.reject(error);
         });
+
+    return deferred.promise.nodeify(next);
 };
 exports.createAdminUserGroup=_createAdminUserGroup;
 
 var _updateUserGroupById = function(id,usergroup, next){
+    var deferred = QPromise.defer();
+
+    _findUserGroupById(id).then(function(newUserGroup){
+        if(!newUserGroup){ deferred.reject("UserGroup not found"); }
+
+        newUserGroup.updateAttributes(usergroup)
+            .success(function() {
+                //*** Add log
+                _createLog("UPDATE",'USERGROUP','Update usergroup(' + id + '): name=' + newUserGroup.name + " role=" + newUserGroup.role, null).then(function() {
+                    deferred.resolve(newUserGroup);
+                });
+            })
+            .error(function(error){
+                deferred.reject(error);
+            });
+        },
+        function(error){   deferred.reject(error);  });
+
+
+
+    /*
     _findUserGroupById(id, function(err, newUserGroup){
         if(err){ if(next) next(err, false);}
         if(!newUserGroup){ if(next) next("UserGroup not found", false);}
@@ -294,30 +353,64 @@ var _updateUserGroupById = function(id,usergroup, next){
             });
         });
     });
+    */
+    return deferred.promise.nodeify(next);
 };
 exports.updateUserGroupById = _updateUserGroupById;
 
 var _deleteUserGroupById = function (id, next) {
-    UserGroup.find(id).success(function(usergroup) {
-        if (!usergroup){ if(next) next("UserGroup  not found", false);}
-        var name = usergroup.name;
-        var role = usergroup.role;
-        usergroup.deleted = true;
-        usergroup.destroy().success(function() {
-            //*** Add log
-            _createLog("DELETE",'USERGROUP','Delete usergroup(' + id + ') ' + name, null, function(err, log){
-                if(next) return next(null, null);
-            });
-        });
-    });
+    var deferred = QPromise.defer();
+
+    _findUserGroupById(id).then(
+        function(usergroup) {
+            if (!usergroup){ deferred.reject("UserGroup  not found");}
+            var name = usergroup.name;
+            usergroup.deleted = true;
+            usergroup.destroy()
+                .success(function() {
+                    //*** Add log
+                    _createLog("DELETE",'USERGROUP','Delete usergroup(' + id + ') ' + name, null)
+                        .then(function(){ deferred.resolve(true); });
+                })
+                .error(function(error){deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.deleteUserGroupById = _deleteUserGroupById;
 
 var _addUserToUserGroupById = function (info, next){
-    console.log('Assign User(', info.userid, ') to UserGroup:', info.usergroupid)
+    var deferred = QPromise.defer();
+
+    console.log('Assign User(', info.userid, ') to UserGroup:', info.usergroupid);
     var usergroupid = info.usergroupid;
     var userid = info.userid;
 
+    _findUserGroupById(usergroupid).then(
+        function(usergroup){
+            if (!usergroup){ deferred.reject("usergroup not found"); }
+            _findUserById(userid).then(
+                function(user) {
+                    if (!user){ deferred.reject("user not found"); }
+                    usergroup.addUser(user)
+                        .success(function() {
+                            deferred.resolve(usergroup);
+                        })
+                        .error(function(error){deferred.reject(error);});
+                },
+                function(error) {
+                    deferred.reject(error);
+                }
+            );
+        },
+        function(error){
+            deferred.reject(error);
+        }
+    );
+
+
+    /*
     _findUserGroupById(usergroupid, function(err, usergroup){
         console.log('Seaching UserGroup:', usergroup);
         if (!usergroup){ next("usergroup not found", false); }
@@ -331,14 +424,44 @@ var _addUserToUserGroupById = function (info, next){
             });
         });
     });
+    */
+    return deferred.promise.nodeify(next);
 };
 exports.addUserToUserGroupById = _addUserToUserGroupById;
 
 var _removeUserFromUserGroupById = function (info, next){
-    console.log('Assign User(', info.userid, ') to UserGroup:', info.usergroupid)
+    var deferred = QPromise.defer();
+
+    console.log('Assign User(', info.userid, ') to UserGroup:', info.usergroupid);
     var usergroupid = info.usergroupid;
     var userid = info.userid;
 
+
+    _findUserGroupById(usergroupid).then(
+        function(usergroup){
+            if (!usergroup){ deferred.reject("usergroup not found"); }
+            _findUserById(userid).then(
+                function(user){
+                    if (!user){ deferred.reject("user not found"); }
+                    usergroup.removeUser(user)
+                        .success(function() {
+                            deferred.resolve(usergroup);
+                        })
+                        .error(function(error){
+                            deferred.reject(error);
+                        });
+                },
+                function(error){
+                    deferred.reject(error);
+                })
+        },
+        function(error) {
+            deferred.reject(error);
+        }
+    );
+
+
+    /*
     _findUserGroupById(usergroupid, function(err, usergroup){
         console.log('Seaching UserGroup:', usergroup);
         if (!usergroup){ next("usergroup not found", false); }
@@ -351,7 +474,9 @@ var _removeUserFromUserGroupById = function (info, next){
                 if(next) next(null, usergroup);
             });
         });
-    });
+    });*/
+
+    return deferred.promise.nodeify(next);
 };
 exports.removeUserFromUserGroupById = _removeUserFromUserGroupById;
 
@@ -359,45 +484,81 @@ exports.removeUserFromUserGroupById = _removeUserFromUserGroupById;
 // USER
 //****************************************//
 var _createUser = function (user, next) {
+    var deferred = QPromise.defer();
+
     var newUser = User.build(user);
     newUser
         .save()
-        .on('success', function() {if(next) next(newUser);})
-        .on('failure', function(err) {console.log(err); if(next) next(null);});
+        .on('success', function() {deferred.resolve(newUser);})
+        .on('failure', function(error) {console.log(error); deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.createUser = _createUser;
 
 var _findUserByUsername = function (username, next) {
+    var deferred = QPromise.defer();
+
     console.log("_findUserByUsername(): username=" + username);
     User
         .find({ where: {username: username} })
         .success(function(user) {
             console.log("user found");
+            if(!user){ deferred.reject("User " + username + " not found");}
+            deferred.resolve(user);
+            /*
             if(next){
                 if(!user){ next("User " + username + " not found", false);}
                 else { next(null,user); }
-            }
+            }*/
         })
-        .error(function(error){ console.error(error); if(next) next(error,false);});
+        .error(function(error){ console.error(error); deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findUserByUsername = _findUserByUsername;
 
 var _findUserById = function(userid, next) {
+    var deferred = QPromise.defer();
     User
         .find(userid)
         .success(function(fuser) {
             console.log("user found");
 
+            if(!fuser){ deferred.reject("UserId " + userid + " not found");}
+            deferred.resolve(fuser);
+
+            /*
             if(next) {
                 if(!fuser){ return next ("UserId " + userid + " not found", false)}
                 return next(null,fuser)
-            };
+            };*/
         })
-        .error(function(error){ console.error(error); if(next) next(error,false);});
+        .error(function(error){ console.error(error); deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findUserById = _findUserById;
 
 var _findUserByUserGroupId = function(usergroupid, next) {
+    var deferred = QPromise.defer();
+
+    _findUserGroupById(usergroupid).then(
+        function(usergroup){
+            var tmpUsers = [];
+            usergroup.getUsers()
+                .success(function(users) {
+                    if (! users instanceof Array){tmpUsers.push(users);}
+                    else{tmpUsers = users;}
+                    deferred.resolve(tmpUsers);
+                })
+                .error(function(error){ console.error(error); deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
+
+
+    /*
     UserGroup.find(usergroupid).success(function(usergroup) {
 
         var tmpUsers = [];
@@ -412,7 +573,7 @@ var _findUserByUserGroupId = function(usergroupid, next) {
         }).error(function(error){ console.error(error); if(next) next(error,false);});
 
     }).error(function(error){ console.error(error); if(next) next(error,false);});
-
+*/
     /*
     User
         .find({usergroupId: usergroupid})
@@ -428,6 +589,8 @@ var _findUserByUserGroupId = function(usergroupid, next) {
             if(next) next(null, tmpUsers);
         })
       */
+
+    return deferred.promise.nodeify(next);
 };
 exports.findUserByUserGroupId = _findUserByUserGroupId;
 
@@ -447,17 +610,43 @@ var _createAdminUser = function(){
 exports.createAdminUser=_createAdminUser;
 
 var _findUserAll = function(next){
-    User.findAll({}).success(function(users) {
-        var tmpUsers = [];
-        if (! users instanceof Array){ tmpUsers.push(users); }
-        else{ tmpUsers = users; }
+    var deferred = QPromise.defer();
+    User.findAll({})
+        .success(function(users) {
+            var tmpUsers = [];
+            if (! users instanceof Array){ tmpUsers.push(users); }
+            else{ tmpUsers = users; }
 
-        if(next) next(null, tmpUsers);
-    })
+            deferred.resolve(tmpUsers);
+            //if(next) next(null, tmpUsers);
+        })
+        .error(function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findUserAll = _findUserAll;
 
 var _updateUserById = function(id,user, next){
+    var deferred = QPromise.defer();
+
+    _findUserById(id).then(
+        function(newUser){
+            if(!newUser){ deferred.reject("User not found");}
+
+            newUser.updateAttributes(user)
+                .success(function() {
+                    //*** Add log
+                    _createLog("UPDATE",'USER','Update user(' + id + '): name=' + newUser.name + " role=" + newUser.role, null)
+                        .then(function(){
+                            deferred.resolve(newUser);
+                        });
+                })
+                .error(function(error){ deferred.reject(error); });
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    /*
     _findUserById(id, function(err, newUser){
         if(err){ if(next) next(err, false);}
         if(!newUser){ if(next) next("User not found", false);}
@@ -469,10 +658,30 @@ var _updateUserById = function(id,user, next){
             });
         });
     });
+    */
+    return deferred.promise.nodeify(next);
 };
 exports.updateUserById = _updateUserById;
 
 var _deleteUserById = function (id, next) {
+    var deferred = QPromise.defer();
+
+    _findUserById(id).then(
+        function(user){
+            if (!user){ deferred.reject("User not found");}
+            var name = user.name;
+            user.destroy()
+                .success(function() {
+                    //*** Add log
+                    _createLog("DELETE",'USER','Delete user(' + id + ') ' + name, null)
+                        .then( function(){deferred.resolve(true);});
+                })
+                .error(function(error){deferred.reject(error); });
+        },
+        function(error){deferred.reject(error); }
+    );
+
+    /*
     User.find(id).success(function(user) {
         if (!user){ if(next) next("User not found", false);}
         var name = user.name;
@@ -484,10 +693,35 @@ var _deleteUserById = function (id, next) {
             });
         });
     });
+    */
+    return deferred.promise.nodeify(next);
 };
 exports.deleteUserById = _deleteUserById;
 
 var _addAddressToUserById = function(id, address, next){
+    var deferred = QPromise.defer();
+
+    _findUserById(id).then(
+        function(user){
+            if(!user){ deferred.reject("User not found");}
+            Address.build(address).save()
+                .success(function(newAddress) {
+                    _createLog("CREATE",'ADDRESS','Create address(' + newAddress.id + '): adress=' + newAddress.address1, null)
+                        .done();
+
+                    user.addAddress(newAddress)
+                        .success( function(user) {
+                            _createLog("UPDATE",'USER','Update user(' + id + ') with new address=' + newAddress.id, null)
+                                .then(function(){ deferred.resolve(user); });
+                        })
+                        .error( function(error) { deferred.reject(error); });
+                })
+                .error(function(error) {deferred.reject(error); });
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    /*
     _findUserById(id, function(err, user){
         if(err){ if(next) next(err, false);}
         if(!user){ if(next) next("User not found", false);}
@@ -505,11 +739,34 @@ var _addAddressToUserById = function(id, address, next){
                     .on('failure', function(err) { if(next) next(err,false); });
             })
             .on('failure', function(err) { if(next) next(err,false); });
-    });
+    });*/
+
+    return deferred.promise.nodeify(next);
 };
 exports.addAddressToUserById = _addAddressToUserById;
 
 var _removeAddressToUserById = function(id, addressid, next){
+    var deferred = QPromise.defer();
+
+    _findUserById(id).then(
+        function(user){
+            if(!user){ deferred.reject("User not found");}
+            Address.find(addressid)
+                .success( function(newAddress) {
+                    user.removeAddress(newAddress)
+                        .success(function(user) {
+                            _createLog("UPDATE",'USER','Update user(' + id + ') remove address=' + addressid, null)
+                                .then(function(){
+                                    deferred.resolve(user);
+                                });
+                        })
+                        .error(function(error) {deferred.reject(error);});
+                })
+                .error(function(error) {deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
+    /*
     _findSiteById(id, function(err, user){
         if(err){ if(next) next(err, false);}
         if(!user){ if(next) next("User not found", false);}
@@ -526,10 +783,34 @@ var _removeAddressToUserById = function(id, addressid, next){
             })
             .on('failure', function(err) { if(next) next(err,false); });
     });
+    */
+    return deferred.promise.nodeify(next);
 };
 exports.removeAddressToUserById = _removeAddressToUserById;
 
 var _addTelephoneToUserById = function(id, telephone, next){
+    var deferred = QPromise.defer();
+    _findUserById(id).then(
+        function(user){
+            if(!user){deferred.reject("User not found");}
+            Telephone.build(telephone).save()
+                .success(function(newTelephone) {
+                    _createLog("CREATE",'TELEPHONE','Create telephone(' + newTelephone.id + '): telephone=' + newTelephone.telephone, null)
+                        .done();
+
+                    user.addTelephone(newTelephone)
+                        .success(function(user) {
+                            _createLog("UPDATE",'USER','Update user(' + id + ') with new telephone=' + newTelephone.id, null)
+                                .then(function(){ deferred.resolve(user);});
+                        })
+                        .error(function(error) {deferred.reject(error);});
+                })
+                .error(function(error) {deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    /*
     _findUserById(id, function(err, user){
         if(err){ if(next) next(err, false);}
         if(!user){ if(next) next("User not found", false);}
@@ -547,11 +828,33 @@ var _addTelephoneToUserById = function(id, telephone, next){
                     .on('failure', function(err) { if(next) next(err,false); });
             })
             .on('failure', function(err) { if(next) next(err,false); });
-    });
+    }); */
+
+    return deferred.promise.nodeify(next);
 };
 exports.addTelephoneToUserById = _addTelephoneToUserById;
 
 var _removeTelephoneToUserById = function(id, telephoneid, next){
+    var deferred = QPromise.defer();
+
+    _findUserById(id).then(
+        function(user){
+            if(!user){ deferred.reject("User not found");}
+            Telephone.find(telephoneid)
+                .success(function(newTelephone) {
+                    user.removeTelephone(newTelephone)
+                        .success(function(user) {
+                            _createLog("UPDATE",'USER','Update user(' + id + ') remove telephone=' + telephoneid, null)
+                                .then(function() {deferred.resolve(user);});
+                        })
+                        .error(function(error) {deferred.reject(error);});
+                })
+                .error(function(error) {deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    /*
     _findSiteById(id, function(err, user){
         if(err){ if(next) next(err, false);}
         if(!user){ if(next) next("User not found", false);}
@@ -567,11 +870,35 @@ var _removeTelephoneToUserById = function(id, telephoneid, next){
                     .on('failure', function(err) { if(next) next(err,false); });
             })
             .on('failure', function(err) { if(next) next(err,false); });
-    });
+    });*/
+
+    return deferred.promise.nodeify(next);
 };
 exports.removeTelephoneToUserById = _removeTelephoneToUserById;
 
 var _addEmailToUserById = function(id, email, next){
+    var deferred = QPromise.defer();
+
+    _findUserById(id).then(
+        function(user){
+            if(!user){deferred.reject("User not found");}
+            Email.build(email).save()
+                .success(function(newEmail) {
+                    _createLog("CREATE",'EMAIL','Create email(' + newEmail.id + '): email=' + newEmail.email, null)
+                        .done();
+
+                    user.addEmail(newEmail)
+                        .success(function(user) {
+                            _createLog("UPDATE",'USER','Update user(' + id + ') with new email=' + newEmail.id, null)
+                                .then(function(){ deferred.resolve(user);});
+                        })
+                        .error(function(error) {deferred.reject(error);});
+                })
+                .error(function(error) {deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
+    /*
     _findUserById(id, function(err, user){
         if(err){ if(next) next(err, false);}
         if(!user){ if(next) next("User not found", false);}
@@ -589,11 +916,33 @@ var _addEmailToUserById = function(id, email, next){
                     .on('failure', function(err) { if(next) next(err,false); });
             })
             .on('failure', function(err) { if(next) next(err,false); });
-    });
+    });*/
+
+    return deferred.promise.nodeify(next);
 };
 exports.addEmailToUserById = _addEmailToUserById;
 
 var _removeEmailToUserById = function(id, emailid, next){
+    var deferred = QPromise.defer();
+
+    _findUserById(id).then(
+        function(user){
+            if(!user){ deferred.reject("User not found");}
+            Email.find(emailid)
+                .success(function(newEmail) {
+                    user.removeEmail(newEmail)
+                        .success(function(user) {
+                            _createLog("UPDATE",'USER','Update user(' + id + ') remove email=' + emailid, null)
+                                .then(function() {deferred.resolve(user);});
+                        })
+                        .error(function(error) {deferred.reject(error);});
+                })
+                .error(function(error) {deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    /*
     _findSiteById(id, function(err, user){
         if(err){ if(next) next(err, false);}
         if(!user){ if(next) next("User not found", false);}
@@ -609,7 +958,9 @@ var _removeEmailToUserById = function(id, emailid, next){
                     .on('failure', function(err) { if(next) next(err,false); });
             })
             .on('failure', function(err) { if(next) next(err,false); });
-    });
+    });*/
+
+    return deferred.promise.nodeify(next);
 };
 exports.removeEmailToUserById = _removeEmailToUserById;
 
@@ -619,17 +970,20 @@ exports.removeEmailToUserById = _removeEmailToUserById;
 // ADDRESS
 //****************************************//
 var _updateAddressById = function(id, address, next){
+    var deferred = QPromise.defer();
+
         Address.find(id)
-            .on('success', function(newAddress) {
+            .success(function(newAddress) {
                 newAddress.updateAttributes(address)
-                    .on('success', function(naddress) {
-                        _createLog("UPDATE",'ADDRESS','Update address(' + id + ')', null, function(err, log){
-                                                    if(next) return next(null, naddress);
-                                                });
+                    .success(function(naddress) {
+                        _createLog("UPDATE",'ADDRESS','Update address(' + id + ')', null)
+                            .then(function(){deferred.resolve(naddress);});
                     })
-                    .on('failure', function(err) { if(next) next(err,false); });
+                    .error(function(error) { deferred.reject(error); });
             })
-            .on('failure', function(err) { if(next) next(err,false); });
+            .error(function(error) { deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.updateAddressById = _updateAddressById;
 
@@ -639,88 +993,119 @@ exports.updateAddressById = _updateAddressById;
 // SITEGROUP
 //****************************************//
 var _findSiteGroupAllDetails = function(next){
-    SiteGroup.findAll({where: {deleted: false},include: [{ model: Site, as: 'Sites' }] }).success(function(sitegroups) {
-        var tmpSiteGroups = [];
-        if (! sitegroups instanceof Array){ tmpSiteGroups.push(sitegroups); }
-        else{ tmpSiteGroups = sitegroups; }
+    var deferred = QPromise.defer();
 
-        if(next) return next(null, tmpSiteGroups);
-    })
+    SiteGroup.findAll({where: {deleted: false},include: [{ model: Site, as: 'Sites' }] })
+        .success(function(sitegroups) {
+            var tmpSiteGroups = [];
+            if (! sitegroups instanceof Array){ tmpSiteGroups.push(sitegroups); }
+            else{ tmpSiteGroups = sitegroups; }
+
+            deferred.resolve(tmpSiteGroups);
+        })
+        .error(function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findSiteGroupAllDetails = _findSiteGroupAllDetails;
 
 var _findSiteGroupAll = function(next){
-    SiteGroup.findAll({where: {deleted: false}}).success(function(sitegroups) {
-        var tmpSiteGroups = [];
-        if (! sitegroups instanceof Array){ tmpSiteGroups.push(sitegroups); }
-        else{ tmpSiteGroups = sitegroups; }
+    var deferred = QPromise.defer();
 
-        if(next) next(null, tmpSiteGroups);
-    })
+    SiteGroup.findAll({where: {deleted: false}})
+        .success(function(sitegroups) {
+            var tmpSiteGroups = [];
+            if (! sitegroups instanceof Array){ tmpSiteGroups.push(sitegroups); }
+            else{ tmpSiteGroups = sitegroups; }
+
+            deferred.resolve(tmpSiteGroups);
+        })
+        .error(function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findSiteGroupAll = _findSiteGroupAll;
 
 var _findSiteGroupById = function(id,next){
+    var deferred = QPromise.defer();
+
     SiteGroup
         .find(id)
         .success(function(sitegroup) {
-            if (!sitegroup){ next("sitegroup not found", false); }
-
-            if(next) next(null, sitegroup);
+            if (!sitegroup){ deferred.reject("sitegroup not found"); }
+            deferred.resolve(sitegroup);
         })
+        .error(function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findSiteGroupById = _findSiteGroupById;
 
 var _createSiteGroup = function (sitegroup, next) {
+    var deferred = QPromise.defer();
+
     console.log('create a new SiteGroup:', sitegroup);
 
     var newSiteGroup = SiteGroup.build(sitegroup);
     newSiteGroup.save()
-        .on('success', function() {
+        .success(function() {
             console.log('New SiteGroup created');
-            _createSiteWithSiteGroupId(newSiteGroup.id, {name:'New Site', code:'000', default: true}, function(err, site){
-                if(next){
-                    if(err){ next(err,false);}
-                    else {next(null, newSiteGroup); }
-
-                }  })
-            })
-        .on('failure', function(err) {
-            console.log('Error during creation of a new SiteGroup');
-
-            if(next) next(err,false);
+            _createSiteWithSiteGroupId(newSiteGroup.id, {name: 'New Site', code: '000', default: true})
+                .then(
+                    function () {
+                        deferred.resolve(newSiteGroup);
+                    },
+                    function (error) {
+                        deferred.reject(error);
+                    }
+                );
         })
+        .error(function(error) {deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.createSiteGroup = _createSiteGroup;
 
 var _updateSiteGroupById = function(id,sitegroup, next){
-    _findSiteGroupById(id, function(err, newSiteGroup){
-        if(err){ if(next) next(err, false);}
-        if(!newSiteGroup){ if(next) next("SiteGroup not found", false);}
+    var deferred = QPromise.defer();
 
-        newSiteGroup.updateAttributes(sitegroup).success(function() {
-            //*** Add log
-            _createLog("UPDATE",'SITEGROUP','Update sitegroup(' + id + '): name=' + newSiteGroup.name + " code=" + newSiteGroup.code, null, function(err, log){
-                if(next) return next(null, newSiteGroup);
+    _findSiteGroupById(id).then(
+        function(newSiteGroup){
+            if(!newSiteGroup){ deferred.reject("SiteGroup not found");}
+
+            newSiteGroup.updateAttributes(sitegroup).success(function() {
+                //*** Add log
+                _createLog("UPDATE",'SITEGROUP','Update sitegroup(' + id + '): name=' + newSiteGroup.name + " code=" + newSiteGroup.code, null)
+                    .then(function(){deferred.resolve(newSiteGroup);});
             });
-        });
-    });
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.updateSiteGroupById = _updateSiteGroupById;
 
 var _deleteSiteGroupById = function (id, next) {
-    SiteGroup.find(id).success(function(sitegroup) {
-        if (!sitegroup){ if(next) next("SiteGroup  not found", false);}
-        var name = sitegroup.name;
-        var code = sitegroup.code;
-        sitegroup.deleted = true;
-        sitegroup.save().success(function() {
-            //*** Add log
-            _createLog("DELETE",'SITEGROUP','Delete sitegroup(' + id + ') ' + name, null, function(err, log){
-                if(next) return next(null, null);
-            });
-        });
-    });
+    var deferred = QPromise.defer();
+
+    _findSiteGroupById(id).then(
+        function(sitegroup){
+            if (!sitegroup){ deferred.reject("SiteGroup  not found");}
+            var name = sitegroup.name;
+            sitegroup.deleted = true;
+            sitegroup.save()
+                .success(function() {
+                    //*** Add log
+                    _createLog("DELETE",'SITEGROUP','Delete sitegroup(' + id + ') ' + name, null)
+                        .then(function(err, log){deferred.resolve(true);});
+                })
+                .error(function(error){deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.deleteSiteGroupById = _deleteSiteGroupById;
 
@@ -731,51 +1116,55 @@ var _createUnassignedSiteGroup = function(){
 exports.createUnassignedSiteGroup=_createUnassignedSiteGroup;
 
 var _importSiteGroup = function (sitegroup, forced, next) {
+    var deferred = QPromise.defer();
+
     if (sitegroup) {
         SiteGroup.findOrCreate({code: sitegroup.code}, {name: sitegroup.name})
             .success(function (newSiteGroup, created) {
                 if (created) {
-                    _createSiteWithSiteGroupId(newSiteGroup.id, {
-                        name: 'New Site',
-                        code: '000',
-                        default: true
-                    }, function (err, site) {
-                        if (next) {
-                            if (err) {
-                                next(err, false);
-                            }
-                            else {
-                                next(null, newSiteGroup);
-                            }
-
-                        }
-                    })
+                    _createSiteWithSiteGroupId(newSiteGroup.id, {name: 'New Site', code: '000', default: true})
+                        .then(
+                            function() {deferred.resolve(newSiteGroup);},
+                            function(error){}
+                        );
                 }
                 else {
                     if(forced)
                     {
                         _updateSiteGroupById(newSiteGroup.id, sitegroup, next);
                     }
-                    if (next) return next(null, newSiteGroup);
+                    deferred.resolve(newSiteGroup);
                 }
             })
+            .error(function(error){deferred.reject(error);});
     }
+
+    return deferred.promise.nodeify(next);
 };
 exports.importSiteGroup=_importSiteGroup;
 
 var _bulkImportSiteGroup = function(sitegroups, forced, next)
 {
+    var deferred = QPromise.defer();
+
     if(sitegroups && sitegroups instanceof Array)
     {
         if(sitegroups.length>0)
         {
             var sitegroup = sitegroups.pop();
-            _importSiteGroup(sitegroup, forced,_bulkImportSiteGroup(sitegroups, forced, next));
+            //_importSiteGroup(sitegroup, forced,_bulkImportSiteGroup(sitegroups, forced, next));
+            _importSiteGroup(sitegroup, forced)
+                .then(
+                    function(){_bulkImportSiteGroup(sitegroups, forced);},
+                    function(error){deferred.reject(error);}
+                );
         }
         else {
-            if(next) return next(null, true);
+            deferred.resolve(true);
         }
     }
+
+    return deferred.promise.nodeify(next);
 };
 exports.bulkImportSiteGroup=_bulkImportSiteGroup;
 
@@ -783,136 +1172,173 @@ exports.bulkImportSiteGroup=_bulkImportSiteGroup;
 // SITE
 //****************************************//
 var _findSiteAllDetails = function(next){
-    Site.findAll({where: {deleted: false},include: [{ model: Building, as: 'Buildings' }] }).success(function(sites) {
-        var tmpSites = [];
-        if (! sites instanceof Array){
-            tmpSites.push(sites);
-        }
-        else{
-            tmpSites = sites;
-        }
+    var deferred = QPromise.defer();
 
-        if(next) return next(null, tmpSites);
-    })
+    Site.findAll({where: {deleted: false},include: [{ model: Building, as: 'Buildings' }] })
+        .success(function(sites) {
+            var tmpSites = [];
+            if (! sites instanceof Array){tmpSites.push(sites);}
+            else{tmpSites = sites;}
+
+            deferred.resolve(tmpSites);
+        })
+        .error(function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findSiteAllDetails = _findSiteAllDetails;
 
 var _findSiteAll = function(next){
-    Site.findAll({where: {deleted: false}}).success(function(sites) {
-        var tmpSites = [];
-        if (! sites instanceof Array){
-            tmpSites.push(sites);
-        }
-        else{
-            tmpSites = sites;
-        }
+    var deferred = QPromise.defer();
 
-        if(next) return next(null, tmpSites);
-    })
+    Site.findAll({where: {deleted: false}})
+        .success(function(sites) {
+            var tmpSites = [];
+            if (! sites instanceof Array){tmpSites.push(sites);}
+            else{tmpSites = sites;}
+
+            deferred.resolve(tmpSites);
+        })
+        .error(function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findSiteAll = _findSiteAll;
 
 var _findSiteAllBySiteGroupId = function(sitegroupid, next){
-    _findSiteGroupById(sitegroupid, function(err, sitegroup){
-        if(err) {if(next) return next(err, []);}
-        if(!sitegroup) {if(next) return next("SiteGroup not found", []);}
+    var deferred = QPromise.defer();
 
-        sitegroup.getSites({where: {deleted: false}})
-            .on('success', function(sites){
-                if(next) next(null, sites);
-            })
-            .on('failure', function(error){
-                if(next) next(error, false);
-            });
-    });
+    _findSiteGroupById(sitegroupid)
+        .then(
+            function(sitegroup){
+                if(!sitegroup) {deferred.reject("SiteGroup not found");}
+
+                sitegroup.getSites({where: {deleted: false}})
+                    .success(function(sites){deferred.resolve(sites);})
+                    .error(function(error){deferred.reject(error);});
+            },
+            function(error){deferred.reject(error);}
+        );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findSiteAllBySiteGroupId = _findSiteAllBySiteGroupId;
 
 var _findSiteById = function(id,next){
+    var deferred = QPromise.defer();
+
     Site
         .find(id)
         .success(function(site) {
-            if (!site){ next("site not found", false); }
-
-            if(next) return next(null, site);
+            if (!site){ deferred.reject("site not found"); }
+            deferred.resolve(site);
         })
+        .error(function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findSiteById = _findSiteById;
 
 var _findSiteByCode = function(code,next){
+    var deferred = QPromise.defer();
     Site
         .find({where: {code: code}})
         .success(function(site) {
-            if (!site){ next("site not found", false); }
-
-            if(next) return next(null, site);
+            if (!site){ deferred.reject("site not found"); }
+            deferred.resolve(site);
         })
+        .error(function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findSiteByCode = _findSiteByCode;
 
 var _createSite = function (site, next) {
+    var deferred = QPromise.defer();
+
     var newSite = Site.build(site);
     var newAddress = Address.build();
 
     newAddress.save()
-        .on('success', function(address) {
-        newSite.save()
-                .on('success', function() {
-                    //newSite.addAddress(newAddress);
-
-                    _createBuildingWithSiteId(newSite.id, {name:'Main', default: true}, function(err,building){
-                        if(next){
-                            if(err) { next(err,false); }
-                            else { next(null, newSite);}
-                        }
-                    });
+        .success( function(address) {
+            newSite.save()
+                .success(function() {
+                    newSite.addAddress(newAddress);
+                    _createBuildingWithSiteId(newSite.id, {name:'Main', default: true})
+                        .then(
+                            function(){ deferred.resolve(newSite);},
+                            function(error){deferred.reject(error);}
+                        );
                 })
-                .on('failure', function(err) {
-                    if(next) next(err,false);
-                });
+                .error(function(err) {deferred.reject(error); });
     })
-    .on('failure', function(err) { if(next) next(err,false); });
+    .error(function(error) { deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.createSite = _createSite;
 
 var _createSiteWithSiteGroupId = function (sitegroupid, site, next) {
-    _createSite(site,function(err, newSite){
-        if(newSite){
-            _findSiteGroupById(sitegroupid, function(err, sitegroup){
-                if(sitegroup){
-                    sitegroup.addSite(newSite)
-                        .on('success', function(){
-                            _createLog("CREATE",'SITE','Create site: name=' + site.name + " code=" + site.code + ' in ' + sitegroup.name, null, function(err, log){
-                                if(next) return next(null, newSite);
-                            });
-                        })
-                        .on('failure', function(error){
-                            if(next) next(error, false);
-                        });
-                }
-            });
-        }
-    });
+    var deferred = QPromise.defer();
 
+    _createSite(site)
+        .then(function(newSite){
+            if(!newSite){ deferred.reject(error); }
+            _findSiteGroupById(sitegroupid)
+                .then(function(sitegroup){
+                    if(!sitegroup){deferred.reject(error);}
+                    sitegroup.addSite(newSite)
+                        .success(function(){
+                            _createLog("CREATE",'SITE','Create site: name=' + site.name + " code=" + site.code + ' in ' + sitegroup.name, null)
+                                .then(function(){deferred.resolve(newSite);});
+                        })
+                        .error(function(error){deferred.reject(error);});
+                    },
+                    function(error){deferred.reject(error);});
+        }, function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.createSiteWithSiteGroupId = _createSiteWithSiteGroupId;
 
 var _updateSiteById = function(id, site, next){
-    _findSiteById(id, function(err, newSite){
-        if(err){ if(next) next(err, false);}
-        if(!newSite){ if(next) next("Site not found", false);}
+    var deferred = QPromise.defer();
 
-        newSite.updateAttributes(site).success(function() {
-            //*** Add log
-            _createLog("UPDATE",'SITE','Update site(' + id + '): name=' + site.name + " code=" + site.code, null, function(err, log){
-                if(next) return next(null, site);
-            });
-        });
-    });
+    _findSiteById(id)
+        .then(function(newSite){
+            if(!newSite){ deferred.reject("Site not found");}
+
+            newSite.updateAttributes(site)
+                .success(function() {
+                    //*** Add log
+                    _createLog("UPDATE",'SITE','Update site(' + id + '): name=' + site.name + " code=" + site.code, null)
+                        .then(function(){deferred.resolve(site);});
+                })
+                .error(function(error){deferred.reject(error);});
+        }, function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.updateSiteById = _updateSiteById;
 
 var _deleteSiteById = function (id, next) {
+    var deferred = QPromise.defer();
+
+    _findSiteById(id).then(
+        function(site){
+            if(!site) {deferred.reject(error);}
+            var name = site.name;
+            site.deleted = true;
+            site.save().success(function() {
+                //*** Add log
+                _createLog("DELETE",'SITE','Delete site(' + id + ') ' + name, null)
+                    .then(function(){ deferred.resolve(true); });
+            });
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    /*
     Site.find(id).success(function(site) {
         if (!site){ if(next) next("Site  not found", false);}
         var name = site.name;
@@ -925,189 +1351,213 @@ var _deleteSiteById = function (id, next) {
             });
         });
     });
+    */
+    return deferred.promise.nodeify(next);
 };
 exports.deleteSiteById = _deleteSiteById;
 
 var _findAddressBySiteId = function(id, next){
-    Site.find(id, {include: [{ model: Address, as: 'Addresses' }] }).success(function(site) {
-        var tmpAddresses = [];
-        site.getAddresses().success(function(addresses){
-            if (! addresses instanceof Array){
-                        tmpAddresses.push(addresses);
-                    }
-                    else{
-                        tmpAddresses = addresses;
-                    }
-            if(next) return next(null, tmpAddresses);
-        });
-    })
+    var deferred = QPromise.defer();
+
+    Site.find(id, {include: [{ model: Address, as: 'Addresses' }] })
+        .success(function(site) {
+            var tmpAddresses = [];
+            site.getAddresses()
+                .success(function(addresses){
+                    if (! addresses instanceof Array){ tmpAddresses.push(addresses);}
+                    else{tmpAddresses = addresses;}
+                    deferred.resolve(tmpAddresses);
+                })
+                .error(function(error){deferred.reject(error); });
+        })
+        .error(function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findAddressBySiteId = _findAddressBySiteId;
 
 var _addAddressToSiteById = function(id, address, next){
-    _findSiteById(id, function(err, site){
-        if(err){ if(next) next(err, false);}
-        if(!site){ if(next) next("Site not found", false);}
+    var deferred = QPromise.defer();
 
-        Address.build(address).save()
-            .on('success', function(newAddress) {
-                _createLog("CREATE",'ADDRESS','Create address(' + newAddress.id + '): adress=' + newAddress.address1, null, function(err, log){});
+    _findSiteById(id)
+        .then(function(site){
+            if(err){ if(next) next(err, false);}
+            if(!site){ if(next) next("Site not found", false);}
 
-                site.addAddress(newAddress)
-                    .on('success', function(site) {
-                        _createLog("UPDATE",'SITE','Update site(' + id + ') with new address=' + newAddress.id, null, function(err, log){
-                            if(next) return next(null, site);
-                        });
-                    })
-                    .on('failure', function(err) { if(next) next(err,false); });
-            })
-            .on('failure', function(err) { if(next) next(err,false); });
-    });
+            Address.build(address).save()
+                .success( function(newAddress) {
+                    _createLog("CREATE",'ADDRESS','Create address(' + newAddress.id + '): adress=' + newAddress.address1, null).done();
+
+                    site.addAddress(newAddress)
+                        .success( function(site) {
+                            _createLog("UPDATE",'SITE','Update site(' + id + ') with new address=' + newAddress.id, null).then(function(){
+                                deferred.resolve(site);
+                            });
+                        })
+                        .error(function(error) {deferred.reject(error); });
+                })
+                .error(function(error) {deferred.reject(error); });
+        },
+        function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.addAddressToSiteById = _addAddressToSiteById;
 
 var _removeAddressToSiteById = function(id, addressid, next){
-    _findSiteById(id, function(err, site){
-        if(err){ if(next) next(err, false);}
-        if(!site){ if(next) next("Site not found", false);}
+    var deferred = QPromise.defer();
 
-        Address.find(addressid)
-            .on('success', function(newAddress) {
-                site.removeAddress(newAddress)
-                    .on('success', function(site) {
-                        _createLog("UPDATE",'SITE','Update site(' + id + ') remove address=' + addressid, null, function(err, log){
-                            if(next) return next(null, site);
-                        });
-                    })
-                    .on('failure', function(err) { if(next) next(err,false); });
-            })
-            .on('failure', function(err) { if(next) next(err,false); });
-    });
+    _findSiteById(id).then(
+        function(site){
+            if(!site){ deferred.reject("Site not found");}
+
+            Address.find(addressid)
+                .success(function(newAddress) {
+                    site.removeAddress(newAddress)
+                        .success(function(site) {
+                            _createLog("UPDATE",'SITE','Update site(' + id + ') remove address=' + addressid, null)
+                                .then(function(){deferred.resolve(site);});
+                        })
+                        .error(function(error) {deferred.reject(error); });
+                })
+                .error(function(error) { deferred.reject(error); });
+        },
+        function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.removeAddressToSiteById = _removeAddressToSiteById;
 
 var _findContactBySiteId = function(id, next){
+    var deferred = QPromise.defer();
+
     var sql = "SELECT `users`.* FROM `users`, `SitesUsers` WHERE `SitesUsers`.deletedAt IS NULL AND `SitesUsers`.`userId`=`users`.`id` AND `SitesUsers`.`siteId`=" + id ;
     //var sql = "SELECT *  from view_closetalldetails where sitegroup_id=" + sitegroupid;
     sequelize.query(sql, null, {raw: true})
-            .success(function(users) {
-                if (!users){ if(next) next("Users not found", false);}
-                if(next) next(null, users);
-            });
+        .success(function(users) {
+                if (!users){ deferred.reject("Users not found");}
+                deferred.resolve(users);
+            })
+        .error(function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findContactBySiteId = _findContactBySiteId;
 
 var _addContactToSiteById = function (id, userid, next) {
-    _findSiteById(id, function (err, site) {
-        if (err) {
-            if (next) next(err, false);
-        }
-        if (!site) {
-            if (next) next("Site not found", false);
-        }
+    var deferred = QPromise.defer();
 
-        _findUserById(userid, function (err, user) {
-            if (err) {
-                if (next) next(err, false);
-            }
-            if (!user) {
-                if (next) next("User not found", false);
-            }
+    _findSiteById(id).then(function (site) {
+        if (!site) { deferred.reject("Site not found");}
 
+        _findUserById(userid).then(function (user) {
+            if (!user) {deferred.reject("User not found");}
 
             var sql = "UPDATE `SitesUsers` SET deletedAt = NULL WHERE `userId`=" + userid + " AND `siteId`=" + id;
             sequelize.query(sql, null, {raw: true}).success(function() {});
 
             site.addContact(user)
-                .on('success', function (site) {
-                    _createLog("UPDATE", 'SITE', 'Update site(' + id + ') with new user=' + user.id, null, function (err, log) {
-                        if (next) return next(null, site);
-                    });
+                .success(function (site) {
+                    _createLog("UPDATE", 'SITE', 'Update site(' + id + ') with new user=' + user.id, null)
+                        .then(function () {deferred.resolve(site);});
                 })
-                .on('failure', function (err) {
-                    if (next) next(err, false);
-                });
-        });
-    });
+                .error(function (error) { deferred.reject(error);});
+        },
+            function(error){deferred.reject(error);}
+        );
+    }, function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.addContactToSiteById = _addContactToSiteById;
 
 var _removeContactToSiteById = function(id, userid, next){
-    _findSiteById(id, function(err, site){
+    var deferred = QPromise.defer();
 
-        if(err){ if(next) next(err, false);}
-        if(!site){ if(next) next("Site not found", false);}
+    _findSiteById(id).then(function(site){
+        if(!site){ deferred.reject("Site not found");}
 
-        User.find(userid)
-            .on('success', function(newUser) {
+        _findUserById(id).then(
+            function(newUser){
                 site.removeContact(newUser)
-                    .on('success', function(site) {
-                        _createLog("UPDATE",'SITE','Update site(' + id + ') remove user=' + userid, null, function(err, log){
-                            if(next) return next(null, site);
-                        });
+                    .success( function(site) {
+                        _createLog("UPDATE",'SITE','Update site(' + id + ') remove user=' + userid, null)
+                            .then(function(){deferred.resolve(site);});
                     })
-                    .on('failure', function(err) { if(next) next(err,false); });
-            })
-            .on('failure', function(err) { if(next) next(err,false); });
-    });
+                    .error(function(error) {deferred.reject(error); });
+            },
+            function(error){deferred.reject(error);}
+        );
+    }, function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.removeContactToSiteById = _removeContactToSiteById;
 
 var _findNoteBySiteId = function(id, next){
-    Site.find(id, {include: [{ model: Comment, as: 'Notes' }] }).success(function(site) {
-        var tmpNotes = [];
-        site.getNotes().success(function(notes){
-            if (! notes instanceof Array){
-                tmpNotes.push(notes);
-                    }
-                    else{
-                tmpNotes = notes;
-                    }
-            if(next) return next(null, tmpNotes);
-        });
-    });
+    var deferred = QPromise.defer();
+
+    Site.find(id, {include: [{ model: Comment, as: 'Notes' }] })
+        .success(function(site) {
+            var tmpNotes = [];
+            site.getNotes()
+                .success(function(notes){
+                    if (! notes instanceof Array){  tmpNotes.push(notes);}
+                    else{tmpNotes = notes;}
+
+                    deferred.resolve(tmpNotes);
+                })
+                .error(function(error){deferred.reject(error); });
+        })
+        .error(function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findNoteBySiteId = _findNoteBySiteId;
 
 var _addNoteToSiteById = function(id, note, next){
-    _findSiteById(id, function(err, site){
-        if(err){ if(next) next(err, false);}
-        if(!site){ if(next) next("Site not found", false);}
+    var deferred = QPromise.defer();
+
+    _findSiteById(id).then(function(site){
+        if(!site){ deferred.reject("Site not found");}
 
         Note.build(note).save()
-            .on('success', function(newNote) {
-                _createLog("CREATE",'NOTE','Create note(' + newNote.id + '): title=' + newNote.title, null, function(err, log){});
+            .success(function(newNote) {
+                _createLog("CREATE",'NOTE','Create note(' + newNote.id + '): title=' + newNote.title, null).done();
 
                 site.addNote(newNote)
-                    .on('success', function(site) {
-                        _createLog("UPDATE",'SITE','Update site(' + id + ') with new note=' + newNote.id, null, function(err, log){
-                            if(next) return next(null, site);
-                        });
+                    .success(function(site) {
+                        _createLog("UPDATE",'SITE','Update site(' + id + ') with new note=' + newNote.id, null)
+                            .then(function(){referred.resolve(site);});
                     })
-                    .on('failure', function(err) { if(next) next(err,false); });
+                    .error(function(error) { deferred.reject(error); });
             })
-            .on('failure', function(err) { if(next) next(err,false); });
+            .error(function(error) { deferred.reject(error); });
     });
+
+    return deferred.promise.nodeify(next);
 };
 exports.addNoteToSiteById = _addNoteToSiteById;
 
 var _removeNoteToSiteById = function(id, noteid, next){
-    _findSiteById(id, function(err, site){
-        if(err){ if(next) next(err, false);}
-        if(!site){ if(next) next("Site not found", false);}
+    var deferred = QPromise.defer();
+
+    _findSiteById(id).then(function(site){
+        if(!site){ deferred.reject("Site not found");}
 
         Note.find(noteid)
-            .on('success', function(newNote) {
+            .success(function(newNote) {
                 site.removeNote(newNote)
-                    .on('success', function(site) {
-                        _createLog("UPDATE",'SITE','Update site(' + id + ') remove note=' + noteid, null, function(err, log){
-                            if(next) return next(null, site);
-                        });
+                    .success(function(site) {
+                        _createLog("UPDATE",'SITE','Update site(' + id + ') remove note=' + noteid, null)
+                            .then(function(){referred.resolve(null, site);});
                     })
-                    .on('failure', function(err) { if(next) next(err,false); });
+                    .error(function(error) {referred.reject(error); });
             })
-            .on('failure', function(err) { if(next) next(err,false); });
+            .error(function(error) {referred.reject(error); });
     });
+
+    return deferred.promise.nodeify(next);
 };
 exports.removeNoteToSiteById = _removeNoteToSiteById;
 
@@ -1120,42 +1570,51 @@ exports.createUnassignedSite=_createUnassignedSite;
 
 
 var _importSite = function (site, forced, next) {
+    var deferred = QPromise.defer();
+
     if (site) {
         Site.findOrCreate({code: site.code, sitegroupId: site.sitegroupId}, {name: site.name})
             .success(function (newSite, created) {
                 if (created) {
-                    _createBuildingWithSiteId(newSite.id, {name:'Main', default: true}, function(err,building){
-                                            if(next){
-                                                if(err) { next(err,false); }
-                                                else { next(null, newSite);}
-                                            }
-                                        });
+                    _createBuildingWithSiteId(newSite.id, {name:'Main', default: true})
+                        .then(function(building){deferred.resolve(newSite);}, function(error){deferred.reject(error);});
                 }
                 else {
                     if(forced)
                     {
-                        _updateSiteById(newSite.id, site, next);
+                        _updateSiteById(newSite.id, site).done();
                     }
-                    if (next) return next(null, newSite);
+                    deferred.resolve(newSite);
                 }
             })
     }
+    else{
+        deferred.resolve("No site to import");
+    }
+
+    return deferred.promise.nodeify(next);
 };
 exports.importSite=_importSite;
 
 var _bulkImportSite = function(sites, forced, next)
 {
+    var deferred = QPromise.defer();
     if(sites && sites instanceof Array)
     {
         if(sites.length>0)
         {
             var site = sites.pop();
-            _importSiteGroup(site, forced,_bulkImportSite(sites, forced, next));
+            _importSiteGroup(site, forced)
+                .then(function(){_bulkImportSite(sites, forced);}, function(error){deferred.error(error);} );
         }
         else {
-            if(next) return next(null, true);
+            deferred.resolve(true);
         }
     }
+    else
+    {deferred.resolve(true);}
+
+    return deferred.promise.nodeify(next);
 };
 exports.bulkImportSite=_bulkImportSite;
 
@@ -1165,129 +1624,154 @@ exports.bulkImportSite=_bulkImportSite;
 // Buildings
 //****************************************//
 var _findBuildingAll = function(next){
-    Building.findAll({where: {deleted: false}}).success(function(buildings) {
-        var tmpBuildings = [];
-        if (! buildings instanceof Array){
-            tmpBuildings.push(buildings);
-        }
-        else{
-            tmpBuildings = buildings;
-        }
+    var deferred = QPromise.defer();
 
-        if(next) return next(null, tmpBuildings);
-    })
+    Building.findAll({where: {deleted: false}})
+        .success(function(buildings) {
+            var tmpBuildings = [];
+            if (! buildings instanceof Array){ tmpBuildings.push(buildings); }
+            else{tmpBuildings = buildings;}
+
+            deferred.resolve(tmpBuildings);
+        })
+        .error(function(error){ deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findBuildingAll = _findBuildingAll;
 
 var _findBuildingById = function(id, next){
-    Building.find(id).success(function(building) {
-        if (!building){ if(next) next("building not found", false);}
-        if(next) return next(null, building);
-    })
+    var deferred = QPromise.defer();
+
+    Building.find(id)
+        .success(function(building) {
+            if (!building){ deferred.reject("building not found,");}
+            deferred.resolve(building);
+        })
+        .error(function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findBuildingById = _findBuildingById;
 
 var _findBuildingAllBySiteId = function(siteid, next){
-    _findSiteById(siteid, function(err, site){
-        if(err) {if(next) return next(err, []);}
-        if(!site) {if(next) return next("Building not found", []);}
+    var deferred = QPromise.defer();
 
-        site.getBuildings({where: {deleted: false}})
-            .on('success', function(buildings){
-                if(next) next(null, buildings);
-            })
-            .on('failure', function(error){
-                if(next) next(error, false);
-            });
-    });
+    _findSiteById(siteid).then(
+        function(site){
+            if(!site) {deferred.reject("Site not found");}
+
+            site.getBuildings({where: {deleted: false}})
+                .success(function(buildings){ deferred.resolve(buildings); })
+                .error(function(error){deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findBuildingAllBySiteId = _findBuildingAllBySiteId;
 
 var _createBuilding = function (building, next) {
+    var deferred = QPromise.defer();
     var newBuilding = Building.build(building);
-
     newBuilding.save()
-        .on('success', function() {
-            _createFloorWithBuildingId(newBuilding.id,{name: 'Main', default: true}, function(err, floor){
-                if(next){
-                    if(err){ next(err,false); }
-                    else{ next(null,newBuilding);}
-                }
-            });
+        .success( function() {
+            _createFloorWithBuildingId(newBuilding.id,{name: 'Main', default: true}).then(
+                function(floor){ deferred.resolve(newBuilding);},
+                function(error){ deferred.reject(error);}
+            );
+
         })
-        .on('failure', function(err) {
-            if(next) next(err,false);
-        })
+        .error(function(error) {deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.createBuilding = _createBuilding;
 
 var _createBuildingWithSiteId = function (id, building, next) {
+    var deferred = QPromise.defer();
+
     //Create new building
-    _createBuilding(building, function(err, newBuilding){
-        if(newBuilding){
-            //Get Site from SiteCode
-            _findSiteById(id, function(err, site){
-                //Link Building to Site
-                site.addBuilding(newBuilding)
-                    .on('success', function(){
-                        if(next) next(null, newBuilding);
-                    })
-                    .on('failure', function(error){
-                        if(next) next(error, false);
-                    });
-            });
-        }
-    });
+    _createBuilding(building).then(
+        function(newBuilding){
+            _findSiteById(id).then(
+                function(site){
+                    site.addBuilding(newBuilding)
+                        .success(function(){deferred.resolve(newBuilding);})
+                        .error(function(error){deferred.reject(error); });
+                },
+                function(error){deferred.reject(error);}
+            );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.createBuildingWithSiteId = _createBuildingWithSiteId;
 
 var _createBuildingWithSitecode = function (sitecode, building, next) {
+    var deferred = QPromise.defer();
+
     //Create new building
-    _createBuilding(building, function(err, newBuilding){
-        if(newBuilding){
-            //Get Site from SiteCode
-            _findSiteByCode(sitecode, function(err, site){
-                //Link Building to Site
-                site.addBuilding(newBuilding)
-                    .on('success', function(){
-                        if(next) next(null, newBuilding);
-                    })
-                    .on('failure', function(error){
-                        if(next) next(error, false);
-                    });
-            });
-        }
-    });
+    _createBuilding(building).then(
+        function(newBuilding){
+            if(!newBuilding){deferred.reject(error);}
+
+            _findSiteByCode(sitecode).then(
+                function(site){
+                    site.addBuilding(newBuilding)
+                        .success(function(){deferred.resolve(newBuilding);})
+                        .error(function(error){deferred.reject(error); });
+                },
+                function(error){deferred.reject(error);}
+            );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.createBuildingWithSitecode = _createBuildingWithSitecode;
 
 var _updateBuildingById = function(id, building,  next){
-    _findBuildingById(id, function(err, newBuilding){
-        if(err){ if(next) next(err, false);}
-        if(!newBuilding){ if(next) next("Building not found", false);}
+    var deferred = QPromise.defer();
 
-        newBuilding.updateAttributes(building).success(function() {
-            //*** Add log
-            _createLog("UPDATE",'BUILDING','Update building(' + id + '): name=' + building.name, null, function(err, log){
-                if(next) return next(null, newBuilding);
+    _findBuildingById(id).then(
+        function(newBuilding){
+            if(!newBuilding){ deferred.reject("Building not found..");}
+
+            newBuilding.updateAttributes(building).success(function() {
+                //*** Add log
+                _createLog("UPDATE",'BUILDING','Update building(' + id + '): name=' + building.name, null)
+                    .then(function(){deferred.resolve(newBuilding);});
             });
-        });
-    });
+        },
+        function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.updateBuildingById = _updateBuildingById;
 
 var _deleteBuildingById = function (id, next) {
-    Building.find(id).success(function(building) {
-        if (!building){ if(next) next("Building  not found", false);}
-        var name = building.name;
-        building.deleted = true;
-        building.save().success(function() {
-            //*** Add log
-            _createLog("DELETE",'BUILDING','Delete building(' + id + ') ' + name, null, function(err, log){
-                if(next) return next(null, null);
+    var deferred = QPromise.defer();
+
+    _findBuildingById(id).then(
+        function(building){
+            if (!building){ deferred.reject("Building  not found");}
+            var name = building.name;
+            building.deleted = true;
+            building.save().success(function() {
+                //*** Add log
+                _createLog("DELETE",'BUILDING','Delete building(' + id + ') ' + name, null)
+                    .then(function(err, log){ deferred.resolve(true);});
             });
-        });
-    });
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.deleteBuildingById = _deleteBuildingById;
 
@@ -1295,111 +1779,140 @@ exports.deleteBuildingById = _deleteBuildingById;
 // Floor
 //****************************************//
 var _findFloorAll = function(next){
-    Floor.findAll({where: {deleted: false}}).success(function(floors) {
-        var tmpFloors = [];
-        if (! floors instanceof Array){
-            tmpFloors.push(floors);
-        }
-        else{
-            tmpFloors = floors;
-        }
+    var deferred = QPromise.defer();
 
-        if(next) return next(null, tmpFloors);
-    })
+    Floor.findAll({where: {deleted: false}})
+        .success(function(floors) {
+            var tmpFloors = [];
+            if (! floors instanceof Array){tmpFloors.push(floors);}
+            else{tmpFloors = floors;}
+
+            referred.resolve(tmpFloors);
+        })
+        .error(function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findFloorAll = _findFloorAll;
 
 var _findFloorById = function(id, next){
-    Floor.find(id).success(function(floor) {
-        if (!floor){ if(next) next("floor not found", false);}
-        if(next) return next(null, floor);
-    })
+    var deferred = QPromise.defer();
+
+    Floor.find(id)
+        .success(function(floor) {
+            if (!floor){ deferred.reject("floor not found");}
+            deferred.resolve(floor);
+        })
+        .error(function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findFloorById = _findFloorById;
 
 var _findFloorAllByBuildingId = function(buildingid, next){
-    _findBuildingById(buildingid, function(err, building){
-        if(err) {if(next) return next(err, []);}
-        if(!building) {if(next) return next("Building not found", []);}
+    var deferred = QPromise.defer();
 
-        building.getFloors({where: {deleted: false}})
-            .on('success', function(floors){
-                if(next) next(null, floors);
-            })
-            .on('failure', function(error){
-                if(next) next(error, false);
-            });
-    });
+    _findBuildingById(buildingid).then(
+        function(building){
+            if(!building) {deferred.reject("Building not found.");}
+
+            building.getFloors({where: {deleted: false}})
+                .success(function(floors){deferred.resolve(floors);})
+                .error( function(error){deferred.reject(error);});
+        },
+        function(error){deferred.reject(error); });
+
+    return deferred.promise.nodeify(next);
 };
 exports.findFloorAllByBuildingId = _findFloorAllByBuildingId;
 
 var _createFloor = function (floor, next) {
-    var newFloor  = Floor.build(floor);
+    var deferred = QPromise.defer();
 
+    var newFloor  = Floor.build(floor);
     newFloor.save()
-            .on('success', function() {
-                _createLog("CREATE",'FLOOR','Create floor: name=' + floor.name,  null, function(err, log){
-                    _createClosetWithFloorId(newFloor.id, { name: 'Main', default: true }, function(err, closet){
-                        if(next){
-                            if(err){  next(err,false); }
-                            else {  next(null, newFloor) };
-                        }
-                    });
-                });
+            .success(function() {
+                _createLog("CREATE",'FLOOR','Create floor: name=' + floor.name,  null).then(
+                    function(){
+                        _createClosetWithFloorId(newFloor.id, { name: 'Main', default: true }).then(
+                            function(closet){
+                                deferred.resolve(newFloor);
+                            },
+                            function(error){deferred.reject(error);});
+                    },
+                    function(error){deferred.reject(error);} );
             })
-            .on('failure', function(err) {
-                if(next) next(err,false);
-            });
+            .error( function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.createFloor = _createFloor;
 
 var _createFloorWithBuildingId = function (buildingid, floor, next) {
-    //Create new building
-    _createFloor(floor, function(err, newFloor){
-        if(newFloor){
-            //Get Site from SiteCode
-            _findBuildingById(buildingid, function(err, building){
-                //Link Building to Site
-                building.addFloor(newFloor)
-                    .on('success', function(){
-                        if(next) next(null, newFloor);
-                    })
-                    .on('failure', function(err){
-                        if(next) next(err, false);
-                    });
-            });
-        }
-    });
+    var deferred = QPromise.defer();
+
+    //Create new Floor
+    _createFloor(floor).then(
+        function(newFloor){
+            if(!newFloor){deferred.reject(error);}
+                //Get Site from SiteCode
+                _findBuildingById(buildingid).then(
+                    function(building){
+                        //Link Building to Site
+                        building.addFloor(newFloor)
+                            .success(function(){deferred.resolve(newFloor);})
+                            .error(function(error){deferred.reject(error);});
+                    },
+                    function(error){deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.createFloorWithBuildingId = _createFloorWithBuildingId;
 
 var _updateFloorById = function(id, floor,  next){
-    _findFloorById(id, function(err, newFloor){
-        if(err){ if(next) next(err, false);}
-        if(!newFloor){ if(next) next("Floor not found", false);}
+    var deferred = QPromise.defer();
 
-        newFloor.updateAttributes(floor).success(function() {
-            //*** Add log
-            _createLog("UPDATE",'FLOOR','Update floor(' + id + '): name=' + floor.name, null, function(err, log){
-                if(next) return next(null, newFloor);
-            });
-        });
-    });
+    _findFloorById(id).then(
+        function(newFloor){
+            if(!newFloor){ deferred.reject("Floor not found");}
+
+            newFloor.updateAttributes(floor)
+                .success(function() {
+                    //*** Add log
+                    _createLog("UPDATE",'FLOOR','Update floor(' + id + '): name=' + floor.name, null)
+                        .then(function(){deferred.resolve(newFloor);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.updateFloorById = _updateFloorById;
 
 var _deleteFloorById = function (id, next) {
-    Floor.find(id).success(function(floor) {
-        if (!floor){ if(next) next("Floor  not found", false);}
-        var name = floor.name;
-        floor.deleted = true;
-        floor.save().success(function() {
-            //*** Add log
-            _createLog("DELETE",'FLOOR','Delete floor(' + id + ') ' + name, null, function(err, log){
-                if(next) return next(null, null);
-            });
-        });
-    });
+    var deferred = QPromise.defer();
+
+    _findFloorById(id).then(
+        function(floor){
+            if (!floor){ deferred.reject("Floor  not found");}
+            var name = floor.name;
+            floor.deleted = true;
+            floor.save()
+                .success(function() {
+                    //*** Add log
+                    _createLog("DELETE",'FLOOR','Delete floor(' + id + ') ' + name, null)
+                        .then(function(){deferred.resolve(true);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.deleteFloorById = _deleteFloorById;
 
@@ -1407,341 +1920,420 @@ exports.deleteFloorById = _deleteFloorById;
 // Closet
 //****************************************//
 var _findClosetAll = function(next){
-    Closet.findAll({where: {deleted: false}}).success(function(closets) {
-        var tmpClosets = [];
-        if (! closets instanceof Array){
-            tmpClosets.push(closets);
-        }
-        else{
-            tmpClosets = closets;
-        }
+    var deferred = QPromise.defer();
 
-        if(next) return next(null, tmpClosets);
-    })
+    Closet.findAll({where: {deleted: false}})
+        .success(function(closets) {
+            var tmpClosets = [];
+            if (! closets instanceof Array){tmpClosets.push(closets);}
+            else{tmpClosets = closets;}
+
+            deferred.resolve(tmpClosets);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findClosetAll = _findClosetAll;
 
 var _findClosetById = function(id, next){
-    Closet.find(id).success(function(closet) {
-        if (!closet){ if(next) next("Closet not found", false);}
-        if(next) return next(null, closet);
-    })
+    var deferred = QPromise.defer();
+    Closet.find(id)
+        .success(function(closet) {
+            if (!closet){ deferred.reject("Closet not found");}
+            deferred.resolve(closet);
+        })
+        .error(function(error){deferred.reject(error);} )
+
+    return deferred.promise.nodeify(next);
 };
 exports.findClosetById = _findClosetById;
 
 var _findClosetAllByFloorId_2 = function(floorid, next){
-    _findFloorById(floorid, function(err, floor){
-        if(err) {if(next) return next(err, []);}
-        if(!floor) {if(next) return next("Floor not found", []);}
+    var deferred = QPromise.defer();
 
-        floor.getClosets({where: {deleted: false}})
-            .on('success', function(closets){
-                if(next) next(null, closets);
-            })
-            .on('failure', function(error){
-                if(next) next(error, false);
-            });
-    });
+    _findFloorById(floorid).then(
+        function(floor){
+            if(!floor) {deferred.reject("Floor not found");}
+
+            floor.getClosets({where: {deleted: false}})
+                .success(function(closets){deferred.resolve(closets);})
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findClosetAllByFloorId_2 = _findClosetAllByFloorId_2;
 
 var _findClosetAllBySiteGroupId = function(sitegroupid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT *  from view_closetalldetails where sitegroup_id=" + sitegroupid;
     sequelize.query(sql, null, {raw: true})
-            .success(function(closets) {
-                if (!closets){ if(next) next("Closets not found", false);}
-                if(next) next(null, closets);
-            });
+        .success(function(closets) {
+                if (!closets){ deferred.reject("Closets not found");}
+                deferred.resolve(closets);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findClosetAllBySiteGroupId = _findClosetAllBySiteGroupId;
 
 var _findClosetAllBySiteId = function(siteid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT *  from view_closetalldetails where site_id=" + siteid;
     sequelize.query(sql, null, {raw: true})
-            .success(function(closets) {
-                if (!closets){ if(next) next("Closets not found", false);}
-                if(next) next(null, closets);
-            });
+        .success(function(closets) {
+                if (!closets){ deferred.reject("Closets not found");}
+                deferred.resolve(closets);
+            })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findClosetAllBySiteId = _findClosetAllBySiteId;
 
 var _findClosetAllByBuildingId = function(buildingid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT *  from view_closetalldetails where building_id=" + buildingid;
     sequelize.query(sql, null, {raw: true})
             .success(function(closets) {
-                if (!closets){ if(next) next("Closets not found", false);}
-                if(next) next(null, closets);
-            });
+                if (!closets){ deferred.reject("Closets not found");}
+                deferred.resolve(closets);
+            })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findClosetAllByBuildingId = _findClosetAllByBuildingId;
 
 var _findClosetAllByFloorId = function(floorid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT *  from view_closetalldetails where floor_id=" + floorid;
     sequelize.query(sql, null, {raw: true})
             .success(function(closets) {
-                if (!closets){ if(next) next("Closets not found", false);}
-                if(next) next(null, closets);
-            });
+                if (!closets){ deferred.reject("Closets not found");}
+                deferred.resolve(closets);
+            })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findClosetAllByFloorId = _findClosetAllByFloorId;
 
 var _findClosetAllByClosetId = function(closetid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT *  from view_closetalldetails where closet_id=" + closetid;
     sequelize.query(sql, null, {raw: true})
             .success(function(closets) {
-                if (!closets){ if(next) next("Closets not found", false);}
-                if(next) next(null, closets);
-            });
+                if (!closets){ deferred.reject("Closets not found");}
+                deferred.resolve(closets);
+            })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findClosetAllByClosetId = _findClosetAllByClosetId;
 
 var _createCloset = function (closet, next) {
+    var deferred = QPromise.defer();
     var newCloset  = Closet.build(closet);
 
     newCloset.save()
-        .on('success', function() {
-            _createLog("CREATE",'CLOSET','Create closet: name=' + closet.name,  null, function(err, log){
-                if(next) return next(null, newCloset);
-            });
+        .success(function() {
+            _createLog("CREATE",'CLOSET','Create closet: name=' + closet.name,  null)
+                .then(function(){deferred.resolve(newCloset);});
         })
-        .on('failure', function(err) {
-            if(next) next(err,false);
-        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.createCloset = _createCloset;
 
 var _createClosetWithFloorId = function (floorid, closet, next) {
+    var deferred = QPromise.defer();
     //Create new building
-    _createCloset(closet, function(err, newCloset){
-        if(newCloset){
-            //Get Site from SiteCode
-            _findFloorById(floorid, function(err, floor){
-                //Link Building to Site
-                floor.addCloset(newCloset)
-                    .on('success', function(){
-                        if(next) next(null, newCloset);
-                    })
-                    .on('failure', function(err){
-                        if(next) next(err, false);
-                    });
-            });
-        }
-    });
+    _createCloset(closet).then(
+        function(newCloset){
+            if(newCloset){
+                //Get Site from SiteCode
+                _findFloorById(floorid).then(
+                    function(floor){
+                        //Link Building to Site
+                        floor.addCloset(newCloset)
+                            .success(function(){deferred.resolve(newCloset);})
+                            .error(function(error){deferred.reject(error);} );
+                    },
+                    function(error){deferred.reject(error);} );
+            }
+        },
+        function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.createClosetWithFloorId = _createClosetWithFloorId;
 
 var _updateClosetById = function(id, closet,  next){
-    _findClosetById(id, function(err, newCloset){
-        if(err){ if(next) next(err, false);}
-        if(!newCloset){ if(next) next("Closet not found", false);}
+    var deferred = QPromise.defer();
 
-        newCloset.updateAttributes(closet).success(function() {
-            //*** Add log
-            _createLog("UPDATE",'CLOSET','Update closet(' + id + '): name=' + closet.name, null, function(err, log){
-                if(next) return next(null, newCloset);
-            });
-        });
-    });
+    _findClosetById(id).then(
+        function(newCloset){
+            if(!newCloset){ deferred.reject("Closet not found");}
+            newCloset.updateAttributes(closet)
+                .success(function() {
+                    //*** Add log
+                    _createLog("UPDATE",'CLOSET','Update closet(' + id + '): name=' + closet.name, null)
+                        .then(function(){deferred.resolve(newCloset);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.updateClosetById = _updateClosetById;
 
 var _deleteClosetById = function (id, next) {
-    Closet.find(id).success(function(closet) {
-        if (!closet){ if(next) next("Closet  not found", false);}
-        var name = closet.name;
-        closet.deleted = true;
-        closet.save().success(function() {
-            //*** Add log
-            _createLog("DELETE",'CLOSET','closet floor(' + id + ') ' + name, null, function(err, log){
-                if(next) return next(null, null);
-            });
-        });
-    });
+    var deferred = QPromise.defer();
+    _findClosetById(id).then(
+        function(closet){
+            if (!closet){ deferred.reject("Closet  not found");}
+            var name = closet.name;
+            closet.deleted = true;
+            closet.save()
+                .success(function() {
+                    //*** Add log
+                    _createLog("DELETE",'CLOSET','closet floor(' + id + ') ' + name, null)
+                        .then(function(){deferred.resolve(true);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.deleteClosetById = _deleteClosetById;
 
 var _getClosetAllDetails = function(next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from `view_closetalldetails`";
     sequelize.query(sql, null, {raw: true})
         .success(function(closets) {
-            if (!closets){ if(next) next("Closets not found", false);}
-            if(next) next(null, closets);
-        });
-}
-exports.getClosetAllDetails = _getClosetAllDetails
+            if (!closets){ deferred.reject("Closets not found");}
+            deferred.resolve(closets);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
+};
+exports.getClosetAllDetails = _getClosetAllDetails;
 
 //****************************************//
 // Devices
 //****************************************//
 var _findDeviceAll = function(next){
-    Device.findAll({where: {deleted: false}}).success(function(devices) {
-        var tmpDevices = [];
-        if (! devices instanceof Array){
-            tmpDevices.push(devices);
-        }
-        else{
-            tmpDevices = devices;
-        }
+    var deferred = QPromise.defer();
 
-        if(next) return next(null, tmpDevices);
-    })
+    Device.findAll({where: {deleted: false}})
+        .success(function(devices) {
+            var tmpDevices = [];
+            if (! devices instanceof Array){tmpDevices.push(devices);}
+            else{tmpDevices = devices;}
+
+            deferred.resolve(null, tmpDevices);
+        })
+        .error(function(error){deferred.reject(error);} )
+
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceAll = _findDeviceAll;
 
 var _findDeviceAllByClosetId = function(closetId,  next){
-    _findClosetById(closetId, function(err,closet){
-        if(closet)
-        {
-            closet.getDevices()
-                .on('success', function(devices){
-                    if(devices && !devices instanceof Array) {devices=[];}
-                    if(next) next(null,devices);
-                })
-                .on('failure', function(err){
-                    if(next) next(err,false);
-                });
-        }
-        else
-        {
-            if(next) next('Closet not found',false);
-        }
-    });
+    var deferred = QPromise.defer();
+
+    _findClosetById(closetId).then(
+        function(closet){
+            if(!closet) {deferred.reject("Closet not found");}
+                closet.getDevices()
+                    .success(function(devices){
+                        if(devices && !devices instanceof Array) {devices=[];}
+                        deferred.resole(devices);
+                    })
+                    .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceAllByClosetId = _findDeviceAllByClosetId;
 
 var _findDeviceById = function(id, next){
-    Device.find(id).success(function(device) {
-        if (!device){ if(next) next("Device not found", false);}
-        if(next) return next(null, device);
-    })
+    var deferred = QPromise.defer();
+    Device.find(id)
+        .success(function(device) {
+            if (!device){ deferred.reject("Device not found");}
+            deferred.resolve(device);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceById = _findDeviceById;
 
 var _createDevice = function (device, next) {
-    var newDevice  = Device.build(device);
+    var deferred = QPromise.defer();
 
+    var newDevice  = Device.build(device);
     newDevice.save()
-        .on('success', function() {
-            _createLog("CREATE",'DEVICE','Create device: name=' + device.name,  null, function(err, log){
-                if(next) return next(null, newDevice);
-            });
+        .success(function() {
+            _createLog("CREATE",'DEVICE','Create device: name=' + device.name,  null)
+                .then(function(){deferred.resolve(newDevice);});
         })
-        .on('failure', function(err) {
-            if(next) next(err,false);
-        })
+        .error(function(error){deferred.reject(error);} )
+    return deferred.promise.nodeify(next);
 };
 exports.createDevice = _createDevice;
 
 var _createDeviceWithProductId = function (productid, device, next) {
-    _createDevice(device, function(err, newDevice){
-        if(newDevice){
+    var deferred = QPromise.defer();
+    _createDevice(device).then(
+        function(newDevice){
+            if(!newDevice){deferred.reject("Device not created");}
             //Get Site from SiteCode
-            _findProductById(productid, function(err, product){
-                //Link Building to Site
+            _findProductById(productid).then(
+                function(product){
+                    //Link Building to Site
+                    newDevice.setProduct(product)
+                        .success(function(){deferred.resolve(newDevice);})
+                        .error(function(error){deferred.reject(error);} );
+                },
+                function(error){deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);}
+    );
 
-                console.log('newDevice:', newDevice);
-                newDevice.setProduct(product)
-                    .on('success', function(){
-                        if(next) next(null, newDevice);
-                    })
-                    .on('failure', function(err){
-                        if(next) next(err, false);
-                    });
-            });
-        }
-    });
+    return deferred.promise.nodeify(next);
 };
 exports.createDeviceWithProductId = _createDeviceWithProductId;
 
 var _createDeviceWithClosetId = function (closetid,productid, device, next) {
-    _createDeviceWithProductId(productid, device, function(err, newDevice){
-        if(newDevice){
+    var deferred = QPromise.defer();
+
+    _createDeviceWithProductId(productid, device).then(
+        function(newDevice){
+            if(!newDevice){deferred.reject("Device not created");}
             //Get Site from SiteCode
-            _findClosetById(closetid, function(err, closet){
-                //Link Building to Site
-                console.log('Add Device to Closet:', closet);
-                closet.addDevice(newDevice)
-                    .on('success', function(ndevice){
-                        console.log('New Device:', ndevice);
-                        device.id = ndevice.id;
-                        if(next) next(null, device);
-                    })
-                    .on('failure', function(err){
-                        if(next) next(err, false);
-                    });
-            });
-        }
-    });
+            _findClosetById(closetid).then(
+                function(closet){
+                    //Link Building to Site
+                    console.log('Add Device to Closet:', closet);
+                    closet.addDevice(newDevice)
+                        .success(function(ndevice){
+                            device.id = ndevice.id;
+                            deferred.resolve(device);
+                        })
+                        .error(function(error){deferred.reject(error);} );
+                },
+                function(error){deferred.reject(error);});
+        },
+        function(error){deferred.reject(error);});
+
+    return deferred.promise.nodeify(next);
 };
 exports.createDeviceWithClosetId = _createDeviceWithClosetId;
 
 var _findDeviceAllDetails = function(next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from view_devicesalldetails where device_deleted=0";
     sequelize.query(sql, null, {raw: true})
         .success(function(devices) {
-            if (!devices){ if(next) next("Devices not found", false);}
-            if(next) next(null, devices);
-        });
+            if (!devices){ deferred.reject("Devices not found");}
+            deferred.resolve(devices);
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceAllDetails = _findDeviceAllDetails;
 
 var _findDeviceAllSiteGroupDetails = function(sitegroupid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND sitegroup_id=" + sitegroupid;
     sequelize.query(sql, null, {raw: true})
         .success(function(devices) {
-            if (!devices){ if(next) next("Devices not found", false);}
-            if(next) next(null, devices);
-        });
+            if (!devices){ deferred.reject("Devices not found");}
+            deferred.resolve(devices);
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceAllSiteGroupDetails = _findDeviceAllSiteGroupDetails;
 
 var _findDeviceAllSiteDetails = function(siteid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND site_id=" + siteid;
     sequelize.query(sql, null, {raw: true})
         .success(function(devices) {
-            if (!devices){ if(next) next("Devices not found", false);}
-            if(next) next(null, devices);
-        });
+            if (!devices){ deferred.reject("Devices not found");}
+            deferred.resolve(devices);
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceAllSiteDetails = _findDeviceAllSiteDetails;
 
 var _findDeviceAllBuildingDetails = function(buildingid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND building_id=" + buildingid;
     sequelize.query(sql, null, {raw: true})
         .success(function(devices) {
-            if (!devices){ if(next) next("Devices not found", false);}
-            if(next) next(null, devices);
-        });
+            if (!devices){ deferred.reject("Devices not found");}
+            deferred.resolve(devices);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceAllBuildingDetails = _findDeviceAllBuildingDetails;
 
 var _findDeviceAllFloorDetails = function(floorid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND floor_id=" + floorid;
     sequelize.query(sql, null, {raw: true})
         .success(function(devices) {
-            if (!devices){ if(next) next("Devices not found", false);}
-            if(next) next(null, devices);
-        });
+            if (!devices){ deferred.reject("Devices not found");}
+            deferred.resolve(devices);
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceAllFloorDetails = _findDeviceAllFloorDetails;
 
 var _findDeviceAllClosetDetails = function(closetid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from view_devicesalldetails where device_deleted=0 AND closet_id=" + closetid;
     sequelize.query(sql, null, {raw: true})
         .success(function(devices) {
-            if (!devices){ if(next) next("Devices not found", false);}
-            if(next) next(null, devices);
-        });
+            if (!devices){ deferred.reject("Devices not found");}
+            deferred.resolve(devices);
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceAllClosetDetails = _findDeviceAllClosetDetails;
 
 var _findDeviceById = function(deviceid, next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from view_devicesalldetails where device_id=" + deviceid;
     sequelize.query(sql, null, {raw: true})
         .success(function(device) {
-            if (!device){ if(next) next("Device not found", false);}
-            if(next) next(null, device);
-        });
+            if (!device){ deferred.reject("Device not found");}
+            deferred.resolve(device);
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findDeviceById = _findDeviceById;
 
@@ -1759,39 +2351,29 @@ var _updateDeviceById = function(id, device, next){
         });
     });
 
-    /*
-    _findDeviceById(id, function(err, newDevice){
-        if(err){ if(next) next(err, false);}
-        if(!newDevice){ if(next) next("Device not found", false);}
-
-        console.log('newDevice Found:', newDevice);
-        Device.find(newDevice[0].device_id).success( function(deviceFound){
-
-            console.log('Device Found:', deviceFound);
-            deviceFound.updateAttributes(device).success(function() {
-                        //*** Add log
-                        _createLog("UPDATE",'DEVICE','Update device(' + id + '): name=' + device.name, null, function(err, log){
-                            if(next) return next(null, deviceFound);
-                        });
-                    });
-        });
-    });
-    */
 };
 exports.updateDeviceById = _updateDeviceById;
 
 var _deleteDeviceById = function (id, next) {
-    Device.find(id).success(function(device) {
-        if (!device){ if(next) next("Device  not found", false);}
-        var name = device.name;
-        device.deleted = true;
-        device.save().success(function() {
-            //*** Add log
-            _createLog("DELETE",'DEVICE','Delete device(' + id + ') ' + name, null, function(err, log){
-                if(next) return next(null, null);
-            });
-        });
-    });
+    var deferred = QPromise.defer();
+
+    _findDeviceById(id).then(
+        function(device) {
+            if (!device){ deferred.reject("Device  not found");}
+            var name = device.name;
+            device.deleted = true;
+            device.save()
+                .success(function() {
+                    //*** Add log
+                    _createLog("DELETE",'DEVICE','Delete device(' + id + ') ' + name, null)
+                        .then(function(){deferred.resolve(true); });
+                })
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.deleteDeviceById = _deleteDeviceById;
 
@@ -1799,73 +2381,99 @@ exports.deleteDeviceById = _deleteDeviceById;
 // Product Category
 //****************************************//
 var _findProductCategoryAll = function(next){
-    ProductCategory.findAll({where: {deleted: false}, include: [{ model: Product, as: 'Products' }] }).success(function(productcategories) {
-        var tmpproductcategories = [];
-        if (! productcategories instanceof Array){ tmpproductcategories.push(productcategories); }
-        else{ tmpproductcategories = productcategories; }
+    var deferred = QPromise.defer();
+    ProductCategory.findAll({where: {deleted: false}, include: [{ model: Product, as: 'Products' }] })
+        .success(function(productcategories) {
+            var tmpproductcategories = [];
+            if (! productcategories instanceof Array){ tmpproductcategories.push(productcategories); }
+            else{ tmpproductcategories = productcategories; }
 
-        if(next) return next(null, tmpproductcategories);
-    })
+            deferred.resolve(tmpproductcategories);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findProductCategoryAll = _findProductCategoryAll;
 
 var _findProductCategoryById = function(id, next){
-    ProductCategory.find(id).success(function(productcategory) {
-        if (!productcategory){ if(next) next("Product Category not found", false);}
-        if(next) return next(null, productcategory);
-    })
+    var deferred = QPromise.defer();
+    ProductCategory.find(id)
+        .success(function(productcategory) {
+            if (!productcategory){ deferred.reject("Product Category not found");}
+            deferred.resolve(productcategory);
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findProductCategoryById = _findProductCategoryById;
 
 var _findProductCategoryByName = function(name, next){
-    ProductCategory.findAll({where: {name: name}, limit: 1}).success(function(productcategory) {
-        if (!productcategory){ if(next) next("Product Category not found", false);}
-        if(next) return next(null, productcategory);
-    })
+    var deferred = QPromise.defer();
+    ProductCategory.findAll({where: {name: name}, limit: 1})
+        .success(function(productcategory) {
+            if (!productcategory){ deferred.reject("Product Category not found");}
+            deferred.resolve(productcategory);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findProductCategoryByName = _findProductCategoryByName;
 
 var _createProductCategory = function (productcategory, next) {
-    var newProductCategory  = ProductCategory.build(productcategory);
+    var deferred = QPromise.defer();
 
+    var newProductCategory  = ProductCategory.build(productcategory);
     newProductCategory.save()
-        .on('success', function() {
+        .success(function() {
             //Log
-            _createLog("CREATE",'ProductCategory','Create product family: name=' + newProductCategory.name,  null, function(err, log){
-                if(next) return next(null, newProductCategory);
-            });
+            _createLog("CREATE",'ProductCategory','Create product family: name=' + newProductCategory.name,  null)
+                .then(function(){deferred.resolve(newProductCategory);});
         })
-        .on('failure', function(err) {
-            if(next) next(err,false);
-        })
+        .error(function(error){deferred.reject(error);} )
+
+    return deferred.promise.nodeify(next);
 };
 exports.createProductCategory = _createProductCategory;
 
 var _deleteProductCategoryById = function (id, next) {
-    ProductCategory.find(id).success(function(productcategory) {
-            if (!productcategory){ if(next) next("Product Category not found", false);}
-            var name = productcategory.name
+    var deferred = QPromise.defer();
+    ProductCategory.find(id)
+        .success(function(productcategory) {
+            if (!productcategory){ deferred.reject("Product Category not found");}
+            var name = productcategory.name;
             productcategory.deleted = true;
-            productcategory.save().success(function() {
-                //*** Add log
-                _createLog("DELETE",'ProductCategory','Delete product family('+ id +') name=' + name,  null, function(err, log){
-                    if(next) return next(null, null);
-                });
-            });
-        });
+            productcategory.save()
+                .success(function() {
+                    //*** Add log
+                    _createLog("DELETE",'ProductCategory','Delete product family('+ id +') name=' + name,  null)
+                        .then(function(err, log){deferred.resolve(true);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.deleteProductCategoryById = _deleteProductCategoryById;
 
 var _updateProductCategoryById = function (id,productcategory, next) {
-    ProductCategory.find(id).success(function(newProductCategory) {
-        if (!newProductCategory){ if(next) next("Product Category not found", false);}
-        newProductCategory.updateAttributes(productcategory).success(function() {
-                //*** Add log
-                _createLog("UPDATE",'ProductCategory','Update product family('+ id +') name=' + newProductCategory.name,  null, function(err, log){
-                    if(next) return next(null, newProductCategory);
-                });
-            });
-        });
+    var deferred = QPromise.defer();
+
+    ProductCategory.find(id)
+        .success(function(newProductCategory) {
+            if (!newProductCategory){ deferred.reject("Product Category not found");}
+            newProductCategory.updateAttributes(productcategory)
+                .success(function() {
+                    //*** Add log
+                    _createLog("UPDATE",'ProductCategory','Update product family('+ id +') name=' + newProductCategory.name,  null)
+                        .then(function(err, log){deferred.resolve(newProductCategory);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.updateProductCategoryById = _updateProductCategoryById;
 
@@ -1881,7 +2489,7 @@ var _createDefaultProductCategory = function(){
             .add(ProductCategory.build({name:'WIRELESS'}).save())
             .add(ProductCategory.build({name:'SERVER'}).save())
             .add(ProductCategory.build({name:'APPLICATION'}).save())
-            .add(ProductCategory.build({name:'OTHER'}).save())
+            .add(ProductCategory.build({name:'OTHER'}).save());
 
         chainer.run()
             .on('success', function() {
@@ -1897,142 +2505,163 @@ exports.createDefaultProductCategory=_createDefaultProductCategory;
 // Product
 //****************************************//
 var _findProductAll = function(next){
-    Product.findAll({where: {deleted: false}}).success(function(productcategories) {
-        var tmpProducts = [];
-        if (! products instanceof Array){
-            tmpProducts.push(products);
-        }
-        else{
-            tmpProducts = products;
-        }
+    var deferred = QPromise.defer();
+    Product.findAll({where: {deleted: false}})
+        .success(function(products) {
+            var tmpProducts = [];
+            if (! products instanceof Array){tmpProducts.push(products);}
+            else{tmpProducts = products;}
 
-        if(next) return next(null, tmpProducts);
-    })
+            deferred.resolve(tmpProducts);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findProductAll = _findProductAll;
 
 var _findProductAllByProductCategoryId = function(ProductCategoryid, next){
-    _findProductCategoryById(ProductCategoryid, function(err, ProductCategory){
-        if(ProductCategory)
-        {
+    var deferred = QPromise.defer();
+    _findProductCategoryById(ProductCategoryid).then(
+        function(ProductCategory){
+            if(!ProductCategory) {deferred.reject("Product Category not found");}
             ProductCategory.getProducts()
-                .on('success', function(products){
-                    if(products && !products instanceof Array) {products=[];}
-                    if(next) next(null,products);
-                })
-                .on('failure', function(err){
-                    if(next) next(err,false);
-                });
-        }
-        else
-        {
-            if(next) next('Product Category not found',false);
-        }
-    });
+                    .success(function(products){
+                        if(products && !products instanceof Array) {products=[];}
+                        deferred.resolve(products);
+                    })
+                    .error(function(error){deferred.reject(error);} )
+        },
+        function(error){deferred.reject(error);}
+    );
+    return deferred.promise.nodeify(next);
 };
 exports.findProductAllByProductCategoryId = _findProductAllByProductCategoryId;
 
 var _findProductById = function(id, next){
-    Product.find(id).success(function(product) {
-        if (!product){ if(next) next("Product not found", false);}
-        if(next) return next(null, product);
-    })
+    var deferred = QPromise.defer();
+    Product.find(id)
+        .success(function(product) {
+            if (!product){ deferred.reject("Product not found");}
+            deferred.resolve(product);
+        })
+        .error(function(error){deferred.reject(error);} );
+    return deferred.promise.nodeify(next);
 };
 exports.findProductById = _findProductById;
 
 var _createProduct = function (product, next) {
+    var deferred = QPromise.defer();
     var newProduct  = Product.build(product);
-
     newProduct.save()
-        .on('success', function() {
-            if(next) next(null,newProduct);
-        })
-        .on('failure', function(err) {
-            if(next) next(err,false);
-        })
+        .success(function() {deferred.resolve(newProduct);})
+        .error(function(error){deferred.reject(error);} )
+    return deferred.promise.nodeify(next);
 };
 exports.createProduct = _createProduct;
 
 var _createProductWithProductCategoryId = function (ProductCategoryId, product, next) {
-    _createProduct(product, function(err, newProduct){
-        if(newProduct){
+    var deferred = QPromise.defer();
+    _createProduct(product).then(function(newProduct){
+        if(!newProduct){ deferred.reject("Product not created"); }
             //Get Product family from SiteCode
-            _findProductCategoryById(ProductCategoryId, function(err, ProductCategory){
-                //Link Product to Product family
-                ProductCategory.addProduct(newProduct)
-                    .on('success', function(){
-                        _createLog("CREATE",'PRODUCT','Create product: name=' + product.name + " part=" + product.part + ' for ' + ProductCategory.name, null, function(err, log){
-                            if(next) return next(null, newProduct);
-                        });
-                    })
-                    .on('failure', function(err){
-                        if(next) next(err, false);
-                    });
-            });
-        }
-    });
+            _findProductCategoryById(ProductCategoryId).then(
+                function(ProductCategory){
+                    //Link Product to Product family
+                    ProductCategory.addProduct(newProduct)
+                        .success(function(){
+                            _createLog("CREATE",'PRODUCT','Create product: name=' + product.name + " part=" + product.part + ' for ' + ProductCategory.name, null)
+                                .then(function(){deferred.resolve(newProduct);});
+                        })
+                        .error(function(error){deferred.reject(error);} )
+                },
+                function(error){deferred.reject(error);});
+    }, function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.createProductWithProductCategoryId = _createProductWithProductCategoryId;
 
 var _createProductWithProductCategoryName = function (ProductCategoryName, product, next) {
-    _createProduct(product, function(err, newProduct){
-        if(newProduct){
-            //Get Product family from SiteCode
-            _findProductCategoryByName(ProductCategoryName, function(err, ProductCategorys){
-                //Link Product to Product family
-                ProductCategorys[0].addProduct(newProduct)
-                    .on('success', function(){
-                        _createLog("CREATE",'PRODUCT','Create product: name=' + product.name + " part=" + product.part + ' for ' + ProductCategoryName, null, function(err, log){
-                            if(next) return next(null, newProduct);
-                        });
-                    })
-                    .on('failure', function(err){
-                        if(next) next(err, false);
-                    });
+    var deferred = QPromise.defer();
+    _createProduct(product).then(
+        function(newProduct){
+            if(!newProduct){deferred.reject("Product not created");}
+                //Get Product family from SiteCode
+                _findProductCategoryByName(ProductCategoryName).then(
+                    function(ProductCategorys){
+                        //Link Product to Product family
+                        ProductCategorys[0].addProduct(newProduct)
+                            .success(function(){
+                                _createLog("CREATE",'PRODUCT','Create product: name=' + product.name + " part=" + product.part + ' for ' + ProductCategoryName, null)
+                                    .then(function(){deferred.resolve(newProduct);});
+                            })
+                            .error(function(error){deferred.reject(error);} );
+                    },
+                    function(error){deferred.reject(error);}
+                );
+        },
+        function(error){deferred.reject(error);}
+    );
 
-            });
-        }
-    });
+    return deferred.promise.nodeify(next);
 };
 exports.createProductWithProductCategoryName = _createProductWithProductCategoryName;
 
 var _deleteProductById = function (id, next) {
-    Product.find(id).success(function(product) {
-            if (!product){ if(next) next("Product  not found", false);}
-            var name = product.name;
-            var part = product.part
+    var deferred = QPromise.defer();
+    _findProductById(id).then(
+        function(product) {
+            if (!product){ deferred.reject("Product  not found");}
+            var part = product.part;
             product.deleted = true;
-            product.save().success(function() {
-                //*** Add log
-                _createLog("DELETE",'PRODUCT','Delete product(' + id + ') ' + part, null, function(err, log){
-                    if(next) return next(null, null);
-                });
-            });
-        });
+            product.save()
+                .success(function() {
+                    //*** Add log
+                    _createLog("DELETE",'PRODUCT','Delete product(' + id + ') ' + part, null)
+                        .then(function(){deferred.resolve(true);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.deleteProductById = _deleteProductById;
 
 var _updateProductById = function (id,product, next) {
-    Product.find(id).success(function(newProduct) {
-            if (!newProduct){ if(next) next("Product not found", false);}
-            newProduct.updateAttributes(product).success(function() {
-                //*** Add log
-                _createLog("UPDATE",'PRODUCT','Update product(' + id + '): name=' + product.name + " part=" + product.part, null, function(err, log){
-                    if(next) return next(null, newProduct);
-                });
-            });
-        });
+    var deferred = QPromise.defer();
+    _findProductById(id).then(
+        function(newProduct) {
+            if (!newProduct){ deferred.reject("Product not found");}
+            newProduct.updateAttributes(product)
+                .success(function() {
+                    //*** Add log
+                    _createLog("UPDATE",'PRODUCT','Update product(' + id + '): name=' + product.name + " part=" + product.part, null)
+                        .then(function(){deferred.resolve(newProduct);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+
+    return deferred.promise.nodeify(next);
 };
 exports.updateProductById = _updateProductById;
 
 var _getProductAllDetails = function(next){
+    var deferred = QPromise.defer();
     var sql = "SELECT * from `view_productsalldetails`";
     sequelize.query(sql, null, {raw: true})
         .success(function(products) {
-            if (!products){ if(next) next("Products not found", false);}
-            if(next) next(null, products);
-    });
-}
+            if (!products){ deferred.reject("Products not found");}
+            deferred.resolve(products);
+        })
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
+};
 exports.getProductAllDetails = _getProductAllDetails;
 
 var _createDefaultProducts = function(){
@@ -2290,64 +2919,51 @@ exports.createDefaultProducts = _createDefaultProducts;
 // Notes
 //****************************************//
 var _findNotes = function(next){
-    Note.findAll({}).success(function(notes) {
-        var tmpNotes = [];
-        if (! notes instanceof Array){ tmpNotes.push(notes); }
-        else{ tmpNotes = notes; }
+    var deferred = QPromise.defer();
+    Note.findAll({})
+        .success(function(notes) {
+            var tmpNotes = [];
+            if (! notes instanceof Array){ tmpNotes.push(notes); }
+            else{ tmpNotes = notes; }
 
-        if(next) next(null, tmpNotes);
-    })
-
+            deferred.resolve(tmpNotes);
+        })
+        .error(function(error){deferred.reject(error);} )
+    return deferred.promise.nodeify(next);
 };
 exports.findNotes = _findNotes;
 
 var _findNoteById = function(noteid, next){
-    Note
-        .find(noteid)
+    var deferred = QPromise.defer();
+    Note.find(noteid)
         .success(function(note) {
-            if(next) {
-                if(!note){ return next ("NoteId " + noteid + " not found", false);}
-                return next(null,note);
-            };
+            if(!note){ deferred.reject("NoteId " + noteid + " not found");}
+            deferred.resolve(note);
         })
-        .error(function(error){
-            console.error(error);
-            if(next) next(error,false);}
-    );
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.findNoteById=_findNoteById;
 
 var _updateNoteById = function (id,note, next) {
-    Note.find(id).success(function(newNote) {
-        if (!newNote){ if(next) next("Note not found", false);}
-        newNote.updateAttributes(note).success(function() {
-            //*** Add log
-            _createLog("UPDATE",'NOTE','Update note(' + id + '): title=' + note.title, null, function(err, log){
-                if(next) return next(null, newNote);
-            });
-        });
-    });
+    var deferred = QPromise.defer();
+    _findNoteById(id).then(
+        function(newNote) {
+            if (!newNote){ deferred.reject("Note not found");}
+            newNote.updateAttributes(note)
+                .success(function() {
+                    //*** Add log
+                    _createLog("UPDATE",'NOTE','Update note(' + id + '): title=' + note.title, null)
+                        .then(function(){deferred.resolve(newNote);});
+                })
+                .error(function(error){deferred.reject(error);} );
+        },
+        function(error){deferred.reject(error);}
+    );
+    return deferred.promise.nodeify(next);
 };
 exports.updateNoteById = _updateNoteById;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2373,29 +2989,28 @@ exports.findLogAll = _findLogAll;
 
 var _createLog = function(action,modelName,text,user,next)
 {
+    var deferred = QPromise.defer();
     var chainer = new Sequelize.Utils.QueryChainer
         , log  = Log.build({ action: action, model: modelName, text: text });
 
     chainer
-        .add(log.save())
+        .add(log.save());
 
     chainer.run()
-        .on('success', function() {
+        .success(function() {
             //Assign log to user
-           if(user) {
+            if(user) {
                 user.addLog(log)
-                    .on('success', function() { if(next) next(null, log); })
-                    .on('failure', function(err) { if(next) next(err,false); });
-            ;}
-            else{ if(next) next(null, log); }
+                    .success(function() {deferred.resolve(log); })
+                    .error(function(error){deferred.reject(error);});
+                }
+            else{ deferred.resolve(log); }
         })
-        .on('failure', function(err) { if(next) next(err,false); });
+        .error(function(error){deferred.reject(error);} );
+
+    return deferred.promise.nodeify(next);
 };
 exports.createLog = _createLog;
-
-
-
-
 
 
 /********************************
